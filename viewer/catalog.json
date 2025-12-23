@@ -1,0 +1,12 @@
+[
+  {
+    "id": "glass-card-001",
+    "name": "Glassmorphism Card",
+    "description": "A frosted glass card with hover tilt effect.",
+    "path": "../storage/glass-card/code.html",
+    "preview": "https://placehold.co/400x300/6d5dfc/FFF?text=Glass+Card", 
+    "promptPath": "../storage/glass-card/prompt.md",
+    "tags": ["card", "glassmorphism", "3d", "test"],
+    "dateCreated": "2024-12-23"
+  }
+]

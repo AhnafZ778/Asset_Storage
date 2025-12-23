@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UI Asset Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="background-glob" id="glob-1"></div>
+    <div class="background-glob" id="glob-2"></div>
+
+    <header class="glass-header">
+      <div class="logo">
+        <span class="logo-icon">💠</span>
+        <h1>Asset<span class="accent">Vault</span></h1>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-input" placeholder="Search assets..." />
+        <button id="search-btn">🔍</button>
+      </div>
+    </header>
+
+    <main class="gallery-container">
+      <div id="gallery-grid" class="grid">
+        <!-- Asset Cards will be injected here by main.js -->
+      </div>
+    </main>
+
+    <!-- Asset Detail Modal -->
+    <div id="modal-overlay" class="modal-overlay hidden">
+      <div class="modal-glass">
+        <button id="close-modal" class="close-btn">&times;</button>
+        <div class="modal-content">
+          <div class="modal-preview">
+            <img id="modal-image" src="" alt="Asset Preview" />
+          </div>
+          <div class="modal-info">
+            <h2 id="modal-title">Asset Name</h2>
+            <div class="tags" id="modal-tags">
+              <!-- Tags injected here -->
+            </div>
+            <p id="modal-desc">Description goes here...</p>
+
+            <div class="modal-actions">
+              <button id="copy-btn" class="action-btn primary">
+                <span class="icon">📋</span> Copy for Agent
+              </button>
+              <a
+                id="view-code-link"
+                href="#"
+                target="_blank"
+                class="action-btn secondary"
+              >
+                <span class="icon">👁️</span> View Code
+              </a>
+            </div>
+            <div id="copy-feedback" class="feedback-msg hidden">
+              Copied to clipboard!
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="main.js"></script>
+  </body>
+</html>
