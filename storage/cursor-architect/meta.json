@@ -1,0 +1,12 @@
+{
+    "name": "Hard-Light Architect",
+    "description": "Photonic Lattice cursor with Ortho-Grid trail.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

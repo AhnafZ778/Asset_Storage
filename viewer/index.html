@@ -21,15 +21,31 @@
         <span class="logo-icon">💠</span>
         <h1>Asset<span class="accent">Vault</span></h1>
       </div>
-      <div class="search-bar">
-        <input type="text" id="search-input" placeholder="Search assets..." />
-        <button id="search-btn">🔍</button>
+
+      <!-- NEW: Back Button & Search Container -->
+      <div class="flex items-center gap-4 flex-1 justify-end">
+        <button id="back-btn" class="nav-btn-h hidden">
+          <span>←</span> Back
+        </button>
+
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search assets..." />
+          <button id="search-btn">🔍</button>
+        </div>
       </div>
     </header>
 
     <main class="gallery-container">
-      <div id="gallery-grid" class="grid">
-        <!-- Asset Cards will be injected here by main.js -->
+      <!-- 1. LANDING PAGE: Category List -->
+      <div id="category-list-container" class="category-grid">
+        <!-- Categories injected here -->
+      </div>
+
+      <!-- 2. GALLERY VIEW: Assets -->
+      <div id="gallery-view-container" class="hidden">
+        <div id="gallery-grid" class="grid">
+          <!-- Asset Cards will be injected here by main.js -->
+        </div>
       </div>
     </main>
 
@@ -39,10 +55,20 @@
         <button id="close-modal" class="close-btn">&times;</button>
         <div class="modal-content">
           <div class="modal-preview">
-            <img id="modal-image" src="" alt="Asset Preview" />
+            <!-- Dynamic Iframe for interactive preview -->
+            <div id="iframe-container" class="iframe-wrapper"></div>
+            <!-- Fallback/Loading state -->
+            <div id="preview-loader" class="loader hidden"></div>
           </div>
           <div class="modal-info">
             <h2 id="modal-title">Asset Name</h2>
+
+            <!-- Variant Selector -->
+            <div id="variant-selector" class="variant-container hidden">
+              <label>Select Theme:</label>
+              <div id="variant-options" class="variant-options"></div>
+            </div>
+
             <div class="tags" id="modal-tags">
               <!-- Tags injected here -->
             </div>

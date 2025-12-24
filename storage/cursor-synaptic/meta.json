@@ -1,0 +1,12 @@
+{
+    "name": "Synaptic-Impulse",
+    "description": "Bio-Electric Transmission cursor with Dendrite Fiber.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

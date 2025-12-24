@@ -1,0 +1,12 @@
+{
+    "name": "The Oscilloscope",
+    "description": "Vector Graphics Terminal cursor with Signal Decay.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

@@ -2,11 +2,220 @@
   {
     "id": "glass-card-001",
     "name": "Glassmorphism Card",
+    "category": "UI Cards",
     "description": "A frosted glass card with hover tilt effect.",
     "path": "../storage/glass-card/code.html",
-    "preview": "https://placehold.co/400x300/6d5dfc/FFF?text=Glass+Card", 
-    "promptPath": "../storage/glass-card/prompt.md",
+    "preview": "https://placehold.co/400x300/6d5dfc/FFF?text=Glass+Card",
     "tags": ["card", "glassmorphism", "3d", "test"],
-    "dateCreated": "2024-12-23"
+    "dateCreated": "2024-12-23",
+    "variants": [
+        {
+            "name": "Default",
+            "class": "",
+            "promptPath": "../storage/glass-card/prompt.md"
+        }
+    ]
+  },
+  {
+    "id": "elemental-slider-001",
+    "name": "Elemental Slider Sidebar",
+    "category": "Navigation",
+    "description": "Interactive scroll-tracking sidebar with Lava, Ice, Gold, and Blood themes.",
+    "path": "../storage/elemental-slider/demo.html",
+    "codePath": "../storage/elemental-slider/fragment.html",
+    "preview": "https://placehold.co/400x300/ff6b35/FFF?text=Elemental+Slider",
+    "tags": ["sidebar", "navigation", "scroll", "animation", "interactive"],
+    "dateCreated": "2024-12-23",
+    "variants": [
+        { "name": "Lava", "class": "theme-lava", "promptPath": "../storage/elemental-slider/prompt_lava.md" },
+        { "name": "Ice", "class": "theme-ice", "promptPath": "../storage/elemental-slider/prompt_ice.md" },
+        { "name": "Gold", "class": "theme-gold", "promptPath": "../storage/elemental-slider/prompt_gold.md" },
+        { "name": "Blood", "class": "theme-blood", "promptPath": "../storage/elemental-slider/prompt_blood.md" }
+    ]
+  },
+  {
+    "id": "cursor-architect",
+    "name": "Hard-Light Architect",
+    "category": "Cursors",
+    "description": "Photonic Lattice cursor with Ortho-Grid trail.",
+    "path": "../storage/cursor-architect/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Hard-Light+Architect",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-architect/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-ferro",
+    "name": "Ferro-Kinetic Symbiote",
+    "category": "Cursors",
+    "description": "Magnetic Fluid Dynamics cursor with Metaball Webbing.",
+    "path": "../storage/cursor-ferro/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Ferro-Kinetic+Symbiote",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-ferro/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-ion",
+    "name": "Ion-Stream Interceptor",
+    "category": "Cursors",
+    "description": "Magnetoplasmadynamic Thruster cursor with Volumetric Exhaust.",
+    "path": "../storage/cursor-ion/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Ion-Stream+Interceptor",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-ion/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-plasma",
+    "name": "Plasma Scout",
+    "category": "Cursors",
+    "description": "Fusion Containment cursor with Particle Jet trail.",
+    "path": "../storage/cursor-plasma/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Plasma+Scout",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-plasma/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-quantum",
+    "name": "Quantum Navigator",
+    "category": "Cursors",
+    "description": "Probabilistic Waveform cursor with Ribbon trail.",
+    "path": "../storage/cursor-quantum/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Quantum+Navigator",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-quantum/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-scope",
+    "name": "The Oscilloscope",
+    "category": "Cursors",
+    "description": "Vector Graphics Terminal cursor with Signal Decay.",
+    "path": "../storage/cursor-scope/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=The+Oscilloscope",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-scope/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-synaptic",
+    "name": "Synaptic-Impulse",
+    "category": "Cursors",
+    "description": "Bio-Electric Transmission cursor with Dendrite Fiber.",
+    "path": "../storage/cursor-synaptic/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Synaptic-Impulse",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-synaptic/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-void",
+    "name": "Void Drifter",
+    "category": "Cursors",
+    "description": "Null-Point Drive cursor with Chromatic Echo.",
+    "path": "../storage/cursor-void/code.html",
+    "preview": "https://placehold.co/400x300/111111/FFF?text=Void+Drifter",
+    "tags": [
+      "cursor",
+      "canvas",
+      "premium"
+    ],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-void/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "cursor-pencil",
+    "name": "Graphite Pencil",
+    "category": "Cursors",
+    "description": "Analog hexagonal pencil with varying-width graphite trail.",
+    "path": "../storage/cursor-pencil/code.html",
+    "preview": "https://placehold.co/400x300/fbbf24/333?text=Graphite+Pencil",
+    "tags": ["cursor", "skeuomorphic", "creative", "premium"],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/cursor-pencil/prompt.md"
+      }
+    ]
   }
 ]

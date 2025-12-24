@@ -45,12 +45,16 @@ When the user says "Save this" or "Finalize this":
     - Create `prompt.md`: Explain _how_ to use it.
     - Create `meta.json`: Record details.
 4.  **Register**: Add an entry to `viewer/catalog.json`.
+    - **Categorization Rule**: Always assign a `category` (e.g., "Cursors", "Navigation", "Cards"). Group similar items dynamically.
 5.  **Clean**: Empty `playground/`.
 
 ## 🧠 Guiding Principles
 
-- **Premium Only**: We do not build "basic" UIs. We build "Dribbble-worthy" interfaces.
-- **Context is King**: The `prompt.md` is as important as the code. It ensures the _next_ LLM knows what to do with the snippet.
+- **Visual First**: The "Preview" is the hero. The viewer modal should be 90% visual demo, 10% text.
+- **High Fidelity Extraction**: NEVER tone down animations or remove "cool" features during extraction. If an element relies on page scroll, provide a scrollable container. If it relies on particles, keep them all. Complexity is good if it looks premium.
+- **Show, Don't Tell**: User knows how these work. Minimize descriptions. Prioritize the _demo_ and the _code_.
+- **Premium Aesthetics**: We do not build "basic" UIs. We build "Dribbble-worthy" interfaces.
+- **Context is King**: The `prompt.md` is important for the _Copy_ function, but the visual display should be clean.
 - **Isolation**: Components should be self-contained as much as possible.
 
 ---

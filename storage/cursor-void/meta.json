@@ -1,0 +1,12 @@
+{
+    "name": "Void Drifter",
+    "description": "Null-Point Drive cursor with Chromatic Echo.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

@@ -1,0 +1,12 @@
+{
+    "name": "Ion-Stream Interceptor",
+    "description": "Magnetoplasmadynamic Thruster cursor with Volumetric Exhaust.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

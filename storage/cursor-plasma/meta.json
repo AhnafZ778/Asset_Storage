@@ -1,0 +1,12 @@
+{
+    "name": "Plasma Scout",
+    "description": "Fusion Containment cursor with Particle Jet trail.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

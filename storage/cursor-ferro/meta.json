@@ -1,0 +1,12 @@
+{
+    "name": "Ferro-Kinetic Symbiote",
+    "description": "Magnetic Fluid Dynamics cursor with Metaball Webbing.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}

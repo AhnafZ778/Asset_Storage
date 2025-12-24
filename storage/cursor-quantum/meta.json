@@ -1,0 +1,12 @@
+{
+    "name": "Quantum Navigator",
+    "description": "Probabilistic Waveform cursor with Ribbon trail.",
+    "tags": [
+        "cursor",
+        "canvas",
+        "interactive",
+        "nexus-engine"
+    ],
+    "version": "7.0",
+    "author": "Nexus Prime"
+}
