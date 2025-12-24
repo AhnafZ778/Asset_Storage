@@ -217,5 +217,22 @@
         "promptPath": "../storage/cursor-pencil/prompt.md"
       }
     ]
+  },
+  {
+    "id": "nav-island-flex",
+    "name": "Island-Flex-Nav",
+    "category": "Navigation",
+    "description": "A Dynamic Island-style navbar with hover-to-expand labels, sliding active indicators, and buttery-smooth flexbox centering.",
+    "path": "../storage/nav-island-flex/code.html",
+    "preview": "https://placehold.co/400x300/000/FFF?text=Island-Flex-Nav",
+    "tags": ["navigation", "react", "framer-motion", "premium", "dynamic-island"],
+    "dateCreated": "2025-12-24",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/nav-island-flex/prompt.md"
+      }
+    ]
   }
 ]

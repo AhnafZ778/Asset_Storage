@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Island-Flex-Nav | Dynamic Navigation</title>
+
+    <!-- DEPENDENCIES -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+      crossorigin
+    ></script>
+    <script
+      src="https://unpkg.com/framer-motion@11.0.8/dist/framer-motion.js"
+      crossorigin
+    ></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- CSS: ISLAND STYLES -->
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+      * {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont,
+          "SF Pro Display", sans-serif;
+        letter-spacing: -0.02em;
+      }
+
+      body {
+        background: #000;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Subtle animated gradient background */
+      .bg-gradient-animate {
+        background: radial-gradient(
+            ellipse 80% 50% at 50% -20%,
+            rgba(120, 119, 198, 0.15),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 60% 40% at 80% 50%,
+            rgba(78, 81, 102, 0.1),
+            transparent
+          ),
+          radial-gradient(
+            ellipse 60% 40% at 20% 80%,
+            rgba(59, 64, 93, 0.1),
+            transparent
+          ),
+          #000;
+      }
+
+      /* The premium glossy top edge */
+      .island-gloss::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 20%;
+        right: 20%;
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255, 255, 255, 0.2) 25%,
+          rgba(255, 255, 255, 0.4) 50%,
+          rgba(255, 255, 255, 0.2) 75%,
+          transparent 100%
+        );
+        border-radius: 100%;
+      }
+
+      /* Deep inset shadow for that "carved" look */
+      .island-shadow {
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08),
+          0 0 40px -10px rgba(255, 255, 255, 0.15),
+          0 20px 40px -20px rgba(0, 0, 0, 0.8),
+          inset 0 1px 1px rgba(255, 255, 255, 0.05);
+      }
+
+      /* Active item glow pulse */
+      .active-glow {
+        box-shadow: 0 0 20px 2px rgba(255, 255, 255, 0.08),
+          inset 0 1px 1px rgba(255, 255, 255, 0.1);
+      }
+
+      /* Reduced motion support */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-gradient-animate">
+    <!-- HTML: APP ROOT -->
+    <div id="root"></div>
+
+    <!-- JS: REACT APPLICATION -->
+    <script type="text/babel">
+      const { useState, useCallback, useRef } = React;
+      const { motion, AnimatePresence, LayoutGroup } = Motion;
+
+      /* 
+           ================================================================
+           1. CONFIGURATION (Physics & Data)
+           ================================================================
+        */
+
+      // Physics
+      const islandSpring = { type: "spring", damping: 25, stiffness: 300 };
+      const indicatorSpring = { type: "spring", damping: 30, stiffness: 400 };
+      const textSpring = { type: "spring", damping: 20, stiffness: 250 };
+
+      // Data
+      const navItems = [
+        { id: "home", label: "Home", icon: "Home" },
+        { id: "work", label: "Work", icon: "Briefcase" },
+        { id: "about", label: "About", icon: "User" },
+        { id: "contact", label: "Contact", icon: "Mail" },
+      ];
+
+      /* 
+           ================================================================
+           2. ASSETS (Icons)
+           ================================================================
+        */
+      const Icons = {
+        Home: () => (
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+            <polyline points="9,22 9,12 15,12 15,22" />
+          </svg>
+        ),
+        Briefcase: () => (
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+          </svg>
+        ),
+        User: () => (
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+        ),
+        Mail: () => (
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="2" y="4" width="20" height="16" rx="2" />
+            <path d="m22,7-10,6L2,7" />
+          </svg>
+        ),
+      };
+
+      /* 
+           ================================================================
+           3. COMPONENTS
+           ================================================================
+        */
+
+      // --- SUB-COMPONENT: Individual Island Item ---
+      function IslandItem({
+        item,
+        isActive,
+        isHovered,
+        isExpanded,
+        onSelect,
+        onHover,
+        index,
+      }) {
+        const IconComponent = Icons[item.icon];
+
+        return (
+          <motion.button
+            layout
+            onClick={() => onSelect(item.id)}
+            onMouseEnter={() => onHover(item.id)}
+            onFocus={() => onHover(item.id)}
+            className="relative flex items-center justify-center gap-2.5 px-3.5 py-2.5 rounded-full outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-inset"
+            style={{ color: isActive ? "#ffffff" : "rgba(255,255,255,0.5)" }}
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            transition={islandSpring}
+            aria-label={item.label}
+            aria-current={isActive ? "page" : undefined}
+          >
+            {/* Hover spotlight */}
+            {isHovered && !isActive && (
+              <motion.div
+                layoutId="hoverIndicator"
+                className="absolute inset-0 rounded-full bg-white/[0.06]"
+                style={{ boxShadow: "0 0 26px rgba(255,255,255,0.10)" }}
+                transition={indicatorSpring}
+              />
+            )}
+
+            {/* Active Background Pill */}
+            {isActive && (
+              <motion.div
+                layoutId="activeIndicator"
+                className="absolute inset-0 bg-white/[0.1] rounded-full active-glow"
+                transition={indicatorSpring}
+              />
+            )}
+
+            {/* Icon */}
+            <motion.span
+              layout="position"
+              className="relative z-10 flex items-center justify-center flex-shrink-0"
+              transition={islandSpring}
+            >
+              <IconComponent />
+            </motion.span>
+
+            {/* Label (Reveal on Hover) */}
+            <AnimatePresence>
+              {isExpanded && (
+                <motion.span
+                  key={`label-${item.id}`}
+                  layout="position"
+                  initial={{ opacity: 0, x: -10, filter: "blur(4px)" }}
+                  animate={{
+                    opacity: 1,
+                    x: 0,
+                    filter: "blur(0px)",
+                    transition: { ...textSpring, delay: 0.05 + index * 0.025 },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    x: -6,
+                    filter: "blur(4px)",
+                    transition: { duration: 0.15 },
+                  }}
+                  className="relative z-10 text-sm font-medium whitespace-nowrap"
+                >
+                  {item.label}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </motion.button>
+        );
+      }
+
+      // --- MAIN COMPONENT: Dynamic Island ---
+      function DynamicIsland() {
+        const [isExpanded, setIsExpanded] = useState(false);
+        const [activeId, setActiveId] = useState("home");
+        const [hoveredId, setHoveredId] = useState(null);
+        const hoverTimeoutRef = useRef(null);
+        const leaveTimeoutRef = useRef(null);
+
+        const handleMouseEnter = useCallback(() => {
+          if (leaveTimeoutRef.current) {
+            clearTimeout(leaveTimeoutRef.current);
+            leaveTimeoutRef.current = null;
+          }
+          hoverTimeoutRef.current = setTimeout(() => {
+            setIsExpanded(true);
+          }, 50);
+        }, []);
+
+        const handleMouseLeave = useCallback(() => {
+          if (hoverTimeoutRef.current) {
+            clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+          }
+          leaveTimeoutRef.current = setTimeout(() => {
+            setIsExpanded(false);
+            setHoveredId(null);
+          }, 200);
+        }, []);
+
+        return (
+          <LayoutGroup>
+            <div className="fixed top-8 inset-x-0 flex justify-center z-50 pointer-events-none">
+              <motion.nav
+                layout
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+                className="pointer-events-auto island-gloss island-shadow overflow-hidden"
+                style={{
+                  background: "rgba(0, 0, 0, 0.8)",
+                  backdropFilter: "blur(24px) saturate(180%)",
+                  WebkitBackdropFilter: "blur(24px) saturate(180%)",
+                  borderRadius: "9999px",
+                  padding: "6px",
+                }}
+                transition={islandSpring}
+                role="navigation"
+                aria-label="Main navigation"
+              >
+                <motion.div
+                  layout
+                  className="flex items-center justify-center gap-0.5"
+                  transition={islandSpring}
+                >
+                  {navItems.map((item, index) => (
+                    <IslandItem
+                      key={item.id}
+                      item={item}
+                      isActive={activeId === item.id}
+                      isHovered={hoveredId === item.id}
+                      isExpanded={isExpanded}
+                      onSelect={setActiveId}
+                      onHover={setHoveredId}
+                      index={index}
+                    />
+                  ))}
+                </motion.div>
+              </motion.nav>
+            </div>
+          </LayoutGroup>
+        );
+      }
+
+      // --- DEMO CONTENT ---
+      function PageContent() {
+        return (
+          <div className="min-h-screen pt-36 px-6">
+            <div className="max-w-3xl mx-auto text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/50 text-sm mb-8">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  Flex-Anchor Strategy
+                </div>
+
+                <h1 className="text-5xl md:text-7xl font-semibold text-white mb-6 tracking-tight leading-[1.1]">
+                  Zero Layout Shift
+                  <br />
+                  <span className="bg-gradient-to-r from-white via-white/80 to-white/60 bg-clip-text text-transparent">
+                    Pure Flex Centering
+                  </span>
+                </h1>
+
+                <p className="text-lg text-white/40 max-w-xl mx-auto mb-16 leading-relaxed">
+                  The island is wrapped in a{" "}
+                  <strong className="text-white/60">
+                    full-width flex container
+                  </strong>{" "}
+                  with
+                  <code className="px-1.5 py-0.5 mx-1 rounded bg-white/10 text-white/60 text-sm">
+                    justify-center
+                  </code>
+                  . Width changes expand symmetrically — no transforms, no
+                  jitter.
+                </p>
+              </motion.div>
+            </div>
+            {/* Footer */}
+            <footer className="max-w-3xl mx-auto mt-32 pb-12 text-center">
+              <p className="text-xs text-white/20">
+                Flex-Anchor Strategy • Zero Transform Conflicts • Pure Flexbox
+                Centering
+              </p>
+            </footer>
+          </div>
+        );
+      }
+
+      /* 
+           ================================================================
+           4. INITIALIZATION
+           ================================================================
+        */
+      function App() {
+        return (
+          <>
+            <DynamicIsland />
+            <PageContent />
+          </>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>

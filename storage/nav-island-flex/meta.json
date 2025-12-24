@@ -1,0 +1,8 @@
+{
+    "id": "nav-island-flex",
+    "name": "Island-Flex-Nav",
+    "description": "A Dynamic Island-style navbar with hover-to-expand labels, sliding active indicators, and buttery-smooth flexbox centering.",
+    "tags": ["navigation", "react", "framer-motion", "premium", "dynamic-island"],
+    "dateCreated": "2025-12-24",
+    "category": "Navigation"
+}
