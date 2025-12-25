@@ -1,0 +1,8 @@
+{
+    "id": "nav-eden-glass",
+    "name": "Eden-Glass-Nav",
+    "description": "A biomimetic, crystalline navbar with 'Breeze' physics, asymmetric organic leaf shapes, and mist-dissolve exits.",
+    "tags": ["navigation", "react", "framer-motion", "glassmorphism", "biomimetic", "organic"],
+    "dateCreated": "2025-12-25",
+    "category": "Navigation"
+}

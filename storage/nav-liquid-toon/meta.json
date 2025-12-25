@@ -1,0 +1,8 @@
+{
+    "id": "nav-liquid-toon",
+    "name": "Liquid-Toon-Nav",
+    "description": "A bold, Neo-Brutalist navbar with 'BUTTER' spring physics, hard shadows, and liquid-like squashing effects.",
+    "tags": ["navigation", "react", "framer-motion", "neo-brutalist", "toon", "liquid"],
+    "dateCreated": "2025-12-25",
+    "category": "Navigation"
+}
