@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neural Cluster Background | Demo</title>
+    <meta
+      name="description"
+      content="Scroll-responsive 3D neural network background animation with Three.js"
+    />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syncopate:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ============================================================
+         CSS VARIABLES - Design Tokens
+         Customize these for your project's color scheme
+      ============================================================ */
+      :root {
+        --void-dark: #020408;
+        --electric-cyan: #00f0ff;
+        --text-main: #f0f4f8;
+        --text-muted: #8b9bb4;
+        --font-display: "Syncopate", sans-serif;
+        --font-body: "Space Grotesk", sans-serif;
+      }
+
+      /* Reset */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Lenis Smooth Scroll Integration */
+      html.lenis {
+        height: auto;
+      }
+      .lenis.lenis-smooth {
+        scroll-behavior: auto;
+      }
+
+      body {
+        background-color: var(--void-dark);
+        color: var(--text-main);
+        font-family: var(--font-body);
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+        line-height: 1.6;
+      }
+
+      /* Accessibility */
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        ::before,
+        ::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
+
+      /* ============================================================
+         WEBGL CONTAINER - Where the 3D magic happens
+         This container holds the Three.js canvas
+      ============================================================ */
+      #webgl-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      /* Demo Content Styling */
+      .demo-content {
+        position: relative;
+        z-index: 2;
+      }
+
+      .section {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 4rem 2rem;
+      }
+
+      .hero-section {
+        text-align: center;
+      }
+
+      .hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 6vw, 5rem);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: -0.02em;
+        margin-bottom: 1rem;
+        color: transparent;
+        -webkit-text-stroke: 1px var(--text-main);
+      }
+
+      .hero-subtitle {
+        color: var(--electric-cyan);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.3em;
+        margin-bottom: 2rem;
+      }
+
+      .hero-description {
+        color: var(--text-muted);
+        max-width: 500px;
+        margin: 0 auto;
+        font-size: 1.1rem;
+      }
+
+      .scroll-indicator {
+        position: absolute;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        color: var(--text-muted);
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        animation: bounce 2s infinite;
+      }
+
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateX(-50%) translateY(0);
+        }
+        50% {
+          transform: translateX(-50%) translateY(10px);
+        }
+      }
+
+      .content-section {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        padding: 3rem;
+        max-width: 600px;
+        backdrop-filter: blur(10px);
+      }
+
+      .content-section h2 {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+      }
+
+      .content-section p {
+        color: var(--text-muted);
+      }
+
+      /* Footer */
+      .demo-footer {
+        text-align: center;
+        padding: 4rem 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-muted);
+        font-size: 0.9rem;
+      }
+    </style>
+
+    <!-- Three.js Import Map -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- ============================================================
+         WEBGL CONTAINER
+         The Three.js canvas renders inside this div
+    ============================================================ -->
+    <div id="webgl-container"></div>
+
+    <!-- Demo Content to show scroll effect -->
+    <main class="demo-content">
+      <section class="section hero-section">
+        <div>
+          <div class="hero-subtitle">Scroll-Responsive 3D Background</div>
+          <h1 class="hero-title">Neural Cluster</h1>
+          <p class="hero-description">
+            Watch the neural network respond to your scrolling. The nodes rotate
+            faster as you scroll, creating an immersive parallax effect.
+          </p>
+        </div>
+        <div class="scroll-indicator">↓ Scroll to see the effect ↓</div>
+      </section>
+
+      <section class="section">
+        <div class="content-section">
+          <h2>How It Works</h2>
+          <p>
+            This background uses Three.js with selective bloom post-processing.
+            150 glowing spheres are distributed on a sphere, connected by faint
+            lines. The Lenis smooth scroll library provides scroll velocity,
+            which directly controls the rotation speed.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="content-section">
+          <h2>Customizable</h2>
+          <p>
+            Change the node color (default: cyan #00f0ff), particle count
+            (default: 150), distribution radius (default: 10), and bloom
+            intensity (default: 0.35) to match your brand.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="content-section">
+          <h2>Performance Optimized</h2>
+          <p>
+            Uses instanced meshes for efficient rendering of many spheres.
+            Includes WebGL context loss handling and respects
+            prefers-reduced-motion for accessibility.
+          </p>
+        </div>
+      </section>
+
+      <footer class="demo-footer">
+        Neural Cluster Background | Three.js + Lenis
+      </footer>
+    </main>
+
+    <!-- Dependencies -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <!-- Neural Cluster Background Animation -->
+    <script type="module">
+      /* ============================================================
+         THREE.JS IMPORTS
+         Core library + post-processing for bloom effect
+      ============================================================ */
+      import * as THREE from "three";
+      import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+      import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+      import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+      import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+      import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
+
+      /* ============================================================
+         CONFIGURATION
+         Adjust these values to customize the animation
+      ============================================================ */
+      const CONFIG = {
+        // Node Settings
+        nodeColor: 0x00f0ff, // Cyan color for nodes
+        nodeCount: 150, // Number of neural nodes (max ~400 for performance)
+        nodeRadius: 0.1, // Size of each sphere
+        distributionRadius: 10, // Radius of the sphere distribution
+
+        // Connection Settings
+        connectionColor: 0x00f0ff, // Color of connecting lines
+        connectionOpacity: 0.15, // Opacity of lines (keep low for subtlety)
+        connectionDistance: 3.5, // Max distance between connected nodes
+
+        // Bloom Settings
+        bloomStrength: 0.35, // Glow intensity (0.0 - 1.0)
+        bloomRadius: 0.5, // Glow spread
+
+        // Animation Settings
+        baseRotationSpeed: 0.001, // Rotation when not scrolling
+        scrollMultiplier: 0.0005, // How much scroll affects rotation
+        pulseSpeed: 2, // Speed of breathing effect
+        pulseAmount: 0.05, // Scale variation (5%)
+
+        // Camera
+        cameraZ: 25, // Distance from center
+        fogDensity: 0.02, // Fog for depth effect
+      };
+
+      /* ============================================================
+         LENIS SMOOTH SCROLL
+         Provides buttery smooth scrolling and scroll velocity
+      ============================================================ */
+      const lenis = new Lenis({
+        duration: 1.2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+        direction: "vertical",
+        gestureDirection: "vertical",
+        smooth: true,
+        smoothTouch: false,
+        touchMultiplier: 2,
+      });
+
+      /* ============================================================
+         THREE.JS SCENE SETUP
+         Initialize renderer, camera, and scene
+      ============================================================ */
+      const container = document.getElementById("webgl-container");
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x020408, CONFIG.fogDensity);
+
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = CONFIG.cameraZ;
+
+      const renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: true,
+      });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.toneMapping = THREE.ReinhardToneMapping;
+      container.appendChild(renderer.domElement);
+
+      // Handle WebGL context loss gracefully
+      const canvas = renderer.domElement;
+      canvas.addEventListener(
+        "webglcontextlost",
+        (event) => {
+          event.preventDefault();
+          console.log("WebGL context lost");
+        },
+        false
+      );
+      canvas.addEventListener(
+        "webglcontextrestored",
+        () => {
+          console.log("WebGL context restored");
+        },
+        false
+      );
+
+      /* ============================================================
+         SELECTIVE BLOOM POST-PROCESSING
+         Creates the glowing effect on neural nodes
+      ============================================================ */
+      const BLOOM_LAYER = 1;
+      const bloomLayer = new THREE.Layers();
+      bloomLayer.set(BLOOM_LAYER);
+
+      const renderScene = new RenderPass(scene, camera);
+
+      const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        1.5,
+        0.4,
+        0.85
+      );
+      bloomPass.threshold = 0;
+      bloomPass.strength = CONFIG.bloomStrength;
+      bloomPass.radius = CONFIG.bloomRadius;
+
+      const bloomComposer = new EffectComposer(renderer);
+      bloomComposer.renderToScreen = false;
+      bloomComposer.addPass(renderScene);
+      bloomComposer.addPass(bloomPass);
+
+      const finalComposer = new EffectComposer(renderer);
+      finalComposer.addPass(renderScene);
+
+      // Custom shader to combine bloom with base render
+      const mixPass = new ShaderPass(
+        new THREE.ShaderMaterial({
+          uniforms: {
+            baseTexture: { value: null },
+            bloomTexture: { value: bloomComposer.renderTarget2.texture },
+          },
+          vertexShader: `
+            varying vec2 vUv;
+            void main() {
+              vUv = uv;
+              gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+          `,
+          fragmentShader: `
+            uniform sampler2D baseTexture;
+            uniform sampler2D bloomTexture;
+            varying vec2 vUv;
+            void main() {
+              gl_FragColor = texture2D(baseTexture, vUv) + vec4(1.0) * texture2D(bloomTexture, vUv);
+            }
+          `,
+          defines: {},
+        }),
+        "baseTexture"
+      );
+      mixPass.needsSwap = true;
+      finalComposer.addPass(mixPass);
+      finalComposer.addPass(new OutputPass());
+
+      const darkMaterial = new THREE.MeshBasicMaterial({ color: "black" });
+      const materials = {};
+
+      /* ============================================================
+         NEURAL CLUSTER GEOMETRY
+         Creates 150 spheres distributed on a sphere + connecting lines
+      ============================================================ */
+      const nodesGeometry = new THREE.InstancedMesh(
+        new THREE.SphereGeometry(CONFIG.nodeRadius, 16, 16),
+        new THREE.MeshBasicMaterial({ color: CONFIG.nodeColor }),
+        CONFIG.nodeCount
+      );
+
+      const dummy = new THREE.Object3D();
+      const positions = [];
+
+      // Distribute nodes on a sphere surface
+      for (let i = 0; i < CONFIG.nodeCount; i++) {
+        const r = CONFIG.distributionRadius;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(2 * Math.random() - 1);
+
+        const x = r * Math.sin(phi) * Math.cos(theta);
+        const y = r * Math.sin(phi) * Math.sin(theta);
+        const z = r * Math.cos(phi);
+
+        dummy.position.set(x, y, z);
+        dummy.updateMatrix();
+        nodesGeometry.setMatrixAt(i, dummy.matrix);
+        positions.push(new THREE.Vector3(x, y, z));
+      }
+
+      nodesGeometry.layers.enable(BLOOM_LAYER);
+      scene.add(nodesGeometry);
+
+      // Create connections between nearby nodes
+      const lineMaterial = new THREE.LineBasicMaterial({
+        color: CONFIG.connectionColor,
+        transparent: true,
+        opacity: CONFIG.connectionOpacity,
+        blending: THREE.AdditiveBlending,
+      });
+
+      const lineGeo = new THREE.BufferGeometry();
+      const linePositions = [];
+
+      for (let i = 0; i < CONFIG.nodeCount; i++) {
+        for (let j = i + 1; j < CONFIG.nodeCount; j++) {
+          if (
+            positions[i].distanceTo(positions[j]) < CONFIG.connectionDistance
+          ) {
+            linePositions.push(positions[i].x, positions[i].y, positions[i].z);
+            linePositions.push(positions[j].x, positions[j].y, positions[j].z);
+          }
+        }
+      }
+
+      lineGeo.setAttribute(
+        "position",
+        new THREE.Float32BufferAttribute(linePositions, 3)
+      );
+      const connections = new THREE.LineSegments(lineGeo, lineMaterial);
+      scene.add(connections);
+
+      /* ============================================================
+         ANIMATION LOOP
+         Core rendering with scroll-responsive rotation
+      ============================================================ */
+      let time = 0;
+      let scrollVelocity = 0;
+
+      // Hook Lenis into the animation loop
+      function raf(t) {
+        lenis.raf(t);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+
+      // Track scroll velocity
+      lenis.on("scroll", (e) => {
+        scrollVelocity = e.velocity;
+      });
+
+      function render() {
+        time += 0.005;
+
+        // SCROLL-RESPONSIVE ROTATION
+        const rotationSpeed =
+          CONFIG.baseRotationSpeed + scrollVelocity * CONFIG.scrollMultiplier;
+        nodesGeometry.rotation.y += rotationSpeed;
+        connections.rotation.y += rotationSpeed;
+
+        // Breathing pulse effect
+        const scale =
+          1 + Math.sin(time * CONFIG.pulseSpeed) * CONFIG.pulseAmount;
+        nodesGeometry.scale.set(scale, scale, scale);
+
+        // Selective bloom rendering
+        scene.traverse(darkenNonBloomed);
+        bloomComposer.render();
+        scene.traverse(restoreMaterial);
+        finalComposer.render();
+
+        requestAnimationFrame(render);
+      }
+
+      function darkenNonBloomed(obj) {
+        if (obj.isMesh && bloomLayer.test(obj.layers) === false) {
+          materials[obj.uuid] = obj.material;
+          obj.material = darkMaterial;
+        }
+      }
+
+      function restoreMaterial(obj) {
+        if (materials[obj.uuid]) {
+          obj.material = materials[obj.uuid];
+          delete materials[obj.uuid];
+        }
+      }
+
+      render();
+
+      /* ============================================================
+         RESIZE HANDLER
+         Keep the scene responsive
+      ============================================================ */
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        bloomComposer.setSize(window.innerWidth, window.innerHeight);
+        finalComposer.setSize(window.innerWidth, window.innerHeight);
+      });
+    </script>
+  </body>
+</html>

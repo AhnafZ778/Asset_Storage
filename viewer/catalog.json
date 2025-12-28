@@ -268,5 +268,22 @@
         "promptPath": "../storage/nav-eden-glass/prompt.md"
       }
     ]
+  },
+  {
+    "id": "hero-neural-bg",
+    "name": "Neural Cluster Background",
+    "category": "Hero",
+    "description": "Scroll-responsive 3D neural network background with Three.js bloom effects. Nodes rotate faster as you scroll for an immersive parallax experience.",
+    "path": "../storage/hero-neural-bg/code.html",
+    "preview": "https://placehold.co/400x300/020408/00f0ff?text=Neural+Cluster",
+    "tags": ["hero", "background", "three.js", "scroll", "animation", "3d", "webgl", "bloom"],
+    "dateCreated": "2025-12-28",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/hero-neural-bg/prompt.md"
+      }
+    ]
   }
 ]

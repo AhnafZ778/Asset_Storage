@@ -12,20 +12,42 @@ The single source of truth for the gallery.
 [
   {
     "id": "unique-kebab-case-id",
-    "name": "Glassmorphism Card",
-    "description": "A frosted glass card with hover tilt effect.",
-    "path": "../storage/glass-card/code.html",
-    "preview": "../storage/glass-card/preview.png",
-    "promptPath": "../storage/glass-card/prompt.md",
-    "tags": ["card", "glassmorphism", "3d"],
-    "dateCreated": "2024-05-20"
+    "name": "Display Name",
+    "category": "Category Name",
+    "description": "Brief description of the component.",
+    "path": "../storage/component-name/code.html",
+    "codePath": "../storage/component-name/fragment.html", // Optional: for smart copy
+    "preview": "https://placehold.co/400x300/bg/fg?text=Preview",
+    "tags": ["tag1", "tag2", "tag3"],
+    "dateCreated": "YYYY-MM-DD",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/component-name/prompt.md"
+      },
+      {
+        "name": "Variant Name",
+        "class": "variant-class",
+        "promptPath": "../storage/component-name/prompt_variant.md"
+      }
+    ]
   }
 ]
 ```
 
+### Current Categories
+
+| Category       | Description                                  | Example Assets                                     |
+| -------------- | -------------------------------------------- | -------------------------------------------------- |
+| **Cursors**    | Custom cursor effects with canvas/WebGL      | Synaptic-Impulse, Quantum Navigator, Void Drifter  |
+| **Navigation** | Navbars, sidebars, and navigation components | Elemental Slider, Island-Flex-Nav, Liquid-Toon-Nav |
+| **UI Cards**   | Card components with glass effects           | Glassmorphism Card                                 |
+| **Hero**       | Hero section backgrounds and animations      | Neural Cluster Background                          |
+
 ### Smart Copy Logic
 
-The `script.js` fetches the content of `code.html` AND `prompt.md` to construct a clipboard payload:
+The `main.js` fetches the content of `code.html` AND `prompt.md` to construct a clipboard payload:
 
 ```javascript
 const payload = `
@@ -38,7 +60,17 @@ ${codeContent}
 navigator.clipboard.writeText(payload);
 ```
 
+### Adding a New Asset
+
+1. Create folder: `storage/{asset-name}/`
+2. Add `code.html` (demo with sample content)
+3. Add `prompt.md` (comprehensive LLM-friendly instructions)
+4. Register in `viewer/catalog.json`
+5. Run local server from `viewer/` directory to test
+
 ### Security Note
 
 Modern browsers block `fetch()` requests to `file://` URLs.
 **Requirement**: The user _must_ run a local server (e.g., `python3 -m http.server`, `npx http-server`, or the Live Server extension) to view the gallery properly.
+
+**Note**: Run the server from the project root, not `/viewer/`, if you want to preview assets that reference `../storage/` paths.
