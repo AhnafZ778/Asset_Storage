@@ -1,5 +1,70 @@
 [
   {
+    "id": "seasonal-display-cards-001",
+    "name": "Seasonal Display Cards",
+    "category": "UI Cards",
+    "description": "Premium 3D stacked cards with 6 distinct themes (Solarpunk, Seasons, Rainy) and rich background animations.",
+    "path": "../storage/seasonal-display-cards/code.html",
+    "preview": "https://placehold.co/400x300/B87333/FFF?text=Seasonal+Cards",
+    "tags": [
+      "cards",
+      "3d",
+      "nature",
+      "solarpunk",
+      "seasonal",
+      "animation",
+      "premium"
+    ],
+    "dateCreated": "2026-01-07",
+    "variants": [
+      {
+        "name": "Master Bundle (All)",
+        "class": "theme-solarpunk",
+        "promptPath": "../storage/seasonal-display-cards/prompt_master.md"
+      },
+      {
+        "name": "Bundle: Seasonal",
+        "class": "theme-cherry",
+        "promptPath": "../storage/seasonal-display-cards/prompt_bundle_seasonal.md"
+      },
+      {
+        "name": "Bundle: Punk",
+        "class": "theme-solarpunk",
+        "promptPath": "../storage/seasonal-display-cards/prompt_bundle_punk.md"
+      },
+      {
+        "name": "Theme: Solarpunk",
+        "class": "theme-solarpunk",
+        "promptPath": "../storage/seasonal-display-cards/prompt_solarpunk.md"
+      },
+      {
+        "name": "Theme: Cherry Blossom",
+        "class": "theme-cherry",
+        "promptPath": "../storage/seasonal-display-cards/prompt_cherry.md"
+      },
+      {
+        "name": "Theme: Autumn",
+        "class": "theme-autumn",
+        "promptPath": "../storage/seasonal-display-cards/prompt_autumn.md"
+      },
+      {
+        "name": "Theme: Winter",
+        "class": "theme-winter",
+        "promptPath": "../storage/seasonal-display-cards/prompt_winter.md"
+      },
+      {
+        "name": "Theme: Summer",
+        "class": "theme-summer",
+        "promptPath": "../storage/seasonal-display-cards/prompt_summer.md"
+      },
+      {
+        "name": "Theme: Rainy",
+        "class": "theme-rainy",
+        "promptPath": "../storage/seasonal-display-cards/prompt_rainy.md"
+      }
+    ]
+  },
+  {
     "id": "glass-card-001",
     "name": "Glassmorphism Card",
     "category": "UI Cards",
@@ -9,11 +74,11 @@
     "tags": ["card", "glassmorphism", "3d", "test"],
     "dateCreated": "2024-12-23",
     "variants": [
-        {
-            "name": "Default",
-            "class": "",
-            "promptPath": "../storage/glass-card/prompt.md"
-        }
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/glass-card/prompt.md"
+      }
     ]
   },
   {
@@ -27,10 +92,26 @@
     "tags": ["sidebar", "navigation", "scroll", "animation", "interactive"],
     "dateCreated": "2024-12-23",
     "variants": [
-        { "name": "Lava", "class": "theme-lava", "promptPath": "../storage/elemental-slider/prompt_lava.md" },
-        { "name": "Ice", "class": "theme-ice", "promptPath": "../storage/elemental-slider/prompt_ice.md" },
-        { "name": "Gold", "class": "theme-gold", "promptPath": "../storage/elemental-slider/prompt_gold.md" },
-        { "name": "Blood", "class": "theme-blood", "promptPath": "../storage/elemental-slider/prompt_blood.md" }
+      {
+        "name": "Lava",
+        "class": "theme-lava",
+        "promptPath": "../storage/elemental-slider/prompt_lava.md"
+      },
+      {
+        "name": "Ice",
+        "class": "theme-ice",
+        "promptPath": "../storage/elemental-slider/prompt_ice.md"
+      },
+      {
+        "name": "Gold",
+        "class": "theme-gold",
+        "promptPath": "../storage/elemental-slider/prompt_gold.md"
+      },
+      {
+        "name": "Blood",
+        "class": "theme-blood",
+        "promptPath": "../storage/elemental-slider/prompt_blood.md"
+      }
     ]
   },
   {
@@ -40,11 +121,7 @@
     "description": "Photonic Lattice cursor with Ortho-Grid trail.",
     "path": "../storage/cursor-architect/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Hard-Light+Architect",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -61,11 +138,7 @@
     "description": "Magnetic Fluid Dynamics cursor with Metaball Webbing.",
     "path": "../storage/cursor-ferro/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Ferro-Kinetic+Symbiote",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -82,11 +155,7 @@
     "description": "Magnetoplasmadynamic Thruster cursor with Volumetric Exhaust.",
     "path": "../storage/cursor-ion/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Ion-Stream+Interceptor",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -103,11 +172,7 @@
     "description": "Fusion Containment cursor with Particle Jet trail.",
     "path": "../storage/cursor-plasma/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Plasma+Scout",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -124,11 +189,7 @@
     "description": "Probabilistic Waveform cursor with Ribbon trail.",
     "path": "../storage/cursor-quantum/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Quantum+Navigator",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -145,11 +206,7 @@
     "description": "Vector Graphics Terminal cursor with Signal Decay.",
     "path": "../storage/cursor-scope/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=The+Oscilloscope",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -166,11 +223,7 @@
     "description": "Bio-Electric Transmission cursor with Dendrite Fiber.",
     "path": "../storage/cursor-synaptic/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Synaptic-Impulse",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -187,11 +240,7 @@
     "description": "Null-Point Drive cursor with Chromatic Echo.",
     "path": "../storage/cursor-void/code.html",
     "preview": "https://placehold.co/400x300/111111/FFF?text=Void+Drifter",
-    "tags": [
-      "cursor",
-      "canvas",
-      "premium"
-    ],
+    "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -225,7 +274,13 @@
     "description": "A Dynamic Island-style navbar with hover-to-expand labels, sliding active indicators, and buttery-smooth flexbox centering.",
     "path": "../storage/nav-island-flex/code.html",
     "preview": "https://placehold.co/400x300/000/FFF?text=Island-Flex-Nav",
-    "tags": ["navigation", "react", "framer-motion", "premium", "dynamic-island"],
+    "tags": [
+      "navigation",
+      "react",
+      "framer-motion",
+      "premium",
+      "dynamic-island"
+    ],
     "dateCreated": "2025-12-24",
     "variants": [
       {
@@ -242,7 +297,14 @@
     "description": "A bold, Neo-Brutalist navbar with 'BUTTER' spring physics, hard shadows, and liquid-like squashing effects.",
     "path": "../storage/nav-liquid-toon/code.html",
     "preview": "https://placehold.co/400x300/FACC15/000?text=Liquid-Toon",
-    "tags": ["navigation", "react", "framer-motion", "neo-brutalist", "toon", "liquid"],
+    "tags": [
+      "navigation",
+      "react",
+      "framer-motion",
+      "neo-brutalist",
+      "toon",
+      "liquid"
+    ],
     "dateCreated": "2025-12-25",
     "variants": [
       {
@@ -259,7 +321,14 @@
     "description": "A biomimetic, crystalline navbar with 'Breeze' physics, asymmetric organic leaf shapes, and mist-dissolve exits.",
     "path": "../storage/nav-eden-glass/code.html",
     "preview": "https://placehold.co/400x300/dcfce7/065f46?text=Eden-Glass",
-    "tags": ["navigation", "react", "framer-motion", "glassmorphism", "biomimetic", "organic"],
+    "tags": [
+      "navigation",
+      "react",
+      "framer-motion",
+      "glassmorphism",
+      "biomimetic",
+      "organic"
+    ],
     "dateCreated": "2025-12-25",
     "variants": [
       {
@@ -276,7 +345,16 @@
     "description": "Scroll-responsive 3D neural network background with Three.js bloom effects. Nodes rotate faster as you scroll for an immersive parallax experience.",
     "path": "../storage/hero-neural-bg/code.html",
     "preview": "https://placehold.co/400x300/020408/00f0ff?text=Neural+Cluster",
-    "tags": ["hero", "background", "three.js", "scroll", "animation", "3d", "webgl", "bloom"],
+    "tags": [
+      "hero",
+      "background",
+      "three.js",
+      "scroll",
+      "animation",
+      "3d",
+      "webgl",
+      "bloom"
+    ],
     "dateCreated": "2025-12-28",
     "variants": [
       {

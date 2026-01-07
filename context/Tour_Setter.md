@@ -27,6 +27,11 @@ Before you end your session or hand off control, run through this checklist to e
 
 - [ ] **Action**: Update `context/architecture.md` if you introduced any new system-wide patterns (e.g., a new shared CSS library).
 
+### 5. Git Sync (CRITICAL)
+
+- [ ] **Action**: Ensure all changes are pushed to GitHub.
+- [ ] **Run**: `git add . && git commit -m "chore: closing session cleanup" && git push` if pending changes exist.
+
 ## 📝 Handover Note
 
 When running `task_boundary` or `notify_user` to end your shift, briefly summarize:

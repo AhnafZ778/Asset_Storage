@@ -47,6 +47,7 @@ When the user says "Save this" or "Finalize this":
 4.  **Register**: Add an entry to `viewer/catalog.json`.
     - **Categorization Rule**: Always assign a `category` (e.g., "Cursors", "Navigation", "Cards"). Group similar items dynamically.
 5.  **Clean**: Empty `playground/`.
+6.  **Push**: Commit the new asset to GitHub immediately. `git add . && git commit -m "feat(asset): add {Asset_Name}" && git push`. This is non-negotiable.
 
 ## 🧠 Guiding Principles
 

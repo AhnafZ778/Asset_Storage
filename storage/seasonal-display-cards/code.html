@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seasonal Display Cards</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Spectral:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Spectral', serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background 0.8s ease;
+    }
+
+    /* ==========================================================================
+       THEME DEFINITIONS & VARIABLES
+       ========================================================================== */
+    
+    /* --------------------------------------------------------------------------
+       [THEME 1] SOLARPUNK: Nature Meets Industry
+       - Primary: Copper/Bronze
+       - Accent: Verdigris Teal & Moss Green
+       - Vibe: Warm, Mechanical, Organic
+       -------------------------------------------------------------------------- */
+    body.theme-solarpunk {
+      --primary: #B87333;
+      --secondary: #CD7F32;
+      --accent: #2F847C;
+      --accent-2: #2D5A27;
+      --accent-3: #4A7C3F;
+      --text-light: #F5E6D3;
+      --text-highlight: #D4A574;
+      --dark: #3D2914;
+      --muted: #4A7C6F;
+      --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #2d2a24 50%, #1f2d1f 100%);
+      --card-bg: linear-gradient(135deg, rgba(61, 41, 20, 0.9) 0%, rgba(45, 42, 36, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(61, 41, 20, 0.95) 0%, rgba(55, 52, 46, 1) 100%);
+      --glow-1: rgba(184, 115, 51, 0.1);
+      --glow-2: rgba(47, 132, 124, 0.1);
+      --particle-color: #D4A574;
+      background: var(--bg-gradient);
+    }
+
+    /* --------------------------------------------------------------------------
+       [THEME 2] CHERRY BLOSSOM: Sakura & Wind
+       - Primary: Soft Pink
+       - Accent: Deep Magenta
+       - Vibe: Gentle, Floating, Ethereal
+       -------------------------------------------------------------------------- */
+    body.theme-cherry {
+      --primary: #FFB7C5;
+      --secondary: #FF69B4;
+      --accent: #C71585;
+      --accent-2: #DB7093;
+      --accent-3: #FFC0CB;
+      --text-light: #FFF0F5;
+      --text-highlight: #FF1493;
+      --dark: #2D1F2D;
+      --muted: #D8BFD8;
+      --bg-gradient: linear-gradient(135deg, #1a1520 0%, #2d1f2d 50%, #1f1a25 100%);
+      --card-bg: linear-gradient(135deg, rgba(45, 31, 45, 0.9) 0%, rgba(60, 40, 55, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(55, 35, 50, 0.95) 0%, rgba(70, 45, 60, 1) 100%);
+      --glow-1: rgba(255, 105, 180, 0.15);
+      --glow-2: rgba(255, 183, 197, 0.1);
+      --particle-color: #FFB7C5;
+      background: var(--bg-gradient);
+    }
+
+    /* --------------------------------------------------------------------------
+       [THEME 3] AUTUMN: Harvest & Decay
+       - Primary: Burnt Orange
+       - Accent: Brown & Gold
+       - Vibe: Cozy, Rustic, Falling
+       -------------------------------------------------------------------------- */
+    body.theme-autumn {
+      --primary: #D2691E;
+      --secondary: #FF8C00;
+      --accent: #8B4513;
+      --accent-2: #A0522D;
+      --accent-3: #CD853F;
+      --text-light: #FFEFD5;
+      --text-highlight: #FF6347;
+      --dark: #3D2B1F;
+      --muted: #BC8F8F;
+      --bg-gradient: linear-gradient(135deg, #1a1410 0%, #2d1f15 50%, #1f1a12 100%);
+      --card-bg: linear-gradient(135deg, rgba(61, 43, 31, 0.9) 0%, rgba(55, 35, 25, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(70, 50, 35, 0.95) 0%, rgba(65, 42, 30, 1) 100%);
+      --glow-1: rgba(255, 140, 0, 0.15);
+      --glow-2: rgba(210, 105, 30, 0.1);
+      --particle-color: #FF8C00;
+      background: var(--bg-gradient);
+    }
+
+    /* --------------------------------------------------------------------------
+       [THEME 4] WINTER/GLACIER: Ice & Silence
+       - Primary: Icy Blue
+       - Accent: Steel Blue & Cyan
+       - Vibe: Cold, Sharp, Crystalline
+       -------------------------------------------------------------------------- */
+    body.theme-winter {
+      --primary: #87CEEB;
+      --secondary: #B0E0E6;
+      --accent: #4682B4;
+      --accent-2: #5F9EA0;
+      --accent-3: #ADD8E6;
+      --text-light: #F0F8FF;
+      --text-highlight: #00CED1;
+      --dark: #1C2A35;
+      --muted: #778899;
+      --bg-gradient: linear-gradient(135deg, #0a1520 0%, #1c2a35 50%, #0f1a25 100%);
+      --card-bg: linear-gradient(135deg, rgba(28, 42, 53, 0.9) 0%, rgba(35, 50, 65, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(35, 50, 60, 0.95) 0%, rgba(45, 60, 75, 1) 100%);
+      --glow-1: rgba(135, 206, 235, 0.15);
+      --glow-2: rgba(176, 224, 230, 0.1);
+      --particle-color: #E0FFFF;
+      background: var(--bg-gradient);
+    }
+
+    /* --------------------------------------------------------------------------
+       [THEME 5] SUMMER: Sun & Growth
+       - Primary: Golden Yellow
+       - Accent: Orange & Lime Green
+       - Vibe: Bright, Energetic, Radiant
+       -------------------------------------------------------------------------- */
+    body.theme-summer {
+      --primary: #FFD700;
+      --secondary: #FFA500;
+      --accent: #FF6B35;
+      --accent-2: #32CD32;
+      --accent-3: #00CED1;
+      --text-light: #FFFAF0;
+      --text-highlight: #FF4500;
+      --dark: #2D3520;
+      --muted: #90EE90;
+      --bg-gradient: linear-gradient(135deg, #1a2010 0%, #2d3520 50%, #1f2a15 100%);
+      --card-bg: linear-gradient(135deg, rgba(45, 53, 32, 0.9) 0%, rgba(40, 50, 30, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(50, 60, 35, 0.95) 0%, rgba(55, 65, 40, 1) 100%);
+      --glow-1: rgba(255, 215, 0, 0.15);
+      --glow-2: rgba(50, 205, 50, 0.1);
+      --particle-color: #FFD700;
+      background: var(--bg-gradient);
+    }
+
+    /* --------------------------------------------------------------------------
+       [THEME 6] RAINY: Storm & Calm
+       - Primary: Slate Gray/Blue
+       - Accent: Muted Blue
+       - Vibe: Melancholic, Soothing, Wet
+       -------------------------------------------------------------------------- */
+    body.theme-rainy {
+      --primary: #6B8E9F;
+      --secondary: #708090;
+      --accent: #4A6670;
+      --accent-2: #5F7A8A;
+      --accent-3: #7B9AAA;
+      --text-light: #E8F0F5;
+      --text-highlight: #87CEEB;
+      --dark: #1F2933;
+      --muted: #9CB4C0;
+      --bg-gradient: linear-gradient(135deg, #151b20 0%, #1f2933 50%, #1a2530 100%);
+      --card-bg: linear-gradient(135deg, rgba(31, 41, 51, 0.9) 0%, rgba(40, 55, 65, 0.95) 100%);
+      --card-bg-hover: linear-gradient(135deg, rgba(40, 50, 60, 0.95) 0%, rgba(50, 65, 75, 1) 100%);
+      --glow-1: rgba(107, 142, 159, 0.15);
+      --glow-2: rgba(135, 206, 235, 0.1);
+      --particle-color: #87CEEB;
+      background: var(--bg-gradient);
+    }
+
+    /* ==========================================================================
+       SHARED BACKGROUND UTILITIES
+       ========================================================================== */
+    .bg-pattern {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        radial-gradient(ellipse at 20% 30%, var(--glow-1) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 70%, var(--glow-2) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, var(--glow-1) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transition: all 0.8s ease;
+    }
+
+    /* ==========================================================================
+       THEME-SPECIFIC DECORATIONS & ANIMATIONS
+       ========================================================================== */
+    .decorations {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .decoration {
+      position: absolute;
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .decoration.active {
+      opacity: 1;
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] SOLARPUNK: Rotating Gears
+       -------------------------------------------------------------------------- */
+    .deco-solarpunk .gear {
+      position: absolute;
+      opacity: 0.08;
+      animation: rotate 60s linear infinite;
+    }
+
+    .deco-solarpunk .gear-1 { top: 10%; left: 5%; width: 200px; animation-duration: 80s; }
+    .deco-solarpunk .gear-2 { top: 60%; right: 10%; width: 150px; animation-duration: 60s; animation-direction: reverse; }
+    .deco-solarpunk .gear-3 { bottom: 10%; left: 20%; width: 100px; animation-duration: 40s; }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] CHERRY BLOSSOM: Swaying Branches & Petals
+       -------------------------------------------------------------------------- */
+    .deco-cherry .branch {
+      position: absolute;
+      opacity: 0.15;
+    }
+
+    .deco-cherry .branch-1 { top: 0; right: 5%; width: 300px; transform: rotate(15deg); }
+    .deco-cherry .branch-2 { bottom: 10%; left: 0; width: 250px; transform: rotate(-10deg) scaleX(-1); }
+
+    .deco-cherry .floating-petal {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.4;
+      animation: petal-float 15s ease-in-out infinite;
+    }
+
+    .deco-cherry .petal-1 { top: 20%; left: 10%; animation-delay: 0s; }
+    .deco-cherry .petal-2 { top: 40%; right: 15%; animation-delay: 3s; }
+    .deco-cherry .petal-3 { top: 70%; left: 25%; animation-delay: 6s; }
+    .deco-cherry .petal-4 { top: 15%; right: 30%; animation-delay: 9s; }
+
+    @keyframes petal-float {
+      0%, 100% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0.4; }
+      25% { transform: translateY(30px) translateX(20px) rotate(45deg); opacity: 0.6; }
+      50% { transform: translateY(60px) translateX(-10px) rotate(90deg); opacity: 0.4; }
+      75% { transform: translateY(30px) translateX(-30px) rotate(135deg); opacity: 0.6; }
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] AUTUMN: Falling & Swirling Leaves
+       -------------------------------------------------------------------------- */
+    .deco-autumn .leaf {
+      position: absolute;
+      font-size: 3rem;
+      opacity: 0.2;
+      animation: leaf-fall 20s ease-in-out infinite;
+    }
+
+    .deco-autumn .leaf-1 { top: -5%; left: 15%; animation-delay: 0s; }
+    .deco-autumn .leaf-2 { top: -5%; left: 45%; animation-delay: 4s; font-size: 2.5rem; }
+    .deco-autumn .leaf-3 { top: -5%; right: 20%; animation-delay: 8s; font-size: 2rem; }
+    .deco-autumn .leaf-4 { top: -5%; right: 40%; animation-delay: 12s; }
+    .deco-autumn .leaf-5 { top: -5%; left: 70%; animation-delay: 16s; font-size: 2.5rem; }
+
+    .deco-autumn .tree {
+      position: absolute;
+      opacity: 0.08;
+    }
+
+    .deco-autumn .tree-1 { bottom: 0; left: 5%; width: 200px; }
+    .deco-autumn .tree-2 { bottom: 0; right: 8%; width: 150px; transform: scaleX(-1); }
+
+    @keyframes leaf-fall {
+      0% { transform: translateY(-100px) translateX(0) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.3; }
+      50% { transform: translateY(50vh) translateX(100px) rotate(360deg); opacity: 0.2; }
+      90% { opacity: 0.3; }
+      100% { transform: translateY(110vh) translateX(-50px) rotate(720deg); opacity: 0; }
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] WINTER: Snowfall & Shimmering Ice
+       -------------------------------------------------------------------------- */
+    .deco-winter .snowflake {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0.3;
+      animation: snow-fall 15s linear infinite;
+    }
+
+    .deco-winter .snowflake-1 { left: 10%; animation-delay: 0s; }
+    .deco-winter .snowflake-2 { left: 25%; animation-delay: 2s; font-size: 1.5rem; }
+    .deco-winter .snowflake-3 { left: 40%; animation-delay: 4s; }
+    .deco-winter .snowflake-4 { left: 60%; animation-delay: 6s; font-size: 2.5rem; }
+    .deco-winter .snowflake-5 { left: 75%; animation-delay: 8s; font-size: 1.5rem; }
+    .deco-winter .snowflake-6 { left: 90%; animation-delay: 10s; }
+
+    .deco-winter .ice-crystal {
+      position: absolute;
+      opacity: 0.1;
+    }
+
+    .deco-winter .crystal-1 { top: 15%; left: 5%; width: 150px; animation: shimmer 4s ease-in-out infinite; }
+    .deco-winter .crystal-2 { bottom: 20%; right: 8%; width: 120px; animation: shimmer 5s ease-in-out infinite reverse; }
+
+    @keyframes snow-fall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
+      10% { opacity: 0.4; }
+      90% { opacity: 0.4; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50% { opacity: 0.2; transform: scale(1.05); }
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] SUMMER: Pulsing Sun & Fluttering Creatures
+       -------------------------------------------------------------------------- */
+    .deco-summer .sun {
+      position: absolute;
+      top: 5%;
+      right: 10%;
+      width: 200px;
+      opacity: 0.15;
+      animation: sun-pulse 8s ease-in-out infinite;
+    }
+
+    .deco-summer .sunflower {
+      position: absolute;
+      font-size: 3rem;
+      opacity: 0.3;
+      animation: sway 5s ease-in-out infinite;
+    }
+
+    .deco-summer .flower-1 { bottom: 5%; left: 8%; animation-delay: 0s; }
+    .deco-summer .flower-2 { bottom: 8%; left: 20%; animation-delay: 1s; font-size: 2.5rem; }
+    .deco-summer .flower-3 { bottom: 3%; right: 15%; animation-delay: 2s; }
+    .deco-summer .flower-4 { bottom: 10%; right: 25%; animation-delay: 0.5s; font-size: 2rem; }
+
+    .deco-summer .butterfly {
+      position: absolute;
+      font-size: 1.5rem;
+      animation: flutter 10s ease-in-out infinite;
+    }
+
+    .deco-summer .butterfly-1 { top: 30%; left: 20%; animation-delay: 0s; }
+    .deco-summer .butterfly-2 { top: 50%; right: 25%; animation-delay: 5s; }
+
+    @keyframes sun-pulse {
+      0%, 100% { transform: scale(1); opacity: 0.15; }
+      50% { transform: scale(1.1); opacity: 0.2; }
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+    }
+
+    @keyframes flutter {
+      0%, 100% { transform: translateX(0) translateY(0); }
+      25% { transform: translateX(50px) translateY(-30px); }
+      50% { transform: translateX(100px) translateY(0); }
+      75% { transform: translateX(50px) translateY(30px); }
+    }
+
+    /* --------------------------------------------------------------------------
+       [ANIMATION] RAINY: Drifting Clouds & Raindrops
+       -------------------------------------------------------------------------- */
+    .deco-rainy .cloud {
+      position: absolute;
+      opacity: 0.15;
+      animation: cloud-drift 30s ease-in-out infinite;
+    }
+
+    .deco-rainy .cloud-1 { top: 5%; left: 10%; width: 250px; animation-duration: 40s; }
+    .deco-rainy .cloud-2 { top: 15%; right: 15%; width: 200px; animation-duration: 35s; animation-delay: 5s; }
+    .deco-rainy .cloud-3 { top: 8%; left: 50%; width: 180px; animation-duration: 45s; animation-delay: 10s; }
+
+    .deco-rainy .raindrop {
+      position: absolute;
+      width: 2px;
+      height: 20px;
+      background: linear-gradient(to bottom, transparent, var(--primary), var(--accent));
+      border-radius: 2px;
+      opacity: 0;
+      animation: rain-fall 1.5s linear infinite;
+    }
+
+    .deco-rainy .drop-1 { left: 10%; animation-delay: 0s; }
+    .deco-rainy .drop-2 { left: 20%; animation-delay: 0.2s; }
+    .deco-rainy .drop-3 { left: 30%; animation-delay: 0.4s; }
+    .deco-rainy .drop-4 { left: 40%; animation-delay: 0.1s; }
+    .deco-rainy .drop-5 { left: 50%; animation-delay: 0.6s; }
+    .deco-rainy .drop-6 { left: 60%; animation-delay: 0.3s; }
+    .deco-rainy .drop-7 { left: 70%; animation-delay: 0.5s; }
+    .deco-rainy .drop-8 { left: 80%; animation-delay: 0.15s; }
+    .deco-rainy .drop-9 { left: 90%; animation-delay: 0.45s; }
+
+    .deco-rainy .puddle {
+      position: absolute;
+      bottom: 5%;
+      width: 100px;
+      height: 20px;
+      background: radial-gradient(ellipse, var(--primary) 0%, transparent 70%);
+      opacity: 0.2;
+      animation: ripple 3s ease-in-out infinite;
+    }
+
+    .deco-rainy .puddle-1 { left: 20%; animation-delay: 0s; }
+    .deco-rainy .puddle-2 { left: 50%; animation-delay: 1s; width: 80px; }
+    .deco-rainy .puddle-3 { right: 20%; animation-delay: 2s; width: 120px; }
+
+    @keyframes cloud-drift {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(30px); }
+    }
+
+    @keyframes rain-fall {
+      0% { top: -20px; opacity: 0; }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { top: 100vh; opacity: 0; }
+    }
+
+    @keyframes ripple {
+      0%, 100% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.2); opacity: 0.3; }
+    }
+
+    /* ========== VINES (shown for solarpunk & cherry) ========== */
+    .vine {
+      position: absolute;
+      width: 3px;
+      background: linear-gradient(to bottom, transparent, var(--accent-3), transparent);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .vine.active {
+      opacity: 0.3;
+    }
+
+    .vine-1 { left: 3%; top: 0; height: 40%; }
+    .vine-2 { right: 5%; top: 20%; height: 50%; }
+
+    /* ========== CARD STYLING ========== */
+    .display-card {
+      position: relative;
+      display: flex;
+      height: 9rem;
+      width: 22rem;
+      user-select: none;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 0.75rem;
+      border: 2px solid var(--primary);
+      background: var(--card-bg);
+      backdrop-filter: blur(8px);
+      padding: 0.75rem 1rem;
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 40px var(--glow-1);
+    }
+
+    .display-card::after {
+      content: '';
+      position: absolute;
+      right: -4px;
+      top: -5%;
+      height: 110%;
+      width: 20rem;
+      background: linear-gradient(to left, var(--dark), transparent);
+      pointer-events: none;
+    }
+
+    .display-card:hover {
+      border-color: var(--text-highlight);
+      background: var(--card-bg-hover);
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 80px var(--glow-1),
+        0 0 120px var(--glow-2);
+    }
+
+    .card-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .icon-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--muted));
+      box-shadow: 0 2px 8px var(--glow-2);
+      transition: all 0.5s ease;
+    }
+
+    .icon-wrapper svg {
+      width: 1rem;
+      height: 1rem;
+      color: var(--text-light);
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-highlight);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+      transition: color 0.5s ease;
+    }
+
+    .card-description {
+      font-size: 1rem;
+      color: var(--text-light);
+      white-space: nowrap;
+      position: relative;
+      z-index: 1;
+      opacity: 0.9;
+      transition: color 0.5s ease;
+    }
+
+    .card-date {
+      font-size: 0.875rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+      transition: color 0.5s ease;
+    }
+
+    /* ========== GRID STACK EFFECT ========== */
+    .cards-container {
+      display: grid;
+      grid-template-areas: 'stack';
+      place-items: center;
+      opacity: 1;
+      animation: fadeIn 0.7s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Card 1 - Back card (top-left position) */
+    .card-1 {
+      grid-area: stack;
+      transform: skewY(-8deg) translateZ(0);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.7s ease;
+      filter: grayscale(100%);
+      z-index: 10;
+    }
+
+    .card-1::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.75rem;
+      outline: 1px solid var(--primary);
+      background: var(--dark);
+      background-blend-mode: overlay;
+      opacity: 0.5;
+      transition: opacity 0.7s;
+      z-index: 2;
+    }
+
+    .card-1:hover {
+      transform: skewY(-8deg) translateY(-2.5rem) translateZ(0);
+      filter: grayscale(0%);
+    }
+
+    .card-1:hover::before {
+      opacity: 0;
+    }
+
+    /* Card 2 - Middle card (offset right and down) */
+    .card-2 {
+      grid-area: stack;
+      transform: skewY(-8deg) translateX(4rem) translateY(2.5rem) translateZ(0);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.7s ease;
+      filter: grayscale(100%);
+      z-index: 20;
+    }
+
+    .card-2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 0.75rem;
+      outline: 1px solid var(--primary);
+      background: var(--dark);
+      background-blend-mode: overlay;
+      opacity: 0.5;
+      transition: opacity 0.7s;
+      z-index: 2;
+    }
+
+    .card-2:hover {
+      transform: skewY(-8deg) translateX(4rem) translateY(-0.25rem) translateZ(0);
+      filter: grayscale(0%);
+    }
+
+    .card-2:hover::before {
+      opacity: 0;
+    }
+
+    /* Card 3 - Front card (most offset, fully visible) */
+    .card-3 {
+      grid-area: stack;
+      transform: skewY(-8deg) translateX(8rem) translateY(5rem) translateZ(0);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.7s ease;
+      z-index: 30;
+    }
+
+    .card-3:hover {
+      transform: skewY(-8deg) translateX(8rem) translateY(2.5rem) translateZ(0);
+    }
+
+    /* ========== HEADER STYLING ========== */
+    .header-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--text-highlight) 0%, var(--primary) 50%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: none;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+      transition: all 0.5s ease;
+    }
+
+    .header-subtitle {
+      color: var(--muted);
+      font-size: 1.1rem;
+      letter-spacing: 0.1em;
+      transition: color 0.5s ease;
+    }
+
+    /* ========== CORNER FRAMES ========== */
+    .corner-frame {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      border-color: var(--primary);
+      opacity: 0.4;
+      transition: border-color 0.5s ease;
+    }
+
+    .corner-tl { top: 20px; left: 20px; border-top: 2px solid; border-left: 2px solid; }
+    .corner-tr { top: 20px; right: 20px; border-top: 2px solid; border-right: 2px solid; }
+    .corner-bl { bottom: 20px; left: 20px; border-bottom: 2px solid; border-left: 2px solid; }
+    .corner-br { bottom: 20px; right: 20px; border-bottom: 2px solid; border-right: 2px solid; }
+
+    /* ========== FLOATING PARTICLES ========== */
+    .particles-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--particle-color);
+      border-radius: 50%;
+      opacity: 0;
+      animation: float-up 8s infinite;
+    }
+
+    /* ==========================================================================
+       THEME-SPECIFIC PARTICLE OVERRIDES
+       - Customizes the shape, size, and animation of background particles
+       ========================================================================== */
+
+    /* [PARTICLE] RAINY: Elongated rain streaks */
+    body.theme-rainy .particle {
+      width: 2px;
+      height: 15px;
+      border-radius: 2px;
+      animation: rain-particle 1.5s linear infinite;
+    }
+
+    /* [PARTICLE] WINTER: Small round snowflakes */
+    body.theme-winter .particle {
+      width: 6px;
+      height: 6px;
+      animation: snow-particle 10s linear infinite;
+    }
+
+    /* [PARTICLE] CHERRY BLOSSOM: Asymmetric petals */
+    body.theme-cherry .particle {
+      width: 10px;
+      height: 10px;
+      border-radius: 50% 0 50% 50%;
+      animation: petal-particle 12s ease-in-out infinite;
+    }
+
+    /* [PARTICLE] AUTUMN: Angular leaves */
+    body.theme-autumn .particle {
+      width: 12px;
+      height: 12px;
+      border-radius: 0 50% 50% 50%;
+      animation: leaf-particle 15s ease-in-out infinite;
+    }
+
+    @keyframes float-up {
+      0%, 100% { opacity: 0; transform: translateY(100vh) scale(0); }
+      10% { opacity: 0.6; }
+      90% { opacity: 0.6; }
+      100% { opacity: 0; transform: translateY(-100px) scale(1); }
+    }
+
+    @keyframes rain-particle {
+      0% { top: -20px; opacity: 0; }
+      10% { opacity: 0.7; }
+      90% { opacity: 0.7; }
+      100% { top: 100vh; opacity: 0; }
+    }
+
+    @keyframes snow-particle {
+      0% { opacity: 0; transform: translateY(-100px) rotate(0deg); }
+      10% { opacity: 0.8; }
+      90% { opacity: 0.8; }
+      100% { opacity: 0; transform: translateY(100vh) rotate(360deg); }
+    }
+
+    @keyframes petal-particle {
+      0% { opacity: 0; transform: translateY(-100px) translateX(0) rotate(0deg); }
+      10% { opacity: 0.7; }
+      50% { transform: translateY(50vh) translateX(50px) rotate(180deg); }
+      90% { opacity: 0.7; }
+      100% { opacity: 0; transform: translateY(100vh) translateX(-30px) rotate(360deg); }
+    }
+
+    @keyframes leaf-particle {
+      0% { opacity: 0; transform: translateY(-100px) translateX(0) rotate(0deg); }
+      10% { opacity: 0.8; }
+      25% { transform: translateY(25vh) translateX(40px) rotate(90deg); }
+      50% { transform: translateY(50vh) translateX(-20px) rotate(180deg); }
+      75% { transform: translateY(75vh) translateX(30px) rotate(270deg); }
+      90% { opacity: 0.8; }
+      100% { opacity: 0; transform: translateY(100vh) translateX(0) rotate(360deg); }
+    }
+
+    .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .particle:nth-child(2) { left: 25%; animation-delay: 1.5s; }
+    .particle:nth-child(3) { left: 40%; animation-delay: 3s; }
+    .particle:nth-child(4) { left: 55%; animation-delay: 0.5s; }
+    .particle:nth-child(5) { left: 70%; animation-delay: 2s; }
+    .particle:nth-child(6) { left: 85%; animation-delay: 4s; }
+    .particle:nth-child(7) { left: 15%; animation-delay: 2.5s; }
+    .particle:nth-child(8) { left: 60%; animation-delay: 3.5s; }
+
+    /* ========== THEME DROPDOWN ========== */
+    .theme-selector {
+      position: fixed;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+    }
+
+    .theme-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: 2rem;
+      color: var(--text-light);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--text-highlight);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4), 0 0 30px var(--glow-1);
+    }
+
+    .theme-btn svg {
+      width: 1.25rem;
+      height: 1.25rem;
+      transition: transform 0.3s ease;
+    }
+
+    .theme-dropdown.open .theme-btn svg {
+      transform: rotate(180deg);
+    }
+
+    .theme-menu {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      left: 50%;
+      transform: translateX(-50%) scale(0.95);
+      opacity: 0;
+      visibility: hidden;
+      min-width: 220px;
+      padding: 0.5rem;
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-radius: 1rem;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
+    }
+
+    .theme-dropdown.open .theme-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: var(--text-light);
+      font-family: 'Spectral', serif;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-option:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .theme-option.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: var(--text-highlight);
+    }
+
+    .theme-icon {
+      font-size: 1.25rem;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer-text {
+      color: var(--muted);
+      opacity: 0.7;
+      transition: color 0.5s ease;
+    }
+
+    /* ========== EXPANDED CARD VIEW ========== */
+    .card-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.4s ease, visibility 0.4s ease;
+      cursor: pointer;
+    }
+
+    .card-backdrop.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Container for the stack to allow for "retreat" effect */
+    .cards-wrapper {
+      transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1), filter 0.8s ease;
+      perspective: 2000px;
+    }
+
+    body.card-open .cards-wrapper {
+      transform: scale(0.8) translateZ(-200px);
+      filter: blur(4px) brightness(0.5);
+    }
+
+    .expanded-card {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      /* Start state: smaller, skewed, and "deeper" in the screen */
+      transform: translate(-50%, -45%) scale(0.4) perspective(2000px) rotateY(15deg) rotateX(-10deg) skewY(-8deg);
+      width: 650px;
+      max-width: 90vw;
+      max-height: 85vh;
+      background: var(--card-bg);
+      border: 3px solid var(--primary);
+      border-radius: 2rem;
+      padding: 3.5rem;
+      z-index: 201;
+      opacity: 0;
+      visibility: hidden;
+      transition: 
+        opacity 0.5s ease,
+        visibility 0.5s ease,
+        transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.8s ease;
+      box-shadow: 
+        0 30px 90px rgba(0, 0, 0, 0.8),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 0 120px var(--glow-1);
+      cursor: default;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: var(--primary) transparent;
+      backdrop-filter: blur(20px);
+    }
+
+    .expanded-card.active {
+      opacity: 1;
+      visibility: visible;
+      /* End state: forward, center, and perfectly flat */
+      transform: translate(-50%, -50%) scale(1) perspective(2000px) rotateY(0deg) rotateX(0deg) skewY(0deg);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      width: 3rem;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid var(--primary);
+      border-radius: 50%;
+      color: var(--text-light);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 10;
+    }
+
+    .close-btn:hover {
+      background: var(--primary);
+      color: var(--dark);
+      transform: rotate(90deg);
+      box-shadow: 0 0 20px var(--glow-1);
+    }
+
+    .expanded-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .expanded-icon-wrapper {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--muted));
+      box-shadow: 0 4px 16px var(--glow-2);
+    }
+
+    .expanded-icon-wrapper svg {
+      width: 2rem;
+      height: 2rem;
+      color: var(--text-light);
+    }
+
+    .expanded-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--text-highlight);
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .expanded-card-content {
+      font-size: 1.25rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+
+    .expanded-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--primary);
+      opacity: 0.8;
+    }
+
+    .expanded-card-date {
+      font-size: 1rem;
+      color: var(--muted);
+    }
+
+    .close-hint {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      font-size: 0.875rem;
+      color: var(--muted);
+      opacity: 0.6;
+      font-style: italic;
+    }
+
+    /* Make cards clickable and handle stacking */
+    .display-card {
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .display-card:active {
+      transform: scale(0.98) skewY(-8deg) !important;
+    }
+
+    /* Keep the skewed state even during active/focus */
+    .card-1:active { transform: scale(0.98) skewY(-8deg) translateY(-2.5rem) !important; }
+    .card-2:active { transform: scale(0.98) skewY(-8deg) translateX(4rem) translateY(-0.25rem) !important; }
+    .card-3:active { transform: scale(0.98) skewY(-8deg) translateX(8rem) translateY(2.5rem) !important; }
+  </style>
+</head>
+<body class="theme-solarpunk min-h-screen flex flex-col items-center justify-center p-8">
+  <!-- Background Elements -->
+  <div class="bg-pattern"></div>
+  
+  <!-- Decorations Container -->
+  <div class="decorations">
+    <!-- 
+      [THEME SEGMENT] SOLARPUNK DECORATIONS 
+      - Rotating gears in background
+    -->
+    <div class="decoration deco-solarpunk active" id="deco-solarpunk">
+      <svg class="gear gear-1" viewBox="0 0 100 100" fill="currentColor" style="color: var(--primary);">
+        <path d="M50 10 L53 0 L47 0 Z M50 90 L53 100 L47 100 Z M10 50 L0 53 L0 47 Z M90 50 L100 53 L100 47 Z M21.7 21.7 L14.6 14.6 L19.3 9.9 L26.4 17 Z M78.3 78.3 L85.4 85.4 L80.7 90.1 L73.6 83 Z M21.7 78.3 L14.6 85.4 L9.9 80.7 L17 73.6 Z M78.3 21.7 L85.4 14.6 L90.1 19.3 L83 26.4 Z"/>
+        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="8"/>
+        <circle cx="50" cy="50" r="15" fill="currentColor"/>
+      </svg>
+      <svg class="gear gear-2" viewBox="0 0 100 100" fill="currentColor" style="color: var(--accent);">
+        <path d="M50 10 L53 0 L47 0 Z M50 90 L53 100 L47 100 Z M10 50 L0 53 L0 47 Z M90 50 L100 53 L100 47 Z M21.7 21.7 L14.6 14.6 L19.3 9.9 L26.4 17 Z M78.3 78.3 L85.4 85.4 L80.7 90.1 L73.6 83 Z M21.7 78.3 L14.6 85.4 L9.9 80.7 L17 73.6 Z M78.3 21.7 L85.4 14.6 L90.1 19.3 L83 26.4 Z"/>
+        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="8"/>
+        <circle cx="50" cy="50" r="15" fill="currentColor"/>
+      </svg>
+      <svg class="gear gear-3" viewBox="0 0 100 100" fill="currentColor" style="color: var(--accent-3);">
+        <path d="M50 10 L53 0 L47 0 Z M50 90 L53 100 L47 100 Z M10 50 L0 53 L0 47 Z M90 50 L100 53 L100 47 Z"/>
+        <circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="8"/>
+        <circle cx="50" cy="50" r="15" fill="currentColor"/>
+      </svg>
+    </div>
+
+    <!-- 
+      [THEME SEGMENT] CHERRY BLOSSOM DECORATIONS 
+      - SVG Branches
+      - Floating Petals (Unicode)
+    -->
+    <div class="decoration deco-cherry" id="deco-cherry">
+      <svg class="branch branch-1" viewBox="0 0 200 300" fill="none" stroke="currentColor" style="color: var(--accent);" stroke-width="3">
+        <path d="M180 0 Q160 50 140 80 Q100 140 120 200 Q130 250 100 300" />
+        <path d="M140 80 Q120 70 100 90" />
+        <path d="M120 130 Q140 120 150 140" />
+        <path d="M100 180 Q80 170 70 190" />
+      </svg>
+      <svg class="branch branch-2" viewBox="0 0 200 300" fill="none" stroke="currentColor" style="color: var(--accent);" stroke-width="3">
+        <path d="M20 0 Q40 50 60 80 Q100 140 80 200 Q70 250 100 300" />
+        <path d="M60 80 Q80 70 100 90" />
+        <path d="M80 130 Q60 120 50 140" />
+      </svg>
+      <div class="floating-petal petal-1">🌸</div>
+      <div class="floating-petal petal-2">🌸</div>
+      <div class="floating-petal petal-3">🌸</div>
+      <div class="floating-petal petal-4">💮</div>
+    </div>
+
+    <!-- 
+      [THEME SEGMENT] AUTUMN DECORATIONS 
+      - Falling Unicode Leaves
+      - SVG Tree silhouettes
+    -->
+    <div class="decoration deco-autumn" id="deco-autumn">
+      <div class="leaf leaf-1">🍂</div>
+      <div class="leaf leaf-2">🍁</div>
+      <div class="leaf leaf-3">🍂</div>
+      <div class="leaf leaf-4">🍁</div>
+      <div class="leaf leaf-5">🍂</div>
+      <svg class="tree tree-1" viewBox="0 0 100 150" fill="currentColor" style="color: var(--primary);">
+        <rect x="45" y="100" width="10" height="50" fill="var(--accent)"/>
+        <ellipse cx="50" cy="60" rx="45" ry="55"/>
+        <ellipse cx="30" cy="40" rx="25" ry="35"/>
+        <ellipse cx="70" cy="45" rx="28" ry="40"/>
+      </svg>
+      <svg class="tree tree-2" viewBox="0 0 100 150" fill="currentColor" style="color: var(--secondary);">
+        <rect x="45" y="100" width="10" height="50" fill="var(--accent)"/>
+        <ellipse cx="50" cy="60" rx="40" ry="50"/>
+        <ellipse cx="35" cy="45" rx="22" ry="30"/>
+        <ellipse cx="65" cy="50" rx="25" ry="35"/>
+      </svg>
+    </div>
+
+    <!-- 
+      [THEME SEGMENT] WINTER DECORATIONS 
+      - Falling Unicode Snowflakes
+      - SVG Ice Crystals
+    -->
+    <div class="decoration deco-winter" id="deco-winter">
+      <div class="snowflake snowflake-1">❄️</div>
+      <div class="snowflake snowflake-2">❅</div>
+      <div class="snowflake snowflake-3">❄️</div>
+      <div class="snowflake snowflake-4">❆</div>
+      <div class="snowflake snowflake-5">❄️</div>
+      <div class="snowflake snowflake-6">❅</div>
+      <svg class="ice-crystal crystal-1" viewBox="0 0 100 100" fill="none" stroke="currentColor" style="color: var(--primary);" stroke-width="2">
+        <path d="M50 0 L50 100 M0 50 L100 50 M15 15 L85 85 M85 15 L15 85"/>
+        <circle cx="50" cy="50" r="20" fill="none"/>
+        <polygon points="50,10 55,25 45,25" fill="currentColor"/>
+        <polygon points="50,90 55,75 45,75" fill="currentColor"/>
+        <polygon points="10,50 25,55 25,45" fill="currentColor"/>
+        <polygon points="90,50 75,55 75,45" fill="currentColor"/>
+      </svg>
+      <svg class="ice-crystal crystal-2" viewBox="0 0 100 100" fill="none" stroke="currentColor" style="color: var(--secondary);" stroke-width="2">
+        <path d="M50 0 L50 100 M0 50 L100 50 M15 15 L85 85 M85 15 L15 85"/>
+        <circle cx="50" cy="50" r="15" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- 
+      [THEME SEGMENT] SUMMER DECORATIONS 
+      - SVG Sun with rays
+      - Unicode Flowers & Butterflies
+    -->
+    <div class="decoration deco-summer" id="deco-summer">
+      <svg class="sun" viewBox="0 0 100 100" fill="currentColor" style="color: var(--primary);">
+        <circle cx="50" cy="50" r="25"/>
+        <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+          <line x1="50" y1="10" x2="50" y2="0"/>
+          <line x1="50" y1="100" x2="50" y2="90"/>
+          <line x1="10" y1="50" x2="0" y2="50"/>
+          <line x1="100" y1="50" x2="90" y2="50"/>
+          <line x1="22" y1="22" x2="15" y2="15"/>
+          <line x1="78" y1="78" x2="85" y2="85"/>
+          <line x1="22" y1="78" x2="15" y2="85"/>
+          <line x1="78" y1="22" x2="85" y2="15"/>
+        </g>
+      </svg>
+      <div class="sunflower flower-1">🌻</div>
+      <div class="sunflower flower-2">🌼</div>
+      <div class="sunflower flower-3">🌻</div>
+      <div class="sunflower flower-4">🌺</div>
+      <div class="butterfly butterfly-1">🦋</div>
+      <div class="butterfly butterfly-2">🦋</div>
+    </div>
+
+    <!-- 
+      [THEME SEGMENT] RAINY DECORATIONS 
+      - SVG Clouds
+      - CSS Raindrops & Puddles
+    -->
+    <div class="decoration deco-rainy" id="deco-rainy">
+      <svg class="cloud cloud-1" viewBox="0 0 100 60" fill="currentColor" style="color: var(--primary);">
+        <ellipse cx="30" cy="40" rx="25" ry="18"/>
+        <ellipse cx="55" cy="35" rx="30" ry="22"/>
+        <ellipse cx="75" cy="42" rx="20" ry="15"/>
+        <ellipse cx="45" cy="25" rx="20" ry="15"/>
+      </svg>
+      <svg class="cloud cloud-2" viewBox="0 0 100 60" fill="currentColor" style="color: var(--secondary);">
+        <ellipse cx="25" cy="40" rx="22" ry="16"/>
+        <ellipse cx="50" cy="35" rx="28" ry="20"/>
+        <ellipse cx="72" cy="42" rx="18" ry="14"/>
+        <ellipse cx="42" cy="28" rx="18" ry="13"/>
+      </svg>
+      <svg class="cloud cloud-3" viewBox="0 0 100 60" fill="currentColor" style="color: var(--accent);">
+        <ellipse cx="28" cy="38" rx="20" ry="15"/>
+        <ellipse cx="52" cy="34" rx="25" ry="18"/>
+        <ellipse cx="70" cy="40" rx="17" ry="13"/>
+      </svg>
+      <div class="raindrop drop-1"></div>
+      <div class="raindrop drop-2"></div>
+      <div class="raindrop drop-3"></div>
+      <div class="raindrop drop-4"></div>
+      <div class="raindrop drop-5"></div>
+      <div class="raindrop drop-6"></div>
+      <div class="raindrop drop-7"></div>
+      <div class="raindrop drop-8"></div>
+      <div class="raindrop drop-9"></div>
+      <div class="puddle puddle-1"></div>
+      <div class="puddle puddle-2"></div>
+      <div class="puddle puddle-3"></div>
+    </div>
+  </div>
+
+  <!-- Vines (for solarpunk) -->
+  <div class="vine vine-1 active" id="vine-1"></div>
+  <div class="vine vine-2 active" id="vine-2"></div>
+
+  <!-- Corner Frames -->
+  <div class="corner-frame corner-tl"></div>
+  <div class="corner-frame corner-tr"></div>
+  <div class="corner-frame corner-bl"></div>
+  <div class="corner-frame corner-br"></div>
+
+  <!-- Floating Particles -->
+  <div class="particles-container">
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+    <div class="particle"></div>
+  </div>
+
+  <!-- Theme Selector -->
+  <div class="theme-selector">
+    <div class="theme-dropdown" id="themeDropdown">
+      <button class="theme-btn" id="themeBtn">
+        <span class="current-theme-icon">⚙️</span>
+        <span class="current-theme-name">Solarpunk</span>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <div class="theme-menu" id="themeMenu">
+        <div class="theme-option active" data-theme="solarpunk" data-icon="⚙️" data-title="Solarpunk Chronicles" data-subtitle="Where Nature Meets Innovation" data-tagline="⚙ CRAFTED WITH STEAM & SUNLIGHT ⚙">
+          <span class="theme-icon">⚙️</span>
+          <span>Solarpunk</span>
+        </div>
+        <div class="theme-option" data-theme="cherry" data-icon="🌸" data-title="Sakura Dreams" data-subtitle="Petals in the Wind" data-tagline="🌸 BEAUTY IN TRANSIENCE 🌸">
+          <span class="theme-icon">🌸</span>
+          <span>Cherry Blossom</span>
+        </div>
+        <div class="theme-option" data-theme="autumn" data-icon="🍂" data-title="Autumn Harvest" data-subtitle="Golden Leaves Fall" data-tagline="🍂 EMBRACING THE CHANGE 🍂">
+          <span class="theme-icon">🍂</span>
+          <span>Autumn</span>
+        </div>
+        <div class="theme-option" data-theme="winter" data-icon="❄️" data-title="Frozen Echoes" data-subtitle="Whispers of Ice" data-tagline="❄️ CRYSTALLINE SERENITY ❄️">
+          <span class="theme-icon">❄️</span>
+          <span>Winter/Glacier</span>
+        </div>
+        <div class="theme-option" data-theme="summer" data-icon="☀️" data-title="Summer Radiance" data-subtitle="Warmth of Golden Days" data-tagline="☀️ BASKING IN LIGHT ☀️">
+          <span class="theme-icon">☀️</span>
+          <span>Summer</span>
+        </div>
+        <div class="theme-option" data-theme="rainy" data-icon="🌧️" data-title="Rainy Reverie" data-subtitle="Songs of the Storm" data-tagline="💧 PEACE IN THE RAIN 💧">
+          <span class="theme-icon">🌧️</span>
+          <span>Rainy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="relative z-10 text-center mb-16 mt-16">
+    <h1 class="header-title mb-2" id="headerTitle">Solarpunk Chronicles</h1>
+    <p class="header-subtitle uppercase tracking-widest" id="headerSubtitle">Where Nature Meets Innovation</p>
+  </div>
+
+  <div class="relative z-10 flex items-center justify-center py-10 cards-wrapper" id="cardsWrapper">
+    <div class="w-full max-w-3xl">
+      <div class="cards-container">
+        <!-- Card 1 -->
+        <div class="display-card card-1">
+          <div class="card-row">
+            <span class="icon-wrapper icon-1">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="5"/>
+                <line x1="12" y1="1" x2="12" y2="3"/>
+                <line x1="12" y1="21" x2="12" y2="23"/>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                <line x1="1" y1="12" x2="3" y2="12"/>
+                <line x1="21" y1="12" x2="23" y2="12"/>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+              </svg>
+            </span>
+            <p class="card-title title-1">Solar Harvest</p>
+          </div>
+          <p class="card-description desc-1">Renewable energy breakthroughs</p>
+          <p class="card-date date-1">Dawn cycle</p>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="display-card card-2">
+          <div class="card-row">
+            <span class="icon-wrapper icon-2">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </span>
+            <p class="card-title title-2">Botanical Engine</p>
+          </div>
+          <p class="card-description desc-2">Living machinery integration</p>
+          <p class="card-date date-2">2 moons ago</p>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="display-card card-3">
+          <div class="card-row">
+            <span class="icon-wrapper icon-3">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+                <circle cx="12" cy="12" r="4"/>
+              </svg>
+            </span>
+            <p class="card-title title-3">Aether Forge</p>
+          </div>
+          <p class="card-description desc-3">Clockwork innovations unveiled</p>
+          <p class="card-date date-3">Present era</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer tagline -->
+  <div class="relative z-10 mt-16 text-center">
+    <p class="text-sm tracking-widest footer-text" id="footerTagline">
+      ⚙ CRAFTED WITH STEAM & SUNLIGHT ⚙
+    </p>
+  </div>
+
+  <!-- Expanded Card View -->
+  <div class="card-backdrop" id="cardBackdrop"></div>
+  <div class="expanded-card" id="expandedCard">
+    <button class="close-btn" id="closeBtn" aria-label="Close card">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <div class="expanded-card-header">
+      <span class="expanded-icon-wrapper" id="expandedIcon">
+        <!-- Icon injected by JS -->
+      </span>
+      <h2 class="expanded-card-title" id="expandedTitle">Title</h2>
+    </div>
+    <div class="expanded-card-content" id="expandedContent">
+      <!-- Content injected by JS -->
+    </div>
+    <div class="expanded-card-meta">
+      <span class="expanded-card-date" id="expandedDate">Date</span>
+    </div>
+  </div>
+
+  <script>
+    /* ==========================================================================
+       THEME DATA & CONTENT CONFIGURATION
+       - Defines titles, descriptions, dates, and full text for each theme.
+       ========================================================================== */
+    const themeContent = {
+      solarpunk: {
+        cards: [
+          { 
+            title: 'Solar Harvest', 
+            desc: 'Renewable energy breakthroughs', 
+            date: 'Dawn cycle',
+            content: 'Immerse yourself in the future of renewable energy. Our Solar Harvest initiative combines cutting-edge photovoltaic technology with bio-integrated systems, creating a harmonious blend of nature and innovation.\n\nThrough the careful cultivation of light-sensitive botanical networks, we\'ve achieved unprecedented energy efficiency while maintaining ecological balance. Each solar panel is interwoven with living vines that regulate temperature and optimize light absorption.\n\nJoin us in this dawn cycle as we revolutionize sustainable energy for generations to come.'
+          },
+          { 
+            title: 'Botanical Engine', 
+            desc: 'Living machinery integration', 
+            date: '2 moons ago',
+            content: 'Witness the marriage of organic and mechanical as our Botanical Engine redefines the boundaries of sustainable technology. This revolutionary system harnesses the natural growth patterns of engineered plants to power mechanical systems.\n\nRoots intertwine with gears, photosynthesis drives pistons, and the whole apparatus breathes with the rhythm of nature. The engine self-repairs, adapts to seasonal changes, and grows more efficient over time.\n\nThis isn\'t just machinery—it\'s a living testament to what\'s possible when we work with nature, not against it.'
+          },
+          { 
+            title: 'Aether Forge', 
+            desc: 'Clockwork innovations unveiled', 
+            date: 'Present era',
+            content: 'Step into the Aether Forge, where precision clockwork meets renewable energy in a spectacular display of steampunk ingenuity. Our master craftspeople have perfected the art of creating intricate mechanisms powered entirely by sustainable sources.\n\nEvery gear, spring, and escapement is carefully designed to maximize efficiency while minimizing environmental impact. The forge itself runs on captured steam, recycled heat, and the kinetic energy of our workers\' movements.\n\nBehold the future of artisanal engineering—where every tick of the clock is a step toward a greener tomorrow.'
+          }
+        ]
+      },
+      cherry: {
+        cards: [
+          { 
+            title: 'Hanami Festival', 
+            desc: 'Celebrate the blooming season', 
+            date: 'This spring',
+            content: 'Experience the ancient tradition of Hanami, where friends and family gather beneath blooming cherry trees to celebrate the ephemeral beauty of spring. The soft pink petals create a canopy of delicate wonder overhead.\n\nAs the gentle breeze carries petals through the air like pink snow, we\'re reminded of life\'s precious, fleeting moments. Traditional music floats through the gardens while children chase falling blossoms and lovers exchange promises.\n\nJoin us this spring to witness nature\'s most elegant display and celebrate the renewal that comes with each new season.'
+          },
+          { 
+            title: 'Petal Dance', 
+            desc: 'Graceful winds carry wishes', 
+            date: '3 days ago',
+            content: 'Watch as thousands of cherry blossom petals perform their annual dance, swirling and twirling on spring breezes in a mesmerizing display of natural choreography. Each petal carries the wishes and dreams of those who set them free.\n\nThe Petal Dance is more than just a beautiful sight—it\'s a meditation on impermanence and hope. As the petals drift downward, they remind us to release what no longer serves us and make room for new growth.\n\nWitness this graceful spectacle and add your own wishes to the wind.'
+          },
+          { 
+            title: 'Sakura Path', 
+            desc: 'Journey through pink gardens', 
+            date: 'Today',
+            content: 'Embark on a transformative journey down the legendary Sakura Path, where centuries-old cherry trees form a tunnel of pink and white blossoms. This sacred walkway has been a place of reflection and renewal for generations.\n\nAs you stroll beneath the flowering branches, sunlight filters through the petals, casting a rosy glow on everything below. The path winds through traditional gardens, over arched bridges, and past tranquil ponds that mirror the beauty overhead.\n\nTake this journey today and discover the peace that comes from walking among blossoms.'
+          }
+        ]
+      },
+      autumn: {
+        cards: [
+          { 
+            title: 'Harvest Moon', 
+            desc: 'Gathering nature\'s bounty', 
+            date: 'This season',
+            content: 'Celebrate the Harvest Moon, that brilliant autumn orb that lights the way for farmers bringing in their crops and communities gathering to give thanks for nature\'s abundance. This ancient celestial event marks the culmination of the growing season.\n\nUnder the moon\'s amber glow, fields of grain shimmer like gold, and orchards hang heavy with ripe fruit. Communities come together for feasts, sharing the fruits of their labor and expressing gratitude for the earth\'s generosity.\n\nJoin us this season as we honor the harvest and prepare for the quiet contemplation of winter ahead.'
+          },
+          { 
+            title: 'Maple Fire', 
+            desc: 'Colors ablaze in twilight', 
+            date: '1 week ago',
+            content: 'Witness the spectacular transformation known as Maple Fire, when the forest canopy erupts in brilliant shades of crimson, orange, and gold. As twilight descends, the setting sun sets the leaves ablaze with an otherworldly radiance.\n\nThis annual display is nature\'s grand finale before winter\'s rest—a reminder that endings can be as beautiful as beginnings. The maples seem to burn with an inner light, their leaves glowing like embers against the deepening sky.\n\nExperience this fleeting wonder before the winds carry the last leaves away and winter\'s silence descends.'
+          },
+          { 
+            title: 'Amber Dusk', 
+            desc: 'Golden hour memories', 
+            date: 'Tonight',
+            content: 'Savor the magic of Amber Dusk, when autumn\'s golden light transforms the world into a realm of warm honey and copper tones. This is the season\'s most enchanting time, when everything seems to glow from within.\n\nAs the sun hangs low on the horizon, it paints the landscape in rich, nostalgic hues that evoke memories of harvests past and cozy evenings ahead. The air itself seems to shimmer with golden particles, creating an atmosphere of timeless beauty.\n\nEmbrace this golden hour tonight and create new memories bathed in amber light.'
+          }
+        ]
+      },
+      winter: {
+        cards: [
+          { 
+            title: 'Frost Crystal', 
+            desc: 'Patterns in frozen time', 
+            date: 'First snow',
+            content: 'Marvel at the intricate artistry of Frost Crystals, those delicate ice formations that appear overnight like nature\'s own lacework. Each crystal is unique, a frozen moment of mathematical perfection that will never be repeated.\n\nAs the first snow falls, watch windows transform into galleries of crystalline art. These ephemeral masterpieces grow in branching fractals, creating patterns so complex and beautiful that they seem almost intentional—winter\'s signature written in ice.\n\nDiscover the wonder of frozen time in each delicate crystal before the morning sun erases these temporary treasures.'
+          },
+          { 
+            title: 'Aurora Night', 
+            desc: 'Dancing lights above', 
+            date: 'Last night',
+            content: 'Experience the breathtaking spectacle of Aurora Night, when the winter sky comes alive with dancing ribbons of green, purple, and pink light. This celestial ballet unfolds in the darkness, a reminder of the cosmic forces at play beyond our world.\n\nThe aurora borealis shimmers and shifts, painting the snow-covered landscape below in otherworldly hues. Ancient peoples saw these lights as spirits dancing, and watching them today, it\'s easy to understand why. The display is both humbling and uplifting.\n\nWitness this magnificent light show and feel your connection to something far greater than yourself.'
+          },
+          { 
+            title: 'Silent Glacier', 
+            desc: 'Ancient ice whispers', 
+            date: 'Eternal',
+            content: 'Journey to the Silent Glacier, where time itself seems to stand still in the presence of ice that has existed for millennia. These massive rivers of frozen water move imperceptibly, carrying within them the history of our planet.\n\nIn the profound quiet of the glacier, you can hear the occasional crack and groan as ancient ice shifts—the glacier\'s voice, speaking in a language older than humanity. The ice glows with an ethereal blue light, revealing layers of compressed snow from centuries past.\n\nStand in the presence of eternity and listen to the whispers of ancient ice, a reminder of both nature\'s power and its fragility.'
+          }
+        ]
+      },
+      summer: {
+        cards: [
+          { 
+            title: 'Sunburst', 
+            desc: 'Embrace the warmth within', 
+            date: 'High noon',
+            content: 'Feel the invigorating energy of Sunburst, that moment at high noon when the summer sun reaches its zenith and the world is bathed in brilliant, life-affirming light. This is nature\'s invitation to fully embrace the warmth and vitality of the season.\n\nUnder the sun\'s golden rays, everything seems more vibrant, more alive. Flowers bloom in riotous color, the air shimmers with heat, and the world pulses with the energy of growth and abundance. This is summer at its most powerful.\n\nStep into the light today and let the sun\'s warmth recharge your spirit and renew your sense of possibility.'
+          },
+          { 
+            title: 'Ocean Breeze', 
+            desc: 'Waves kiss the shore', 
+            date: 'Yesterday',
+            content: 'Escape into the soothing embrace of the Ocean Breeze, where cool winds carrying the scent of salt and seaweed provide relief from summer\'s heat. The rhythmic sound of waves kissing the shore creates a natural meditation.\n\nAs the breeze lifts off the water, it brings with it the ocean\'s ancient song—a reminder of the vast, mysterious world beneath the waves. Each gust carries away stress and worry, replacing them with a sense of peace and perspective.\n\nLet yesterday\'s ocean breeze inspire today\'s tranquility and remind you of the endless horizon of possibilities.'
+          },
+          { 
+            title: 'Golden Fields', 
+            desc: 'Dancing in sunlight', 
+            date: 'This moment',
+            content: 'Lose yourself in the Golden Fields, where endless waves of wheat and wildflowers sway and dance in the summer breeze under a brilliant blue sky. This is abundance personified—nature in full celebration of life and growth.\n\nAs sunlight plays across the grain, the fields seem to ripple like a golden ocean, creating mesmerizing patterns that shift with every gust of wind. The air is alive with the buzz of bees and the song of larks, creating a symphony of summer.\n\nSeize this moment to dance among the golden fields and reconnect with the simple joy of being alive.'
+          }
+        ]
+      },
+      rainy: {
+        cards: [
+          { 
+            title: 'Storm Song', 
+            desc: 'Thunder rolls in the distance', 
+            date: 'Tonight',
+            content: 'Listen to the Storm Song, that powerful symphony of thunder, rain, and wind that announces nature\'s raw power and cleansing force. As distant thunder rolls across the landscape, the world holds its breath in anticipation.\n\nThe storm approaches with dramatic flair—dark clouds gather, lightning flashes on the horizon, and the first fat raindrops begin to fall. This is nature at its most dramatic, a reminder that beauty and power often go hand in hand.\n\nEmbrace the storm tonight and find peace in its wild, untamed energy—a cleansing force that washes away the old and makes way for the new.'
+          },
+          { 
+            title: 'Misty Morning', 
+            desc: 'Droplets on window panes', 
+            date: 'Dawn',
+            content: 'Wake to the quiet magic of a Misty Morning, when the world is softened by gentle fog and decorated with countless droplets clinging to every surface. Window panes become canvases for nature\'s abstract art.\n\nAs dawn light filters through the mist, everything takes on a dreamlike quality. Familiar landscapes become mysterious, and the world feels hushed and intimate. Each droplet catches the light like a tiny prism, creating miniature rainbows.\n\nGreet this misty dawn with wonder and appreciate the beauty in soft, quiet moments of transition.'
+          },
+          { 
+            title: 'Petrichor', 
+            desc: 'The scent of fresh rain', 
+            date: 'Just now',
+            content: 'Breathe in the distinctive aroma of Petrichor—that earthy, fresh scent that rises from the ground after rain falls. This beloved smell is created when raindrops release trapped oils and compounds from soil and plants.\n\nScientists have named it, but poets have celebrated it for centuries. Petrichor is the smell of renewal, of the earth drinking deeply and coming back to life. It\'s one of nature\'s most universally beloved perfumes, evoking memories and stirring emotions.\n\nStep outside just now, just after the rain, and let the scent of petrichor remind you that every ending brings a new beginning.'
+          }
+        ]
+      }
+    };
+
+    // Theme dropdown functionality
+    const dropdown = document.getElementById('themeDropdown');
+    const themeBtn = document.getElementById('themeBtn');
+    const themeMenu = document.getElementById('themeMenu');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const headerTitle = document.getElementById('headerTitle');
+    const headerSubtitle = document.getElementById('headerSubtitle');
+    const footerTagline = document.getElementById('footerTagline');
+    const allDecorations = document.querySelectorAll('.decoration');
+    const vines = document.querySelectorAll('.vine');
+
+    // Expanded card elements
+    const cardBackdrop = document.getElementById('cardBackdrop');
+    const expandedCard = document.getElementById('expandedCard');
+    const expandedIcon = document.getElementById('expandedIcon');
+    const expandedTitle = document.getElementById('expandedTitle');
+    const expandedContent = document.getElementById('expandedContent');
+    const expandedDate = document.getElementById('expandedDate');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // Current theme tracker
+    let currentTheme = 'solarpunk';
+
+    themeBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('open');
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    // Function to update decorations
+    function updateDecorations(theme) {
+      // Hide all decorations
+      allDecorations.forEach(deco => deco.classList.remove('active'));
+      
+      // Show the decoration for current theme
+      const currentDeco = document.getElementById(`deco-${theme}`);
+      if (currentDeco) {
+        currentDeco.classList.add('active');
+      }
+
+      // Show vines only for solarpunk and cherry
+      if (theme === 'solarpunk' || theme === 'cherry') {
+        vines.forEach(vine => vine.classList.add('active'));
+      } else {
+        vines.forEach(vine => vine.classList.remove('active'));
+      }
+    }
+
+    // Optimized Card click handlers using delegation
+    function setupCardClickHandlers() {
+      const container = document.querySelector('.cards-container');
+      container.addEventListener('click', (e) => {
+        const card = e.target.closest('.display-card');
+        if (!card) return;
+
+        // Determine which card index was clicked based on its class
+        let index = 0;
+        if (card.classList.contains('card-2')) index = 1;
+        if (card.classList.contains('card-3')) index = 2;
+
+        openExpandedCard(index);
+      });
+    }
+
+    function openExpandedCard(cardIndex) {
+      const content = themeContent[currentTheme];
+      if (!content || !content.cards[cardIndex]) return;
+
+      const cardData = content.cards[cardIndex];
+      
+      // Update expanded card content
+      expandedTitle.textContent = cardData.title;
+      expandedDate.textContent = cardData.date;
+      
+      // Format content with paragraphs
+      const paragraphs = cardData.content.split('\n\n');
+      expandedContent.innerHTML = paragraphs
+        .map((p, i) => `<p${i > 0 ? ' style="margin-top: 1rem;"' : ''}>${p}</p>`)
+        .join('');
+      
+      // Get the icon from the card
+      const cardIcon = document.querySelector(`.icon-${cardIndex + 1} svg`);
+      if (cardIcon) {
+        expandedIcon.innerHTML = cardIcon.outerHTML;
+      }
+      
+      // Show backdrop and expanded card
+      cardBackdrop.classList.add('active');
+      expandedCard.classList.add('active');
+      document.body.classList.add('card-open');
+      
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeExpandedCard() {
+      cardBackdrop.classList.remove('active');
+      expandedCard.classList.remove('active');
+      document.body.classList.remove('card-open');
+      document.body.style.overflow = '';
+    }
+
+    // Close handlers
+    cardBackdrop.addEventListener('click', closeExpandedCard);
+    closeBtn.addEventListener('click', closeExpandedCard);
+
+    // Prevent closing when clicking inside the expanded card
+    expandedCard.addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
+
+    // Close with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeExpandedCard();
+      }
+    });
+
+    // Initialize card click handlers
+    setupCardClickHandlers();
+
+    // Theme switching
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.dataset.theme;
+        const icon = option.dataset.icon;
+        const title = option.dataset.title;
+        const subtitle = option.dataset.subtitle;
+        const tagline = option.dataset.tagline;
+
+        // Update current theme tracker
+        currentTheme = theme;
+
+        // Remove all theme classes
+        document.body.className = `theme-${theme} min-h-screen flex flex-col items-center justify-center p-8`;
+
+        // Update button
+        document.querySelector('.current-theme-icon').textContent = icon;
+        document.querySelector('.current-theme-name').textContent = option.querySelector('span:last-child').textContent;
+
+        // Update active state
+        themeOptions.forEach(opt => opt.classList.remove('active'));
+        option.classList.add('active');
+
+        // Update header and footer
+        headerTitle.textContent = title;
+        headerSubtitle.textContent = subtitle;
+        footerTagline.textContent = tagline;
+
+        // Update decorations
+        updateDecorations(theme);
+
+        // Update card content
+        const content = themeContent[theme];
+        if (content) {
+          document.querySelector('.title-1').textContent = content.cards[0].title;
+          document.querySelector('.desc-1').textContent = content.cards[0].desc;
+          document.querySelector('.date-1').textContent = content.cards[0].date;
+          
+          document.querySelector('.title-2').textContent = content.cards[1].title;
+          document.querySelector('.desc-2').textContent = content.cards[1].desc;
+          document.querySelector('.date-2').textContent = content.cards[1].date;
+          
+          document.querySelector('.title-3').textContent = content.cards[2].title;
+          document.querySelector('.desc-3').textContent = content.cards[2].desc;
+          document.querySelector('.date-3').textContent = content.cards[2].date;
+        }
+
+        // Close dropdown
+        dropdown.classList.remove('open');
+
+        // Animate container
+        const container = document.querySelector('.cards-container');
+        container.style.animation = 'none';
+        container.offsetHeight;
+        container.style.animation = 'fadeIn 0.7s ease-out';
+      });
+    });
+
+    // Add subtle parallax effect to decorative elements on mouse move
+    document.addEventListener('mousemove', (e) => {
+      const x = (e.clientX / window.innerWidth - 0.5) * 20;
+      const y = (e.clientY / window.innerHeight - 0.5) * 20;
+      
+      // Card tilt effect for expanded card
+      if (expandedCard.classList.contains('active')) {
+        expandedCard.style.transform = `translate(-50%, -50%) scale(1) perspective(1000px) rotateX(${y * -0.2}deg) rotateY(${x * 0.2}deg)`;
+      }
+
+      // Parallax for solarpunk gears
+      const gears = document.querySelectorAll('.deco-solarpunk.active .gear');
+      gears.forEach((gear, index) => {
+        const factor = (index + 1) * 0.5;
+        const currentRotation = (Date.now() / (1000 * (index + 1))) % 360;
+        gear.style.transform = `translate(${x * factor}px, ${y * factor}px) rotate(${currentRotation}deg)`;
+      });
+
+      // Parallax for winter crystals
+      const crystals = document.querySelectorAll('.deco-winter.active .ice-crystal');
+      crystals.forEach((crystal, index) => {
+        const factor = (index + 1) * 0.3;
+        crystal.style.transform = `translate(${x * factor}px, ${y * factor}px)`;
+      });
+
+      // Parallax for summer sun
+      const sun = document.querySelector('.deco-summer.active .sun');
+      if (sun) {
+        sun.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
+      }
+
+      // Parallax for clouds
+      const clouds = document.querySelectorAll('.deco-rainy.active .cloud');
+      clouds.forEach((cloud, index) => {
+        const factor = (index + 1) * 0.2;
+        cloud.style.transform = `translateX(${x * factor}px)`;
+      });
+    });
+  </script>
+</body>
+</html>
