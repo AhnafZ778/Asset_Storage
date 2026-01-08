@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Premium Mesh Shader Themes</title>
+  <title>Dune Mesh Shader</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
@@ -105,74 +105,7 @@
     .copy-btn:hover { opacity: 0.68; }
     .copy-btn svg { fill: rgba(255, 255, 255, 0.72); }
 
-    .themes {
-      position: fixed;
-      bottom: 32px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 30;
-      display: flex;
-      gap: 6px;
-      pointer-events: auto;
-      padding: 6px;
-      border-radius: 16px;
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.5);
-      max-width: 90vw;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .themes::-webkit-scrollbar { display: none; }
-
-    .theme-btn {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      border: 2px solid transparent;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .theme-btn::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      opacity: 0.9;
-      transition: opacity 0.2s;
-    }
-
-    .theme-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-    }
-
-    .theme-btn:hover::before {
-      opacity: 1;
-    }
-
-    .theme-btn.active {
-      border-color: rgba(255,255,255,0.5);
-      transform: scale(1.1);
-      box-shadow: 0 0 0 2px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4);
-    }
-
-    .theme-btn[data-theme="ember"]::before {
-      background: linear-gradient(135deg, #1a0a00, #ff5722, #ff8a50);
-    }
-
-    .theme-btn[data-theme="mercury"]::before {
-      background: linear-gradient(135deg, #111, #888, #fff);
-    }
-    .theme-btn[data-theme="dune"]::before {
-      background: linear-gradient(135deg, #1a1500, #c4a484, #f4a460);
-    }
-
+    
 
     .theme-label {
       position: fixed;
@@ -188,8 +121,6 @@
       transition: all 0.3s ease;
       opacity: 0.6;
     }
-
-
 
     .status {
       position: fixed;
@@ -218,8 +149,6 @@
     }
 
     @media (max-width: 640px) {
-      .themes { bottom: 20px; gap: 4px; padding: 5px; }
-      .theme-btn { width: 32px; height: 32px; }
       .theme-label { bottom: 85px; }
       .status { right: 12px; top: 12px; }
       .center-content { font-size: 11px; }
@@ -248,17 +177,7 @@
     </div>
   </div>
 
-  <div class="theme-label" id="themeLabel">Ember</div>
-
-  <div class="themes">
-    <button class="theme-btn active" data-theme="ember" title="Ember"></button>
-    <button class="theme-btn" data-theme="cosmic" title="Cosmic"></button>
-    <button class="theme-btn" data-theme="mercury" title="Mercury"></button>
-    <button class="theme-btn" data-theme="dune" title="Dune"></button>
-
-  </div>
-
-
+  <div class="theme-label" id="themeLabel">Dune</div>
 
   <div class="status">
     <div class="status-dot"></div>
@@ -279,8 +198,8 @@
 
     let speed = 1.0;
     let intensity = 1.5;
-    let activeTheme = 'ember';
-    let prevTheme = 'ember';
+    let activeTheme = 'dune';
+    let prevTheme = 'dune';
     let transitionStart = 0;
     let transitioning = false;
 
@@ -403,89 +322,6 @@
       }
     `;
 
-    // EMBER - warm, fiery, micro-folds
-    const emberShader = `
-      ${commonGLSL}
-      ${folderGLSL}
-      void main() {
-        float t = time * speed;
-        float b = ease(0.5 + 0.5 * sin(t * 0.5));
-        float I = intensity * mix(0.9, 1.2, b);
-
-        vec2 uv = vUv;
-        vec2 p = aspectCorrect(uv);
-        p += (mouse - 0.5) * 0.15;
-
-        float folding = fold(p * 1.5, t, b);
-        float base = fbm(p * 2.0 + folding * 0.5, 0.55);
-
-        vec3 c0 = vec3(0.01, 0.0, 0.0);
-        vec3 c1 = vec3(0.12, 0.03, 0.0);
-        vec3 gold = vec3(1.0, 0.45, 0.1);
-
-        vec3 col = mix(c0, c1, base);
-        col += gold * pow(folding, 3.5) * 0.3 * I;
-        col += gold * pow(base, 4.0) * 0.15 * b * I;
-
-        float d = length(p);
-        col *= smoothstep(1.2, 0.2, d);
-        col += filmGrain(gl_FragCoord.xy, t).x * 0.015;
-        gl_FragColor = vec4(tonemap(col) * fade, fade);
-      }
-    `;
-
-
-
-    // COSMIC - improved, deep, spatial folding
-    const cosmicShader = `
-      ${commonGLSL}
-      ${folderGLSL}
-      void main() {
-        float t = time * speed;
-        float b = ease(0.5 + 0.5 * sin(t * 0.42));
-        float I = intensity * mix(0.9, 1.25, b);
-
-        vec2 uv = vUv;
-        vec2 p = aspectCorrect(uv);
-        p += (mouse - 0.5) * 0.2;
-
-        float folding = fold(p * 1.4, t * 0.7, b);
-        float nebula = fbm(p * 1.8 + folding * 0.3, 0.55);
-
-        vec3 c0 = vec3(0.01, 0.0, 0.03);
-        vec3 c1 = vec3(0.05, 0.0, 0.1);
-        vec3 magenta = vec3(0.9, 0.1, 0.6);
-        vec3 blue = vec3(0.1, 0.4, 1.0);
-
-        vec3 col = mix(c0, c1, nebula);
-        col += mix(magenta, blue, folding) * pow(folding, 4.5) * 0.35 * I;
-        col += magenta * pow(nebula, 5.0) * 0.2 * b * I;
-
-        float d = length(p);
-        col *= smoothstep(1.3, 0.2, d);
-        col += filmGrain(gl_FragCoord.xy, t).x * 0.01; // Less grain
-        gl_FragColor = vec4(tonemap(col) * fade, fade);
-      }
-    `;
-
-
-
-    // MERCURY - Liquid chrome
-    const mercuryShader = `
-      ${commonGLSL}
-      ${folderGLSL}
-      void main() {
-        float t = time * speed;
-        float b = ease(0.5 + 0.5 * sin(t * 0.6));
-        vec2 p = aspectCorrect(vUv) + (mouse - 0.5) * 0.15;
-        float folding = fold(p * 1.2, t * 0.5, b);
-        float spec = pow(folding, 8.0) * 0.8 + pow(folding, 2.0) * 0.1;
-        vec3 col = mix(vec3(0.02), vec3(0.95), spec * intensity);
-        col *= smoothstep(1.1, 0.2, length(p));
-        gl_FragColor = vec4(tonemap(col) * fade, fade);
-      }
-    `;
-
     // DUNE - Gritty, wind-blown sand
     const duneShader = `
       ${commonGLSL}
@@ -505,7 +341,6 @@
         gl_FragColor = vec4(tonemap(col) * fade, fade);
       }
     `;
-
 
 
     function compileShader(source, type) {
@@ -534,19 +369,11 @@
     }
 
     const programs = {
-      ember: createProgram(emberShader),
-      cosmic: createProgram(cosmicShader),
-      mercury: createProgram(mercuryShader),
       dune: createProgram(duneShader),
-
     };
 
     const themeAccents = {
-      ember: '255, 87, 34',
-      cosmic: '180, 50, 200',
-      mercury: '220, 220, 230',
       dune: '244, 164, 96',
-
     };
 
     const vertices = new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]);
@@ -629,26 +456,6 @@
     }
 
     requestAnimationFrame(render);
-
-    document.querySelectorAll('.theme-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const next = btn.dataset.theme;
-        if (next === activeTheme) return;
-
-        document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        prevTheme = activeTheme;
-        activeTheme = next;
-        transitioning = true;
-        transitionStart = (performance.now() - startTime) / 1000;
-
-        document.documentElement.style.setProperty('--theme-accent', themeAccents[next]);
-        document.getElementById('themeLabel').textContent = next.charAt(0).toUpperCase() + next.slice(1);
-      });
-    });
-
-
 
     const copyBtn = document.getElementById('copyBtn');
     const copyIcon = document.getElementById('copyIcon');

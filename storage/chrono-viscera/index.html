@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORGE: Chrono-Viscera [CELESTIAL 95+]</title>
+    
+    <style>
+        /* === RESET === */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #050508;
+            color: #888;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #webgl-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            outline: none;
+        }
+
+        /* UI OVERLAY - Elegant & Minimal */
+        .ui-layer {
+            position: fixed;
+            z-index: 5;
+            pointer-events: none;
+            padding: 4rem;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .header h1 {
+            color: #e0c0a0; /* Rose Gold Text */
+            font-weight: 200;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            border-left: 1px solid #e0c0a0;
+            padding-left: 1.5rem;
+        }
+        
+        .header .meta {
+            font-size: 0.6rem;
+            font-family: 'Courier New', monospace;
+            color: #8899aa;
+            margin-left: 1.7rem;
+            opacity: 0.7;
+            letter-spacing: 0.1em;
+        }
+
+        .controls {
+            align-self: flex-end;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-size: 0.65rem;
+            color: #667788;
+            line-height: 1.8;
+            letter-spacing: 0.1em;
+        }
+
+        .loader {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            color: #e0c0a0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.2em;
+            transition: opacity 1.5s ease-out;
+            pointer-events: none;
+        }
+
+        #scroll-proxy {
+            height: 500vh; /* Longer scroll for slower, more majestic movement */
+            position: absolute;
+            top: 0;
+            width: 1px;
+            pointer-events: none;
+        }
+    </style>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="webgl-container"></div>
+    <div id="scroll-proxy"></div>
+    
+    <div class="loader">PRECISION MACHINING...</div>
+
+    <div class="ui-layer">
+        <div class="header">
+            <h1>Chrono-Viscera</h1>
+            <div class="meta">CALIBER 9000 // MASTER CHRONOMETER</div>
+        </div>
+        <div class="controls">
+            SCROLL TO DECONSTRUCT<br>
+            MOUSE TO ORBIT<br>
+            ESCAPEMENT: ACTIVE
+        </div>
+    </div>
+
+    <!-- Lenis for Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+        import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+        import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+        import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+        import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+        import { FXAAShader } from 'three/addons/shaders/FXAAShader.js'; // UPGRADE: FXAA
+        import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
+
+        /* =============================================================================
+           1. CONFIGURATION (The Aesthetics)
+           ============================================================================= */
+        const CONFIG = {
+            colors: {
+                roseGold: 0xffd0b0, // Pale Rose Gold
+                platinum: 0xeeeeff, // Cool metal
+                nebulaCore: new THREE.Color(0x050510), // Deep space blue
+                nebulaGlow: new THREE.Color(0x4466aa), // Ethereal Cyan/Blue
+                ruby: 0xff0040,     // Synthetic Ruby
+                lightKey: 0xfff0dd, // Warm sun
+                lightRim: 0xaaccff, // Cool starlight
+            },
+            physics: {
+                drag: 0.05,    // Fluid resistance for scroll (Lower = heavier)
+                mouseDrag: 0.96 // Mouse inertia
+            },
+            bloom: {
+                threshold: 0.2,
+                strength: 0.4, // Soft, dreamy bloom
+                radius: 1.0    // Wide spread
+            }
+        };
+
+        const STATE = {
+            time: 0,
+            scrollTarget: 0,
+            scrollCurrent: 0,
+            mouse: new THREE.Vector2(0, 0),
+            mouseTarget: new THREE.Vector2(0, 0),
+            width: window.innerWidth,
+            height: window.innerHeight,
+            pixelRatio: Math.min(window.devicePixelRatio, 2.0)
+        };
+
+        /* =============================================================================
+           2. RENDERER & SCENE
+           ============================================================================= */
+        const container = document.getElementById('webgl-container');
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: false, // We use FXAA
+            powerPreference: "high-performance",
+            stencil: false,
+            depth: true
+        });
+        
+        renderer.setPixelRatio(STATE.pixelRatio);
+        renderer.setSize(STATE.width, STATE.height);
+        renderer.toneMapping = THREE.AgXToneMapping;
+        renderer.toneMappingExposure = 1.0;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050508);
+        scene.fog = new THREE.FogExp2(0x050508, 0.02);
+
+        const camera = new THREE.PerspectiveCamera(30, STATE.width / STATE.height, 0.1, 100);
+        camera.position.set(0, 0, 20);
+
+        /* =============================================================================
+           3. LIGHTING & ENVIRONMENT (Imperfection Layer)
+           ============================================================================= */
+        RectAreaLightUniformsLib.init();
+
+        // KEY: Soft, warm main light
+        const keyLight = new THREE.SpotLight(CONFIG.colors.lightKey, 1200);
+        keyLight.position.set(-8, 5, 8);
+        keyLight.angle = Math.PI / 5;
+        keyLight.penumbra = 0.5; // Very soft edges
+        keyLight.castShadow = true;
+        keyLight.shadow.mapSize.width = 2048;
+        keyLight.shadow.mapSize.height = 2048;
+        keyLight.shadow.bias = -0.0001;
+        scene.add(keyLight);
+
+        // RIM: Sharp, cool backlight for silhouette
+        const rimLight = new THREE.SpotLight(CONFIG.colors.lightRim, 2000);
+        rimLight.position.set(10, 0, -5);
+        rimLight.angle = Math.PI / 4;
+        rimLight.penumbra = 0.8;
+        scene.add(rimLight);
+
+        // FILL: Subtle ambient lift
+        const fillLight = new THREE.HemisphereLight(0x111122, 0x000000, 0.6);
+        scene.add(fillLight);
+
+        // UPGRADE: Procedural Noise Texture for EnvMap (The "Imperfection")
+        function createNoiseTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+            
+            // Fill Background
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Generate Noise
+            for (let i = 0; i < 5000; i++) {
+                const x = Math.random() * 512;
+                const y = Math.random() * 512;
+                const w = Math.random() * 100 + 20;
+                const h = Math.random() * 50 + 10;
+                const opacity = Math.random() * 0.1;
+                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+                ctx.fillRect(x, y, w, h);
+            }
+            
+            // Soft Gradient Overlay
+            const grad = ctx.createLinearGradient(0, 0, 0, 512);
+            grad.addColorStop(0, 'rgba(255,255,255,0.1)');
+            grad.addColorStop(1, 'rgba(0,0,0,0.5)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0,0,512,512);
+
+            const tex = new THREE.CanvasTexture(canvas);
+            return tex;
+        }
+
+        const envNoiseTex = createNoiseTexture();
+
+        // ENVIRONMENT: Procedural Studio with Noise
+        const pmremGenerator = new THREE.PMREMGenerator(renderer);
+        pmremGenerator.compileEquirectangularShader();
+        const envScene = new THREE.Scene();
+        
+        // Strip 1: Soft Key reflection
+        const strip1 = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 2), 
+            new THREE.MeshBasicMaterial({color: 0xffffff, map: envNoiseTex, intensity: 8})
+        );
+        strip1.position.set(-5, 5, 5);
+        strip1.lookAt(0,0,0);
+        
+        // Strip 2: Cool Fill reflection
+        const strip2 = new THREE.Mesh(
+            new THREE.PlaneGeometry(10, 2), 
+            new THREE.MeshBasicMaterial({color: 0xaaaaff, map: envNoiseTex, intensity: 4})
+        );
+        strip2.position.set(5, -5, -5);
+        strip2.lookAt(0,0,0);
+        
+        envScene.add(strip1, strip2);
+        scene.environment = pmremGenerator.fromScene(envScene).texture;
+        pmremGenerator.dispose();
+
+        /* =============================================================================
+           4. MATERIALS & GEOMETRY (The Masterpiece)
+           ============================================================================= */
+        const mainGroup = new THREE.Group();
+        scene.add(mainGroup);
+
+        // --- A. MATERIALS ---
+        
+        const gearMaterial = new THREE.MeshPhysicalMaterial({
+            color: CONFIG.colors.roseGold,
+            metalness: 1.0,
+            roughness: 0.25,
+            anisotropy: 1.0, 
+            anisotropyRotation: 0,
+            clearcoat: 0.8,
+            clearcoatRoughness: 0.1,
+            envMapIntensity: 2.0
+        });
+
+        const jewelMaterial = new THREE.MeshPhysicalMaterial({
+            color: CONFIG.colors.ruby,
+            metalness: 0.0,
+            roughness: 0.0,
+            transmission: 0.8,
+            thickness: 1.5,
+            ior: 1.76, 
+            attenuationColor: new THREE.Color(0x880000),
+            attenuationDistance: 0.5
+        });
+
+        // UPGRADE: Sapphire Crystal (The Lens)
+        const crystalMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 0.0,
+            roughness: 0.0,
+            transmission: 0.98,
+            thickness: 2.0,
+            ior: 1.76,
+            clearcoat: 1.0,
+            side: THREE.FrontSide
+        });
+
+        const nebulaMaterial = new THREE.MeshPhysicalMaterial({
+            color: CONFIG.colors.nebulaCore,
+            roughness: 0.2,
+            metalness: 0.1,
+            transmission: 0.6,
+            thickness: 3.0,
+            ior: 1.2,
+            side: THREE.DoubleSide,
+            iridescence: 0.5,
+            iridescenceIOR: 1.3
+        });
+
+        // GLSL Injection for Nebula (kept from previous iter)
+        const GLSL_NOISE = `
+            vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+            vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
+            vec4 taylorInvSqrt(vec4 r) { return 1.79284291400159 - 0.85373472095314 * r; }
+            float snoise(vec3 v) {
+                const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+                const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+                vec3 i  = floor(v + dot(v, C.yyy));
+                vec3 x0 = v - i + dot(i, C.xxx);
+                vec3 g = step(x0.yzx, x0.xyz);
+                vec3 l = 1.0 - g;
+                vec3 i1 = min(g.xyz, l.zxy);
+                vec3 i2 = max(g.xyz, l.zxy);
+                vec3 x1 = x0 - i1 + C.xxx;
+                vec3 x2 = x0 - i2 + C.yyy;
+                vec3 x3 = x0 - D.yyy;
+                i = mod289(i);
+                vec4 p = permute(permute(permute(
+                        i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                        + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                        + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+                float n_ = 0.142857142857;
+                vec3 ns = n_ * D.wyz - D.xzx;
+                vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+                vec4 x_ = floor(j * ns.z);
+                vec4 y_ = floor(j - 7.0 * x_);
+                vec4 x = x_ * ns.x + ns.y;
+                vec4 y = y_ * ns.x + ns.y;
+                vec4 h = 1.0 - abs(x) - abs(y);
+                vec4 b0 = vec4(x.xy, y.xy);
+                vec4 b1 = vec4(x.zw, y.zw);
+                vec4 s0 = floor(b0) * 2.0 + 1.0;
+                vec4 s1 = floor(b1) * 2.0 + 1.0;
+                vec4 sh = -step(h, vec4(0.0));
+                vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+                vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+                vec3 p0 = vec3(a0.xy, h.x);
+                vec3 p1 = vec3(a0.zw, h.y);
+                vec3 p2 = vec3(a1.xy, h.z);
+                vec3 p3 = vec3(a1.zw, h.w);
+                vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+                p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+                vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+                m = m * m;
+                return 42.0 * dot(m * m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+            }
+        `;
+
+        nebulaMaterial.onBeforeCompile = (shader) => {
+            shader.uniforms.uTime = { value: 0 };
+            shader.uniforms.uGlowColor = { value: CONFIG.colors.nebulaGlow };
+            shader.vertexShader = `uniform float uTime;\nvarying float vNoise;\n${GLSL_NOISE}\n` + shader.vertexShader;
+            shader.vertexShader = shader.vertexShader.replace(
+                '#include <begin_vertex>',
+                `#include <begin_vertex>
+                vec3 p = position * 0.3;
+                float t = uTime * 0.15;
+                float n1 = snoise(p + vec3(0.0, t, 0.0));
+                float n2 = snoise(p + vec3(n1) + vec3(t * 0.5));
+                float breath = sin(uTime * 0.8) * 0.05;
+                float disp = (n2 * 0.4) + breath;
+                transformed += normal * disp;
+                vNoise = n2;`
+            );
+            shader.fragmentShader = `uniform vec3 uGlowColor;\nvarying float vNoise;\n` + shader.fragmentShader;
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <emissivemap_fragment>',
+                `#include <emissivemap_fragment>
+                float glowMask = smoothstep(0.3, 0.8, vNoise);
+                vec3 glow = uGlowColor * glowMask * 1.5;
+                totalEmissiveRadiance += glow;
+                diffuseColor.rgb += uGlowColor * 0.2 * glowMask;`
+            );
+            nebulaMaterial.userData.shader = shader;
+        };
+
+        const gears = [];
+
+        // UPGRADE: Involute Gear Geometry (Custom Shape)
+        function createInvoluteGear(radius, teeth, speed, z) {
+            const group = new THREE.Group();
+            
+            // 1. Main Ring (Skeletonized)
+            const ringGeo = new THREE.TorusGeometry(radius, 0.15, 64, 128);
+            const ring = new THREE.Mesh(ringGeo, gearMaterial);
+            group.add(ring);
+            
+            // 2. Teeth (Extruded Involute Shape)
+            const toothW = 0.2;
+            const toothH = 0.4;
+            
+            // Define Custom Shape with Bevels
+            const toothShape = new THREE.Shape();
+            toothShape.moveTo(-toothW/2, 0);
+            toothShape.lineTo(-toothW/3, toothH); // Taper up
+            toothShape.lineTo(toothW/3, toothH);  // Flat top
+            toothShape.lineTo(toothW/2, 0);       // Taper down
+            toothShape.lineTo(-toothW/2, 0);      // Close
+            
+            const toothGeo = new THREE.ExtrudeGeometry(toothShape, {
+                depth: 0.15,
+                bevelEnabled: true,
+                bevelThickness: 0.02,
+                bevelSize: 0.02,
+                bevelSegments: 3 // Smooth chamfer
+            });
+            toothGeo.center(); // Center pivot
+            
+            const teethMesh = new THREE.InstancedMesh(toothGeo, gearMaterial, teeth);
+            const dummy = new THREE.Object3D();
+            
+            for(let i=0; i<teeth; i++) {
+                const angle = (i/teeth) * Math.PI * 2;
+                dummy.position.set(
+                    Math.cos(angle) * (radius + 0.1),
+                    Math.sin(angle) * (radius + 0.1),
+                    0
+                );
+                dummy.rotation.z = angle - (Math.PI/2); // Point outward
+                dummy.updateMatrix();
+                teethMesh.setMatrixAt(i, dummy.matrix);
+            }
+            group.add(teethMesh);
+            
+            // 3. Spokes & Jewel
+            if (radius > 1) {
+                const spokeCount = 5;
+                const spokeGeo = new THREE.CylinderGeometry(0.05, 0.05, radius * 2, 8);
+                const spokes = new THREE.InstancedMesh(spokeGeo, gearMaterial, spokeCount);
+                for(let i=0; i<spokeCount; i++) {
+                    const angle = (i/spokeCount) * Math.PI;
+                    dummy.position.set(0,0,0);
+                    dummy.rotation.set(0,0,angle);
+                    dummy.scale.set(1,1,1);
+                    dummy.updateMatrix();
+                    spokes.setMatrixAt(i, dummy.matrix);
+                }
+                group.add(spokes);
+
+                // UPGRADE: Cupped Jewel Bearing
+                // Bezel
+                const bezelGeo = new THREE.TorusGeometry(0.35, 0.08, 32, 64);
+                const bezel = new THREE.Mesh(bezelGeo, gearMaterial);
+                group.add(bezel);
+
+                // Ruby Cup (Torus + Flattened Sphere)
+                const rubyCupGeo = new THREE.TorusGeometry(0.2, 0.1, 16, 32);
+                const rubyCenterGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.1, 32);
+                
+                const rubyCup = new THREE.Mesh(rubyCupGeo, jewelMaterial);
+                const rubyCenter = new THREE.Mesh(rubyCenterGeo, jewelMaterial);
+                rubyCenter.rotation.x = Math.PI/2;
+                
+                group.add(rubyCup);
+                group.add(rubyCenter);
+            }
+
+            group.position.z = z;
+            group.userData = { speed, baseZ: z };
+            mainGroup.add(group);
+            gears.push(group);
+        }
+
+        // Generate the Movement with New Geometry
+        createInvoluteGear(3.5, 60, 0.1, 0);    // Mainspring barrel
+        createInvoluteGear(2.2, 40, -0.3, 0.6); // Center wheel
+        createInvoluteGear(1.2, 20, 0.8, -0.6); // Escape wheel
+
+        // The "Nebula"
+        const nebulaGeo = new THREE.IcosahedronGeometry(2.5, 96);
+        const nebulaMesh = new THREE.Mesh(nebulaGeo, nebulaMaterial);
+        mainGroup.add(nebulaMesh);
+        
+        // UPGRADE: Sapphire Crystal Cap
+        const crystalGeo = new THREE.CylinderGeometry(4.5, 4.5, 1.0, 64, 1, true); // Open ends? No, top cap.
+        // Let's make a meniscus lens shape
+        const lensGeo = new THREE.SphereGeometry(6, 64, 16, 0, Math.PI * 2, 0, 0.3); // Partial sphere
+        const crystal = new THREE.Mesh(lensGeo, crystalMaterial);
+        crystal.position.z = 2.0; // Floating above
+        crystal.rotation.x = -Math.PI/2; // Face camera
+        mainGroup.add(crystal);
+
+        // --- D. PARTICLES: Star Dust ---
+        const pCount = 300;
+        const pGeo = new THREE.TetrahedronGeometry(0.03, 0);
+        const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.6 });
+        const particles = new THREE.InstancedMesh(pGeo, pMat, pCount);
+        const pData = [];
+        const dummyP = new THREE.Object3D();
+
+        for(let i=0; i<pCount; i++) {
+            const r = 4 + Math.random() * 6;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            pData.push({
+                base: new THREE.Vector3(
+                    r * Math.sin(phi) * Math.cos(theta),
+                    r * Math.sin(phi) * Math.sin(theta),
+                    r * Math.cos(phi)
+                ),
+                speed: 0.05 + Math.random() * 0.1,
+                offset: Math.random() * 100
+            });
+        }
+        mainGroup.add(particles);
+
+        /* =============================================================================
+           5. POST-PROCESSING (FXAA + Bloom + Lens)
+           ============================================================================= */
+        const composer = new EffectComposer(renderer);
+        const renderPass = new RenderPass(scene, camera);
+        composer.addPass(renderPass);
+
+        // Bloom
+        const bloomPass = new UnrealBloomPass(
+            new THREE.Vector2(STATE.width, STATE.height),
+            CONFIG.bloom.strength,
+            CONFIG.bloom.radius,
+            CONFIG.bloom.threshold
+        );
+        composer.addPass(bloomPass);
+
+        // UPGRADE: FXAA (Anti-Aliasing for Chamfered Edges)
+        const fxaaPass = new ShaderPass(FXAAShader);
+        const pixelRatio = renderer.getPixelRatio();
+        fxaaPass.material.uniforms['resolution'].value.x = 1 / (STATE.width * pixelRatio);
+        fxaaPass.material.uniforms['resolution'].value.y = 1 / (STATE.height * pixelRatio);
+        composer.addPass(fxaaPass);
+
+        // Chromatic Aberration
+        const LensShader = {
+            uniforms: {
+                tDiffuse: { value: null },
+                uAberration: { value: 0.002 }
+            },
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+            fragmentShader: `
+                uniform sampler2D tDiffuse;
+                uniform float uAberration;
+                varying vec2 vUv;
+                void main() {
+                    vec2 uv = vUv;
+                    vec2 dist = uv - 0.5;
+                    float r = texture2D(tDiffuse, uv + dist * uAberration).r;
+                    float g = texture2D(tDiffuse, uv).g;
+                    float b = texture2D(tDiffuse, uv - dist * uAberration).b;
+                    gl_FragColor = vec4(r, g, b, 1.0);
+                }
+            `
+        };
+        composer.addPass(new ShaderPass(LensShader));
+        composer.addPass(new OutputPass());
+
+        /* =============================================================================
+           6. ANIMATION LOOP (The Escapement)
+           ============================================================================= */
+        setTimeout(() => { document.querySelector('.loader').style.opacity = '0'; }, 2000);
+
+        const lenis = new Lenis({ 
+            wrapper: window, 
+            content: document.getElementById('scroll-proxy'), 
+            duration: 2.0, 
+            smooth: true 
+        });
+
+        function animate(time) {
+            STATE.time = time * 0.001; 
+            requestAnimationFrame(animate);
+            lenis.raf(time);
+
+            // 1. FLUID PHYSICS
+            const target = STATE.scrollTarget;
+            STATE.scrollCurrent += (target - STATE.scrollCurrent) * CONFIG.physics.drag;
+
+            // 2. Uniforms
+            if (nebulaMaterial.userData.shader) {
+                nebulaMaterial.userData.shader.uniforms.uTime.value = STATE.time;
+            }
+
+            // 3. GEAR MECHANICS (The "Swiss Tick")
+            // Instead of linear speed, we calculate a discrete tick
+            const beat = STATE.time * 2.0; // 2 beats per second (120 BPM)
+            const tick = Math.floor(beat);
+            const subTick = beat % 1.0; 
+            // Elastic overshoot function: goes past target then snaps back
+            // f(t) = t < 0.2 ? sin(t * PI * 5) * decay : 0
+            const snap = subTick < 0.2 ? Math.sin(subTick * Math.PI * 5) * (0.2 - subTick) : 0;
+            
+            gears.forEach((gear, i) => {
+                const speed = gear.userData.speed;
+                const baseZ = gear.userData.baseZ;
+                
+                // Base rotation (Accumulated Ticks) + Snap
+                const angle = (tick * (Math.PI / 30) * speed) + (snap * speed * 0.5);
+                gear.rotation.z = angle;
+                
+                // Scroll Expansion
+                const explodeDist = (i - 1) * STATE.scrollCurrent * 5.0;
+                gear.position.z = THREE.MathUtils.lerp(gear.position.z, baseZ + explodeDist, 0.1);
+            });
+
+            // 4. NEBULA
+            const stretch = 1.0 + (STATE.scrollCurrent * 0.5);
+            nebulaMesh.scale.set(1/Math.sqrt(stretch), 1/Math.sqrt(stretch), stretch);
+            nebulaMesh.rotation.y = STATE.time * 0.03;
+            nebulaMesh.rotation.z = Math.sin(STATE.time * 0.1) * 0.05;
+
+            // 5. STAR DUST
+            for(let i=0; i<pCount; i++) {
+                const d = pData[i];
+                dummyP.position.copy(d.base);
+                const angle = STATE.time * d.speed;
+                dummyP.position.applyAxisAngle(new THREE.Vector3(0,1,0), angle);
+                dummyP.position.y += Math.sin(STATE.time + d.offset) * 0.2;
+                dummyP.position.multiplyScalar(1 + STATE.scrollCurrent * 2.0);
+                dummyP.rotation.set(angle, angle, angle);
+                dummyP.updateMatrix();
+                particles.setMatrixAt(i, dummyP.matrix);
+            }
+            particles.instanceMatrix.needsUpdate = true;
+
+            // 6. INERTIA
+            STATE.mouseTarget.lerp(STATE.mouse, CONFIG.physics.mouseDrag);
+            mainGroup.rotation.y = STATE.mouseTarget.x * 0.4;
+            mainGroup.rotation.x = STATE.mouseTarget.y * 0.4;
+
+            composer.render();
+        }
+
+        window.addEventListener('resize', () => {
+            STATE.width = window.innerWidth;
+            STATE.height = window.innerHeight;
+            STATE.pixelRatio = Math.min(window.devicePixelRatio, 2.0);
+            
+            camera.aspect = STATE.width / STATE.height;
+            camera.updateProjectionMatrix();
+            
+            renderer.setSize(STATE.width, STATE.height);
+            renderer.setPixelRatio(STATE.pixelRatio);
+            composer.setSize(STATE.width, STATE.height);
+            
+            // Update FXAA resolution
+            fxaaPass.material.uniforms['resolution'].value.x = 1 / (STATE.width * STATE.pixelRatio);
+            fxaaPass.material.uniforms['resolution'].value.y = 1 / (STATE.height * STATE.pixelRatio);
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            STATE.mouse.x = (e.clientX / STATE.width) * 2 - 1;
+            STATE.mouse.y = -(e.clientY / STATE.height) * 2 + 1;
+        });
+
+        lenis.on('scroll', (e) => {
+            const maxScroll = document.getElementById('scroll-proxy').clientHeight - window.innerHeight;
+            STATE.scrollTarget = Math.min(1, Math.max(0, e.scroll / maxScroll));
+        });
+
+        animate(0);
+
+    </script>
+</body>
+</html>

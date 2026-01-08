@@ -1,5 +1,73 @@
 [
   {
+    "id": "abstract-mesh-v1",
+    "name": "Abstract Mesh [Flux]",
+    "category": "Hero",
+    "description": "Interactive WebGL shader playground featuring three premium aesthetics: Ember, Cosmic, and Mercury. Supports fluid transitions and mouse interaction.",
+    "path": "../storage/abstract-mesh/index.html",
+    "preview": "https://placehold.co/400x300/1a0a00/ff5722?text=Flux+Mesh",
+    "tags": ["webgl", "shader", "interactive", "hero", "abstract"],
+    "dateCreated": "2026-01-08",
+    "variants": [
+      {
+        "name": "Ember",
+        "class": "theme-ember",
+        "promptPath": "../storage/abstract-mesh/prompt-ember.md"
+      },
+      {
+        "name": "Cosmic",
+        "class": "theme-cosmic",
+        "promptPath": "../storage/abstract-mesh/prompt-cosmic.md"
+      },
+      {
+        "name": "Mercury",
+        "class": "theme-mercury",
+        "promptPath": "../storage/abstract-mesh/prompt-mercury.md"
+      }
+    ]
+  },
+  {
+    "id": "dune-mesh-v1",
+    "name": "Dune Mesh [Arrakis]",
+    "category": "Hero",
+    "description": "High-fidelity wind-blown sand simulation using domain-warped noise and folding algorithms.",
+    "path": "../storage/dune/index.html",
+    "preview": "https://placehold.co/400x300/1a1500/f4a460?text=Dune+Mesh",
+    "tags": ["webgl", "shader", "sand", "hero", "cinematic"],
+    "dateCreated": "2026-01-08",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/dune/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "chrono-viscera-95",
+    "name": "Chrono-Viscera [CELESTIAL]",
+    "category": "Hero",
+    "description": "High-fidelity horological simulation with involute gears, escapement physics, and procedural nebula. Winner of the Celestial design challenge.",
+    "path": "../storage/chrono-viscera/index.html",
+    "preview": "https://placehold.co/400x300/050508/e0c0a0?text=Chrono+Viscera",
+    "tags": [
+      "hero",
+      "3d",
+      "three.js",
+      "mechanical",
+      "premium",
+      "clockwork"
+    ],
+    "dateCreated": "2026-01-08",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/chrono-viscera/prompt.md"
+      }
+    ]
+  },
+  {
     "id": "seasonal-display-cards-001",
     "name": "Seasonal Display Cards",
     "category": "UI Cards",
