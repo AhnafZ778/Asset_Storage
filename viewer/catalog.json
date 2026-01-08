@@ -44,6 +44,23 @@
     ]
   },
   {
+    "id": "solaris-rose-v1",
+    "name": "Solaris Rose [Divine]",
+    "category": "Hero",
+    "description": "Premium landing page with 'Divine' aesthetic, featuring Corona Flare background, Ember Rise particles, and elegant Cormorant Garamond typography.",
+    "path": "../storage/solaris-rose/index.html",
+    "preview": "https://placehold.co/400x300/1c1917/fb7185?text=Solaris+Rose",
+    "tags": ["react", "ui", "landing", "premium", "hero", "rose-gold"],
+    "dateCreated": "2026-01-08",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/solaris-rose/prompt.md"
+      }
+    ]
+  },
+  {
     "id": "chrono-viscera-95",
     "name": "Chrono-Viscera [CELESTIAL]",
     "category": "Hero",
