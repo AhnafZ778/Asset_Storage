@@ -90,23 +90,53 @@ document.addEventListener('DOMContentLoaded', () => {
         items.forEach(asset => {
             const card = document.createElement('div');
             card.className = 'asset-card';
-            // Animation stagger
             card.style.animation = `fadeIn 0.3s ease forwards`; 
             
-            card.onclick = () => openModal(asset);
-
             card.innerHTML = `
                 <div class="card-preview">
-                    <img src="${asset.preview}" alt="${asset.name}" onerror="this.src='https://placehold.co/400x300/1a1a20/FFF?text=No+Preview'">
+                    <img src="${asset.preview}" alt="${asset.name}" class="card-thumbnail" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(45deg, #111, #222)'">
                 </div>
                 <div class="card-info">
                     <div class="card-title">${asset.name}</div>
-                    <div class="card-date">${asset.dateCreated}</div>
-                    <div class="card-tags">
-                        ${asset.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
-                    </div>
                 </div>
             `;
+
+            // Hover Logic for Live Preview
+            let hoverTimeout;
+            let iframe = null;
+
+            card.addEventListener('mouseenter', () => {
+                hoverTimeout = setTimeout(() => {
+                    if (!card.querySelector('.preview-iframe')) {
+                        iframe = document.createElement('iframe');
+                        iframe.className = 'preview-iframe';
+                        iframe.src = asset.path;
+                        // Add class to iframe body if default variant exists
+                        iframe.onload = () => {
+                            if (asset.variants && asset.variants[0].class) {
+                                try {
+                                    iframe.contentDocument.body.classList.add(asset.variants[0].class);
+                                } catch(e) {/* ignore CORS if any */}
+                            }
+                        };
+                        card.querySelector('.card-preview').appendChild(iframe);
+                    }
+                }, 300); // 300ms delay to prevent spam
+            });
+
+            card.addEventListener('mouseleave', () => {
+                clearTimeout(hoverTimeout);
+                if (iframe) {
+                    // Slight delay to allow fade out transition if we added CSS for it
+                    // But for now remove immediately to save resources
+                    iframe.remove();
+                    iframe = null;
+                }
+                const existingIframe = card.querySelector('.preview-iframe');
+                if (existingIframe) existingIframe.remove();
+            });
+
+            card.onclick = () => openModal(asset);
             galleryGrid.appendChild(card);
         });
     }

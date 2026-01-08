@@ -5,7 +5,7 @@
     "category": "Hero",
     "description": "Interactive WebGL shader playground featuring three premium aesthetics: Ember, Cosmic, and Mercury. Supports fluid transitions and mouse interaction.",
     "path": "../storage/abstract-mesh/index.html",
-    "preview": "https://placehold.co/400x300/1a0a00/ff5722?text=Flux+Mesh",
+    "preview": "thumbnails/flux.png",
     "tags": ["webgl", "shader", "interactive", "hero", "abstract"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -32,7 +32,7 @@
     "category": "Hero",
     "description": "High-fidelity wind-blown sand simulation using domain-warped noise and folding algorithms.",
     "path": "../storage/dune/index.html",
-    "preview": "https://placehold.co/400x300/1a1500/f4a460?text=Dune+Mesh",
+    "preview": "thumbnails/dune.png",
     "tags": ["webgl", "shader", "sand", "hero", "cinematic"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -49,7 +49,7 @@
     "category": "Hero",
     "description": "Premium landing page with 'Divine' aesthetic, featuring Corona Flare background, Ember Rise particles, and elegant Cormorant Garamond typography.",
     "path": "../storage/solaris-rose/index.html",
-    "preview": "https://placehold.co/400x300/1c1917/fb7185?text=Solaris+Rose",
+    "preview": "thumbnails/solaris.png",
     "tags": ["react", "ui", "landing", "premium", "hero", "rose-gold"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -66,7 +66,7 @@
     "category": "Hero",
     "description": "High-fidelity horological simulation with involute gears, escapement physics, and procedural nebula. Winner of the Celestial design challenge.",
     "path": "../storage/chrono-viscera/index.html",
-    "preview": "https://placehold.co/400x300/050508/e0c0a0?text=Chrono+Viscera",
+    "preview": "thumbnails/chrono.png",
     "tags": [
       "hero",
       "3d",
@@ -90,7 +90,7 @@
     "category": "UI Cards",
     "description": "Premium 3D stacked cards with 6 distinct themes (Solarpunk, Seasons, Rainy) and rich background animations.",
     "path": "../storage/seasonal-display-cards/code.html",
-    "preview": "https://placehold.co/400x300/B87333/FFF?text=Seasonal+Cards",
+    "preview": "thumbnails/seasonal_cards.png",
     "tags": [
       "cards",
       "3d",
@@ -155,7 +155,7 @@
     "category": "UI Cards",
     "description": "A frosted glass card with hover tilt effect.",
     "path": "../storage/glass-card/code.html",
-    "preview": "https://placehold.co/400x300/6d5dfc/FFF?text=Glass+Card",
+    "preview": "thumbnails/glass_card.png",
     "tags": ["card", "glassmorphism", "3d", "test"],
     "dateCreated": "2024-12-23",
     "variants": [
@@ -173,7 +173,7 @@
     "description": "Interactive scroll-tracking sidebar with Lava, Ice, Gold, and Blood themes.",
     "path": "../storage/elemental-slider/demo.html",
     "codePath": "../storage/elemental-slider/fragment.html",
-    "preview": "https://placehold.co/400x300/ff6b35/FFF?text=Elemental+Slider",
+    "preview": "thumbnails/elemental_slider.png",
     "tags": ["sidebar", "navigation", "scroll", "animation", "interactive"],
     "dateCreated": "2024-12-23",
     "variants": [
@@ -205,7 +205,7 @@
     "category": "Cursors",
     "description": "Photonic Lattice cursor with Ortho-Grid trail.",
     "path": "../storage/cursor-architect/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Hard-Light+Architect",
+    "preview": "thumbnails/cursor_architect.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -222,7 +222,7 @@
     "category": "Cursors",
     "description": "Magnetic Fluid Dynamics cursor with Metaball Webbing.",
     "path": "../storage/cursor-ferro/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Ferro-Kinetic+Symbiote",
+    "preview": "thumbnails/cursor_ferro.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -239,7 +239,7 @@
     "category": "Cursors",
     "description": "Magnetoplasmadynamic Thruster cursor with Volumetric Exhaust.",
     "path": "../storage/cursor-ion/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Ion-Stream+Interceptor",
+    "preview": "thumbnails/cursor_ion.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -256,7 +256,7 @@
     "category": "Cursors",
     "description": "Fusion Containment cursor with Particle Jet trail.",
     "path": "../storage/cursor-plasma/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Plasma+Scout",
+    "preview": "thumbnails/cursor_plasma.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -273,7 +273,7 @@
     "category": "Cursors",
     "description": "Probabilistic Waveform cursor with Ribbon trail.",
     "path": "../storage/cursor-quantum/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Quantum+Navigator",
+    "preview": "thumbnails/cursor_quantum.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -290,7 +290,7 @@
     "category": "Cursors",
     "description": "Vector Graphics Terminal cursor with Signal Decay.",
     "path": "../storage/cursor-scope/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=The+Oscilloscope",
+    "preview": "thumbnails/cursor_scope.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -307,7 +307,7 @@
     "category": "Cursors",
     "description": "Bio-Electric Transmission cursor with Dendrite Fiber.",
     "path": "../storage/cursor-synaptic/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Synaptic-Impulse",
+    "preview": "thumbnails/cursor_synaptic.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -324,7 +324,7 @@
     "category": "Cursors",
     "description": "Null-Point Drive cursor with Chromatic Echo.",
     "path": "../storage/cursor-void/code.html",
-    "preview": "https://placehold.co/400x300/111111/FFF?text=Void+Drifter",
+    "preview": "thumbnails/cursor_void.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -341,7 +341,7 @@
     "category": "Cursors",
     "description": "Analog hexagonal pencil with varying-width graphite trail.",
     "path": "../storage/cursor-pencil/code.html",
-    "preview": "https://placehold.co/400x300/fbbf24/333?text=Graphite+Pencil",
+    "preview": "thumbnails/cursor_pencil.png",
     "tags": ["cursor", "skeuomorphic", "creative", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -358,7 +358,7 @@
     "category": "Navigation",
     "description": "A Dynamic Island-style navbar with hover-to-expand labels, sliding active indicators, and buttery-smooth flexbox centering.",
     "path": "../storage/nav-island-flex/code.html",
-    "preview": "https://placehold.co/400x300/000/FFF?text=Island-Flex-Nav",
+    "preview": "thumbnails/nav_island.png",
     "tags": [
       "navigation",
       "react",
@@ -381,7 +381,7 @@
     "category": "Navigation",
     "description": "A bold, Neo-Brutalist navbar with 'BUTTER' spring physics, hard shadows, and liquid-like squashing effects.",
     "path": "../storage/nav-liquid-toon/code.html",
-    "preview": "https://placehold.co/400x300/FACC15/000?text=Liquid-Toon",
+    "preview": "thumbnails/nav_liquid.png",
     "tags": [
       "navigation",
       "react",
@@ -405,7 +405,7 @@
     "category": "Navigation",
     "description": "A biomimetic, crystalline navbar with 'Breeze' physics, asymmetric organic leaf shapes, and mist-dissolve exits.",
     "path": "../storage/nav-eden-glass/code.html",
-    "preview": "https://placehold.co/400x300/dcfce7/065f46?text=Eden-Glass",
+    "preview": "thumbnails/nav_eden.png",
     "tags": [
       "navigation",
       "react",
@@ -429,7 +429,7 @@
     "category": "Hero",
     "description": "Scroll-responsive 3D neural network background with Three.js bloom effects. Nodes rotate faster as you scroll for an immersive parallax experience.",
     "path": "../storage/hero-neural-bg/code.html",
-    "preview": "https://placehold.co/400x300/020408/00f0ff?text=Neural+Cluster",
+    "preview": "thumbnails/neural.png",
     "tags": [
       "hero",
       "background",
