@@ -58,6 +58,17 @@ When the user says "Save this" or "Finalize this":
 - **Context is King**: The `prompt.md` is important for the _Copy_ function, but the visual display should be clean.
 - **Isolation**: Components should be self-contained as much as possible.
 
+## 🌍 Deployment
+
+The project is configured for deployment on **Vercel**.
+
+1.  **Configuration**: A `vercel.json` file at the root handles routing.
+    - Root URL `/` serves the `viewer/` directory.
+    - `/storage/` paths are accessible with CORS headers enabled.
+2.  **To Deploy**:
+    - Run `vercel` for a preview deployment.
+    - Run `vercel --prod` for a production deployment.
+
 ---
 
 _For session cleanup instructions, refer to `Tour_Setter.md`._
