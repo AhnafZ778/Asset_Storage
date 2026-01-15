@@ -5,7 +5,7 @@
     "category": "Hero",
     "description": "Interactive WebGL shader playground featuring three premium aesthetics: Ember, Cosmic, and Mercury. Supports fluid transitions and mouse interaction.",
     "path": "../storage/abstract-mesh/index.html",
-    "preview": "thumbnails/flux.png",
+    "preview": "thumbnails/real_abstract_mesh.png",
     "tags": ["webgl", "shader", "interactive", "hero", "abstract"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -32,7 +32,7 @@
     "category": "Hero",
     "description": "High-fidelity wind-blown sand simulation using domain-warped noise and folding algorithms.",
     "path": "../storage/dune/index.html",
-    "preview": "thumbnails/dune.png",
+    "preview": "thumbnails/real_dune_mesh.png",
     "tags": ["webgl", "shader", "sand", "hero", "cinematic"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -49,7 +49,7 @@
     "category": "Hero",
     "description": "Premium landing page with 'Divine' aesthetic, featuring Corona Flare background, Ember Rise particles, and elegant Cormorant Garamond typography.",
     "path": "../storage/solaris-rose/index.html",
-    "preview": "thumbnails/solaris.png",
+    "preview": "thumbnails/real_solaris_rose.png",
     "tags": ["react", "ui", "landing", "premium", "hero", "rose-gold"],
     "dateCreated": "2026-01-08",
     "variants": [
@@ -66,7 +66,7 @@
     "category": "Hero",
     "description": "High-fidelity horological simulation with involute gears, escapement physics, and procedural nebula. Winner of the Celestial design challenge.",
     "path": "../storage/chrono-viscera/index.html",
-    "preview": "thumbnails/chrono.png",
+    "preview": "thumbnails/real_chrono_viscera.png",
     "tags": [
       "hero",
       "3d",
@@ -90,7 +90,7 @@
     "category": "UI Cards",
     "description": "Premium 3D stacked cards with 6 distinct themes (Solarpunk, Seasons, Rainy) and rich background animations.",
     "path": "../storage/seasonal-display-cards/code.html",
-    "preview": "thumbnails/seasonal_cards.png",
+    "preview": "thumbnails/real_seasonal_cards.png",
     "tags": [
       "cards",
       "3d",
@@ -155,7 +155,7 @@
     "category": "UI Cards",
     "description": "A frosted glass card with hover tilt effect.",
     "path": "../storage/glass-card/code.html",
-    "preview": "thumbnails/glass_card.png",
+    "preview": "thumbnails/real_glass_card.png",
     "tags": ["card", "glassmorphism", "3d", "test"],
     "dateCreated": "2024-12-23",
     "variants": [
@@ -173,7 +173,7 @@
     "description": "Interactive scroll-tracking sidebar with Lava, Ice, Gold, and Blood themes.",
     "path": "../storage/elemental-slider/demo.html",
     "codePath": "../storage/elemental-slider/fragment.html",
-    "preview": "thumbnails/elemental_slider.png",
+    "preview": "thumbnails/real_elemental_slider.png",
     "tags": ["sidebar", "navigation", "scroll", "animation", "interactive"],
     "dateCreated": "2024-12-23",
     "variants": [
@@ -205,7 +205,7 @@
     "category": "Cursors",
     "description": "Photonic Lattice cursor with Ortho-Grid trail.",
     "path": "../storage/cursor-architect/code.html",
-    "preview": "thumbnails/cursor_architect.png",
+    "preview": "thumbnails/real_cursor_architect.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -222,7 +222,7 @@
     "category": "Cursors",
     "description": "Magnetic Fluid Dynamics cursor with Metaball Webbing.",
     "path": "../storage/cursor-ferro/code.html",
-    "preview": "thumbnails/cursor_ferro.png",
+    "preview": "thumbnails/real_cursor_ferro.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -239,7 +239,7 @@
     "category": "Cursors",
     "description": "Magnetoplasmadynamic Thruster cursor with Volumetric Exhaust.",
     "path": "../storage/cursor-ion/code.html",
-    "preview": "thumbnails/cursor_ion.png",
+    "preview": "thumbnails/real_cursor_ion.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -256,7 +256,7 @@
     "category": "Cursors",
     "description": "Fusion Containment cursor with Particle Jet trail.",
     "path": "../storage/cursor-plasma/code.html",
-    "preview": "thumbnails/cursor_plasma.png",
+    "preview": "thumbnails/real_cursor_plasma.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -273,7 +273,7 @@
     "category": "Cursors",
     "description": "Probabilistic Waveform cursor with Ribbon trail.",
     "path": "../storage/cursor-quantum/code.html",
-    "preview": "thumbnails/cursor_quantum.png",
+    "preview": "thumbnails/real_cursor_quantum.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -290,7 +290,7 @@
     "category": "Cursors",
     "description": "Vector Graphics Terminal cursor with Signal Decay.",
     "path": "../storage/cursor-scope/code.html",
-    "preview": "thumbnails/cursor_scope.png",
+    "preview": "thumbnails/real_cursor_scope.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -307,7 +307,7 @@
     "category": "Cursors",
     "description": "Bio-Electric Transmission cursor with Dendrite Fiber.",
     "path": "../storage/cursor-synaptic/code.html",
-    "preview": "thumbnails/cursor_synaptic.png",
+    "preview": "thumbnails/real_cursor_synaptic.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -324,7 +324,7 @@
     "category": "Cursors",
     "description": "Null-Point Drive cursor with Chromatic Echo.",
     "path": "../storage/cursor-void/code.html",
-    "preview": "thumbnails/cursor_void.png",
+    "preview": "thumbnails/real_cursor_void.png",
     "tags": ["cursor", "canvas", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -341,7 +341,7 @@
     "category": "Cursors",
     "description": "Analog hexagonal pencil with varying-width graphite trail.",
     "path": "../storage/cursor-pencil/code.html",
-    "preview": "thumbnails/cursor_pencil.png",
+    "preview": "thumbnails/real_cursor_pencil.png",
     "tags": ["cursor", "skeuomorphic", "creative", "premium"],
     "dateCreated": "2025-12-24",
     "variants": [
@@ -358,7 +358,7 @@
     "category": "Navigation",
     "description": "A Dynamic Island-style navbar with hover-to-expand labels, sliding active indicators, and buttery-smooth flexbox centering.",
     "path": "../storage/nav-island-flex/code.html",
-    "preview": "thumbnails/nav_island.png",
+    "preview": "thumbnails/real_nav_island.png",
     "tags": [
       "navigation",
       "react",
@@ -381,7 +381,7 @@
     "category": "Navigation",
     "description": "A bold, Neo-Brutalist navbar with 'BUTTER' spring physics, hard shadows, and liquid-like squashing effects.",
     "path": "../storage/nav-liquid-toon/code.html",
-    "preview": "thumbnails/nav_liquid.png",
+    "preview": "thumbnails/real_nav_liquid.png",
     "tags": [
       "navigation",
       "react",
@@ -405,7 +405,7 @@
     "category": "Navigation",
     "description": "A biomimetic, crystalline navbar with 'Breeze' physics, asymmetric organic leaf shapes, and mist-dissolve exits.",
     "path": "../storage/nav-eden-glass/code.html",
-    "preview": "thumbnails/nav_eden.png",
+    "preview": "thumbnails/real_nav_eden.png",
     "tags": [
       "navigation",
       "react",
@@ -429,7 +429,7 @@
     "category": "Hero",
     "description": "Scroll-responsive 3D neural network background with Three.js bloom effects. Nodes rotate faster as you scroll for an immersive parallax experience.",
     "path": "../storage/hero-neural-bg/code.html",
-    "preview": "thumbnails/neural.png",
+    "preview": "thumbnails/real_neural_bg.png",
     "tags": [
       "hero",
       "background",
@@ -447,6 +447,111 @@
         "class": "",
         "promptPath": "../storage/hero-neural-bg/prompt.md"
       }
+    ]
+  },
+  {
+    "id": "hero-velvet-eclipse",
+    "name": "Velvet Eclipse",
+    "category": "Hero",
+    "description": "A cinematic deep-space component visualizing a total solar eclipse with breathing corona and orbiting particles.",
+    "path": "../storage/velvet-eclipse/index.html",
+    "preview": "thumbnails/real_velvet_eclipse.png",
+    "tags": ["hero", "space", "eclipse", "cinematic", "premium"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Totality", "class": "theme-totality", "promptPath": "../storage/velvet-eclipse/prompt_totality.md" },
+      { "name": "Blood Moon", "class": "theme-blood", "promptPath": "../storage/velvet-eclipse/prompt_blood.md" },
+      { "name": "Frozen", "class": "theme-frozen", "promptPath": "../storage/velvet-eclipse/prompt_frozen.md" }
+    ]
+  },
+  {
+    "id": "hero-ethereal-mist",
+    "name": "Ethereal Mist",
+    "category": "Hero",
+    "description": "Dreamy fog-laden interface with shifting aurora borealis effects and floating light motes.",
+    "path": "../storage/ethereal-mist/index.html",
+    "preview": "thumbnails/real_ethereal_mist.png",
+    "tags": ["hero", "fog", "aurora", "dreamy", "ambient"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Luminous", "class": "theme-cyan", "promptPath": "../storage/ethereal-mist/prompt_cyan.md" },
+      { "name": "Emerald", "class": "theme-emerald", "promptPath": "../storage/ethereal-mist/prompt_emerald.md" },
+      { "name": "Sunset", "class": "theme-sunset", "promptPath": "../storage/ethereal-mist/prompt_sunset.md" }
+    ]
+  },
+  {
+    "id": "hero-quantum-field",
+    "name": "Quantum Field",
+    "category": "Hero",
+    "description": "High-tech visualization of subatomic particles, probability fields, and energy rings.",
+    "path": "../storage/quantum-field/index.html",
+    "preview": "thumbnails/real_quantum_field.png",
+    "tags": ["hero", "sci-fi", "tech", "quantum", "particles"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Pulse", "class": "theme-pulse", "promptPath": "../storage/quantum-field/prompt_cyan.md" },
+      { "name": "Matrix", "class": "theme-matrix", "promptPath": "../storage/quantum-field/prompt_matrix.md" },
+      { "name": "Crimson", "class": "theme-crimson", "promptPath": "../storage/quantum-field/prompt_crimson.md" }
+    ]
+  },
+  {
+    "id": "hero-celestial-rose",
+    "name": "Celestial Rose",
+    "category": "Hero",
+    "description": "Divine angelic structure made of pure light beams and falling petals.",
+    "path": "../storage/celestial-rose/index.html",
+    "preview": "thumbnails/real_celestial_rose.png",
+    "tags": ["hero", "divine", "rose", "light", "elegant"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Classic", "class": "theme-classic", "promptPath": "../storage/celestial-rose/prompt_classic.md" },
+      { "name": "Gold", "class": "theme-gold", "promptPath": "../storage/celestial-rose/prompt_gold.md" },
+      { "name": "Violet", "class": "theme-violet", "promptPath": "../storage/celestial-rose/prompt_violet.md" }
+    ]
+  },
+  {
+    "id": "hero-aurora-infinita",
+    "name": "Aurora Infinita",
+    "category": "Hero",
+    "description": "Breathtaking simulation of the Northern Lights with swaying curtains and starfields.",
+    "path": "../storage/aurora-infinita/index.html",
+    "preview": "thumbnails/real_aurora_infinita.png",
+    "tags": ["hero", "nature", "aurora", "lights", "sky"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Borealis", "class": "theme-borealis", "promptPath": "../storage/aurora-infinita/prompt_borealis.md" },
+      { "name": "Australis", "class": "theme-australis", "promptPath": "../storage/aurora-infinita/prompt_australis.md" },
+      { "name": "Solaris", "class": "theme-solaris", "promptPath": "../storage/aurora-infinita/prompt_solaris.md" }
+    ]
+  },
+  {
+    "id": "hero-liquid-dimensions",
+    "name": "Liquid Dimensions",
+    "category": "Hero",
+    "description": "Fluid morphing interface where physics bends and melts with glassmorphic effects.",
+    "path": "../storage/liquid-dimensions/index.html",
+    "preview": "thumbnails/real_liquid_dimensions.png",
+    "tags": ["hero", "liquid", "fluid", "glassmorphism", "modern"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Iridescent", "class": "theme-iridescent", "promptPath": "../storage/liquid-dimensions/prompt_iridescent.md" },
+      { "name": "Jade", "class": "theme-jade", "promptPath": "../storage/liquid-dimensions/prompt_emerald.md" },
+      { "name": "Blush", "class": "theme-blush", "promptPath": "../storage/liquid-dimensions/prompt_rose.md" }
+    ]
+  },
+  {
+    "id": "hero-nebula-genesis",
+    "name": "Nebula Genesis",
+    "category": "Hero",
+    "description": "Cosmic scale visualization of star birth within massive gas clouds and spiral arms.",
+    "path": "../storage/nebula-genesis/index.html",
+    "preview": "thumbnails/real_nebula_genesis.png",
+    "tags": ["hero", "space", "nebula", "cosmic", "stars"],
+    "dateCreated": "2026-01-15",
+    "variants": [
+      { "name": "Creation", "class": "theme-creation", "promptPath": "../storage/nebula-genesis/prompt_creation.md" },
+      { "name": "Cosmic", "class": "theme-cosmic", "promptPath": "../storage/nebula-genesis/prompt_cosmic.md" },
+      { "name": "Ember", "class": "theme-ember", "promptPath": "../storage/nebula-genesis/prompt_ember.md" }
     ]
   }
 ]
