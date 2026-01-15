@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Genesis - Ethereal Collection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poiret+One&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            overflow: hidden; 
+            background: #000;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        #root { height: 100vh; width: 100vw; }
+
+        /* -------------------------------------------------------------------------- */
+        /* [GLOBAL] CSS VARIABLES & BASE STYLES                                       */
+        /* -------------------------------------------------------------------------- */
+        :root {
+            --phi: 1.618033988749895;
+            --phi-inv: 0.618033988749895;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+            --ease-organic: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            opacity: 0.015;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* [THEME-CSS] 07: NEBULA GENESIS                                             */
+        /* -------------------------------------------------------------------------- */
+        @keyframes nebula-swirl {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes nebula-swirl-reverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        @keyframes nebula-cloud-drift {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: var(--cloud-opacity); }
+            50% { transform: translate(-50%, -50%) scale(1.1); opacity: calc(var(--cloud-opacity) * 1.3); }
+        }
+        @keyframes nebula-core-pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 80px 30px var(--core-glow-1), 0 0 160px 60px var(--core-glow-2); }
+            50% { transform: translate(-50%, -50%) scale(1.1); box-shadow: 0 0 120px 50px var(--core-glow-1), 0 0 200px 80px var(--core-glow-2); }
+        }
+        @keyframes nebula-dust-float {
+            0% { transform: translate(var(--start-x), var(--start-y)); opacity: 0; }
+            20% { opacity: var(--dust-opacity); }
+            80% { opacity: calc(var(--dust-opacity) * 0.5); }
+            100% { transform: translate(var(--end-x), var(--end-y)); opacity: 0; }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* [CSS] SHARED UTILITIES                                                     */
+        /* -------------------------------------------------------------------------- */
+        .title-char {
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback, useRef } = React;
+
+        const PHI = 1.618033988749895;
+
+        // --------------------------------------------------------------------------
+        // [CONFIG] THEME DATA
+        // --------------------------------------------------------------------------
+        const themeConfig = {
+            name: "Nebula Genesis",
+            tagline: "Nebula",
+            accent: "#ec4899",
+            font: "'Poiret One', sans-serif",
+            letterSpacing: "0.45em",
+            variants: {
+                creation: { name: "Creation", bg: "radial-gradient(ellipse at 50% 50%, #1a0a15 0%, #120812 25%, #0a050a 50%, #050305 75%, #000 100%)", title: "GENESIS", subtitle: "WHERE STARS ARE BORN", accent: "#ec4899", accentRGB: "236,72,153",
+                    cloudColors: ['rgba(236,72,153,', 'rgba(168,85,247,', 'rgba(139,92,246,', 'rgba(244,114,182,'], coreColors: { glow1: 'rgba(236,72,153,0.7)', glow2: 'rgba(168,85,247,0.4)' } },
+                cosmic: { name: "Cosmic", bg: "radial-gradient(ellipse at 50% 50%, #0a0a1a 0%, #080815 25%, #05050a 50%, #030305 75%, #000 100%)", title: "COSMIC", subtitle: "THE INFINITE STELLAR NURSERY", accent: "#6366f1", accentRGB: "99,102,241",
+                    cloudColors: ['rgba(99,102,241,', 'rgba(139,92,246,', 'rgba(59,130,246,', 'rgba(34,211,238,'], coreColors: { glow1: 'rgba(99,102,241,0.7)', glow2: 'rgba(139,92,246,0.4)' } },
+                ember: { name: "Ember", bg: "radial-gradient(ellipse at 50% 50%, #1a0c05 0%, #150908 25%, #0a0504 50%, #050302 75%, #000 100%)", title: "EMBER", subtitle: "FIRE IN THE VOID", accent: "#f97316", accentRGB: "249,115,22",
+                    cloudColors: ['rgba(249,115,22,', 'rgba(251,146,60,', 'rgba(239,68,68,', 'rgba(251,191,36,'], coreColors: { glow1: 'rgba(249,115,22,0.7)', glow2: 'rgba(251,146,60,0.4)' } }
+            }
+        };
+
+        // --------------------------------------------------------------------------
+        // [COMPONENT] 07: NEBULA GENESIS
+        // --------------------------------------------------------------------------
+        function NebulaTheme({ mounted, variant }) {
+            const clouds = useMemo(() => [
+                { x: '40%', y: '45%', size: 800, color: variant.cloudColors[0], opacity: 0.2, duration: 55 },
+                { x: '60%', y: '55%', size: 700, color: variant.cloudColors[1], opacity: 0.18, duration: 65 },
+                { x: '50%', y: '50%', size: 900, color: variant.cloudColors[2], opacity: 0.15, duration: 75 },
+                { x: '35%', y: '60%', size: 600, color: variant.cloudColors[3], opacity: 0.2, duration: 60 },
+                { x: '65%', y: '40%', size: 650, color: variant.cloudColors[0], opacity: 0.17, duration: 70 }
+            ], [variant]);
+
+            const spiralArms = useMemo(() => [
+                { size: 1100, duration: 100, opacity: 0.12, reverse: false },
+                { size: 900, duration: 85, opacity: 0.1, reverse: true },
+                { size: 700, duration: 70, opacity: 0.08, reverse: false }
+            ], []);
+
+            const dustParticles = useMemo(() => Array.from({ length: 50 }, (_, i) => ({ id: i, startX: (-180 + Math.random() * 360) + 'px', startY: (-180 + Math.random() * 360) + 'px', endX: (-250 + Math.random() * 500) + 'px', endY: (-250 + Math.random() * 500) + 'px', size: 1 + Math.random() * 2.5, opacity: 0.2 + Math.random() * 0.4, duration: 25 + Math.random() * 35, delay: -Math.random() * 45 })), []);
+
+            return (
+                <div className={`absolute inset-0 overflow-hidden transition-opacity duration-[2000ms] ${mounted ? 'opacity-100' : 'opacity-0'}`} style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}>
+                    {spiralArms.map((arm, i) => (<div key={i} className="absolute top-1/2 left-1/2" style={{ width: arm.size, height: arm.size, background: `conic-gradient(from 0deg, transparent 0%, ${variant.cloudColors[0]}${arm.opacity}) 12%, ${variant.cloudColors[1]}${arm.opacity * 0.8}) 25%, transparent 40%, ${variant.cloudColors[2]}${arm.opacity}) 55%, ${variant.cloudColors[3]}${arm.opacity * 0.8}) 70%, transparent 85%)`, filter: 'blur(50px)', animation: `${arm.reverse ? 'nebula-swirl-reverse' : 'nebula-swirl'} ${arm.duration}s linear infinite` }} />))}
+
+                    {clouds.map((cloud, i) => (<div key={i} className="absolute rounded-full" style={{ left: cloud.x, top: cloud.y, width: cloud.size, height: cloud.size, '--cloud-opacity': cloud.opacity, background: `radial-gradient(ellipse at center, ${cloud.color}${cloud.opacity}) 0%, ${cloud.color}${cloud.opacity * 0.4}) 40%, transparent 70%)`, filter: 'blur(70px)', animation: `nebula-cloud-drift ${cloud.duration}s var(--ease-in-out-sine) infinite`, animationDelay: `${-i * 10}s` }} />))}
+
+                    <div className="absolute top-1/2 left-1/2 w-40 h-40 rounded-full" style={{ '--core-glow-1': variant.coreColors.glow1, '--core-glow-2': variant.coreColors.glow2, background: `radial-gradient(circle, rgba(255,255,255,0.9) 0%, ${variant.coreColors.glow1} 30%, transparent 70%)`, animation: 'nebula-core-pulse 10s var(--ease-in-out-sine) infinite' }} />
+
+                    {dustParticles.map(p => (<div key={p.id} className="absolute top-1/2 left-1/2 rounded-full" style={{ width: p.size, height: p.size, background: 'white', '--start-x': p.startX, '--start-y': p.startY, '--end-x': p.endX, '--end-y': p.endY, '--dust-opacity': p.opacity, animation: `nebula-dust-float ${p.duration}s var(--ease-organic) infinite`, animationDelay: `${p.delay}s` }} />))}
+                </div>
+            );
+        }
+
+        // --------------------------------------------------------------------------
+        // [SHARED] CENTER TEXT COMPONENT
+        // --------------------------------------------------------------------------
+        function CenterText({ config, font, mounted, letterSpacing }) {
+            return (
+                <div className="relative z-10 text-center px-4">
+                    <h1 className="mb-6 text-white font-extralight" style={{ fontFamily: font, fontSize: 'clamp(2.5rem, 10vw, 7rem)', letterSpacing: letterSpacing || '0.3em' }}>
+                        {config.title.split("").map((char, i) => (
+                            <span key={i} className={`title-char transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-10 blur-sm'}`} style={{ transitionDelay: `${600 + i * 70}ms`, transitionTimingFunction: 'var(--ease-out-expo)', textShadow: `0 0 50px rgba(${config.accentRGB},0.5), 0 0 100px rgba(${config.accentRGB},0.3)` }}>
+                                {char === " " ? "\u00A0" : char}
+                            </span>
+                        ))}
+                    </h1>
+                    <p className={`text-sm md:text-base font-light tracking-[0.35em] md:tracking-[0.5em] transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} style={{ transitionDelay: '1600ms', fontFamily: font, color: config.accent, textShadow: `0 0 30px rgba(${config.accentRGB},0.4)` }}>
+                        {config.subtitle}
+                    </p>
+                    <div className={`mt-10 flex items-center justify-center gap-4 transition-all duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '2000ms' }}>
+                        <div className="h-px w-16 md:w-28" style={{ background: `linear-gradient(90deg, transparent, ${config.accent}50)` }} />
+                        <div className="w-2 h-2 rotate-45" style={{ background: config.accent, boxShadow: `0 0 15px ${config.accent}` }} />
+                        <div className="h-px w-16 md:w-28" style={{ background: `linear-gradient(90deg, ${config.accent}50, transparent)` }} />
+                    </div>
+                </div>
+            );
+        }
+
+        // --------------------------------------------------------------------------
+        // [CORE] MAIN APP ORCHESTRA
+        // --------------------------------------------------------------------------
+        function App() {
+            const [mounted, setMounted] = useState(false);
+            const [variantKey, setVariantKey] = useState(Object.keys(themeConfig.variants)[0]);
+            const [dropdownOpen, setDropdownOpen] = useState(false);
+
+            useEffect(() => { const timer = setTimeout(() => setMounted(true), 150); return () => clearTimeout(timer); }, []);
+
+            const variantConfig = themeConfig.variants[variantKey];
+
+            const handleVariantChange = (key) => {
+                setMounted(false);
+                setTimeout(() => { setVariantKey(key); setDropdownOpen(false); setTimeout(() => setMounted(true), 100); }, 400);
+            };
+
+            return (
+                <div className="relative w-full h-full transition-all duration-1000" style={{ background: variantConfig.bg, transitionTimingFunction: 'var(--ease-out-expo)' }}>
+                    <NebulaTheme mounted={mounted} variant={variantConfig} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <CenterText config={variantConfig} font={themeConfig.font} letterSpacing={themeConfig.letterSpacing} mounted={mounted} />
+                    </div>
+                    <div className="noise" />
+                    <div className="vignette" />
+                    <div className="absolute top-6 left-6 z-20">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${variantConfig.accent}20, ${variantConfig.accent}08)`, border: `1px solid ${variantConfig.accent}18` }}>
+                                <div className="w-2.5 h-2.5 rounded-full" style={{ background: variantConfig.accent, boxShadow: `0 0 12px ${variantConfig.accent}` }} />
+                            </div>
+                            <span className="hidden sm:block text-white/25 text-[9px] tracking-[0.2em] font-light uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Nebula Genesis</span>
+                        </div>
+                    </div>
+                    <div className="absolute top-6 right-6 z-30">
+                        <div className="relative">
+                            <button onClick={() => setDropdownOpen(!dropdownOpen)} className="px-5 py-2.5 rounded-xl backdrop-blur-xl border border-white/[0.06] text-white/60 hover:text-white transition-all duration-400 flex items-center gap-2" style={{ background: 'rgba(0,0,0,0.4)', fontFamily: "'Inter', sans-serif", fontSize: '10px', letterSpacing: '0.12em' }}>
+                                <span>PALETTE: {variantConfig.name.toUpperCase()}</span>
+                                <svg className={`w-2.5 h-2.5 transition-transform duration-400 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                            {dropdownOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-48 py-1.5 rounded-xl backdrop-blur-2xl border border-white/[0.06] shadow-xl z-40" style={{ background: 'rgba(8,8,8,0.85)' }}>
+                                    {Object.entries(themeConfig.variants).map(([key, v]) => (
+                                        <button key={key} onClick={() => handleVariantChange(key)} className={`w-full text-left px-4 py-2.5 text-[9px] tracking-[0.1em] transition-all duration-300 ${variantKey === key ? 'text-white' : 'text-white/35 hover:text-white/60'}`} style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {v.name.toUpperCase()}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="absolute top-0 left-0 w-32 h-32 pointer-events-none opacity-30" style={{ borderRight: `1px solid ${variantConfig.accent}06`, borderBottom: `1px solid ${variantConfig.accent}06` }} />
+                    <div className="absolute bottom-0 right-0 w-32 h-32 pointer-events-none opacity-30" style={{ borderLeft: `1px solid ${variantConfig.accent}06`, borderTop: `1px solid ${variantConfig.accent}06` }} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
