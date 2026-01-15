@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aurora Infinita - Ethereal Collection</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Tenor+Sans&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            overflow: hidden; 
+            background: #000;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        #root { height: 100vh; width: 100vw; }
+
+        /* -------------------------------------------------------------------------- */
+        /* [GLOBAL] CSS VARIABLES & BASE STYLES                                       */
+        /* -------------------------------------------------------------------------- */
+        :root {
+            --phi: 1.618033988749895;
+            --phi-inv: 0.618033988749895;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+            --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+            --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+            --ease-organic: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .noise {
+            position: fixed;
+            inset: 0;
+            opacity: 0.015;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay;
+        }
+
+        .vignette {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: radial-gradient(ellipse at center, transparent 0%, transparent 50%, rgba(0,0,0,0.5) 100%);
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* [THEME-CSS] 05: AURORA INFINITA                                            */
+        /* -------------------------------------------------------------------------- */
+        @keyframes aurora-curtain-sway {
+            0%, 100% { transform: translateX(0) scaleY(1) skewX(0deg); }
+            25% { transform: translateX(2%) scaleY(1.02) skewX(0.5deg); }
+            50% { transform: translateX(-1%) scaleY(1.04) skewX(-0.3deg); }
+            75% { transform: translateX(1.5%) scaleY(1.01) skewX(0.2deg); }
+        }
+        @keyframes aurora-ray-shimmer {
+            0%, 100% { opacity: 0.4; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-2%); }
+        }
+        @keyframes aurora-fog-drift {
+            0% { transform: translateX(-5%); }
+            100% { transform: translateX(5%); }
+        }
+        @keyframes aurora-star-pulse {
+            0%, 100% { opacity: var(--star-op); transform: scale(1); }
+            50% { opacity: calc(var(--star-op) * 1.5); transform: scale(1.2); }
+        }
+        @keyframes aurora-mote-fall {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: var(--mote-op); }
+            90% { opacity: calc(var(--mote-op) * 0.2); }
+            100% { transform: translateY(110vh) translateX(var(--mote-drift)); opacity: 0; }
+        }
+        @keyframes aurora-glow-pulse {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        /* -------------------------------------------------------------------------- */
+        /* [CSS] SHARED UTILITIES                                                     */
+        /* -------------------------------------------------------------------------- */
+        .title-char {
+            display: inline-block;
+            will-change: transform, opacity;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useCallback, useRef } = React;
+
+        const PHI = 1.618033988749895;
+
+        // --------------------------------------------------------------------------
+        // [CONFIG] THEME DATA
+        // --------------------------------------------------------------------------
+        const themeConfig = {
+            name: "Aurora Infinita",
+            tagline: "Aurora",
+            accent: "#22c55e",
+            font: "'Tenor Sans', sans-serif",
+            letterSpacing: "0.4em",
+            variants: {
+                borealis: { name: "Borealis", bg: "linear-gradient(180deg, #000000 0%, #010208 15%, #020617 40%, #0a101f 70%, #0f172a 100%)", title: "BOREALIS", subtitle: "WHERE LIGHT DANCES ETERNAL", accent: "#22c55e", accentRGB: "34,197,94",
+                    curtainColors: ['#22c55e', '#14b8a6', '#06b6d4', '#8b5cf6'], glowColor: 'rgba(34,197,94,' },
+                australis: { name: "Australis", bg: "linear-gradient(180deg, #000000 0%, #080104 15%, #120208 40%, #1a0a14 70%, #0f0a1a 100%)", title: "AUSTRALIS", subtitle: "THE SOUTHERN CELESTIAL FIRE", accent: "#ec4899", accentRGB: "236,72,153",
+                    curtainColors: ['#ec4899', '#f472b6', '#a855f7', '#6366f1'], glowColor: 'rgba(236,72,153,' },
+                solaris: { name: "Solaris", bg: "linear-gradient(180deg, #000000 0%, #0a0400 15%, #1a0a02 40%, #201004 70%, #1a1005 100%)", title: "SOLARIS", subtitle: "THE GOLDEN FIRE RISES", accent: "#f59e0b", accentRGB: "245,158,11",
+                    curtainColors: ['#f59e0b', '#fbbf24', '#f97316', '#ef4444'], glowColor: 'rgba(245,158,11,' }
+            }
+        };
+
+        // --------------------------------------------------------------------------
+        // [COMPONENT] 05: AURORA INFINITA
+        // --------------------------------------------------------------------------
+        function AuroraTheme({ mounted, variant }) {
+            const stars = useMemo(() => Array.from({ length: 150 }, (_, i) => {
+                const layer = i < 20 ? 'far' : i < 80 ? 'mid' : 'near';
+                const size = layer === 'far' ? 0.4 + Math.random() * 0.6 : layer === 'mid' ? 0.8 + Math.random() * 1 : 1.5 + Math.random() * 1.5;
+                return { id: i, x: Math.random() * 100, y: Math.random() * 70, size, opacity: 0.2 + Math.random() * 0.6, duration: 4 + Math.random() * 6, delay: Math.random() * 8 };
+            }), []);
+
+            const curtains = useMemo(() => [
+                { x: '23.6%', width: '18%', height: '75%', colors: variant.curtainColors, duration: 25.88, delay: 0, intensity: 1 },
+                { x: '50%', width: '22%', height: '85%', colors: variant.curtainColors, duration: 25.88, delay: -6, intensity: 1.2 },
+                { x: '76.4%', width: '16%', height: '70%', colors: variant.curtainColors, duration: 25.88, delay: -12, intensity: 0.9 }
+            ], [variant]);
+
+            const motes = useMemo(() => Array.from({ length: 15 }, (_, i) => ({ id: i, x: 10 + Math.random() * 80, size: 8 + Math.random() * 7, opacity: 0.15 + Math.random() * 0.25, duration: 45 + Math.random() * 15, delay: -Math.random() * 50, drift: (-30 + Math.random() * 60) + 'px' })), []);
+
+            return (
+                <div className={`absolute inset-0 overflow-hidden transition-opacity duration-[2000ms] ${mounted ? 'opacity-100' : 'opacity-0'}`} style={{ transitionTimingFunction: 'var(--ease-out-expo)' }}>
+                    {stars.map(star => (<div key={star.id} className="absolute rounded-full" style={{ left: `${star.x}%`, top: `${star.y}%`, width: star.size, height: star.size, background: 'white', '--star-op': star.opacity, animation: `aurora-star-pulse ${star.duration}s var(--ease-in-out-sine) infinite`, animationDelay: `${star.delay}s` }} />))}
+
+                    <div className="absolute left-1/2 bottom-0 -translate-x-1/2 w-[120%] h-[60%]" style={{ background: `radial-gradient(ellipse at 50% 100%, ${variant.glowColor}0.15) 0%, ${variant.glowColor}0.05) 40%, transparent 70%)`, filter: 'blur(60px)', animation: 'aurora-glow-pulse 20s var(--ease-in-out-sine) infinite' }} />
+
+                    {curtains.map((curtain, i) => (
+                        <div key={i} className="absolute bottom-[15%]" style={{ left: curtain.x, width: curtain.width, height: curtain.height, transform: 'translateX(-50%)', animation: `aurora-curtain-sway ${curtain.duration}s var(--ease-in-out-sine) infinite`, animationDelay: `${curtain.delay}s` }}>
+                            <div className="w-full h-full relative" style={{ background: `linear-gradient(180deg, transparent 0%, ${curtain.colors[0]}40 10%, ${curtain.colors[1]}60 30%, ${curtain.colors[2]}50 50%, ${curtain.colors[3]}30 70%, transparent 100%)`, filter: 'blur(8px)', opacity: curtain.intensity * 0.8 }} />
+                            <div className="absolute inset-0" style={{ background: `linear-gradient(180deg, transparent 0%, ${curtain.colors[0]}25 15%, ${curtain.colors[1]}40 35%, ${curtain.colors[2]}35 55%, transparent 100%)`, filter: 'blur(4px)', animation: `aurora-ray-shimmer 9.89s var(--ease-in-out-sine) infinite`, animationDelay: `${i * -3}s` }} />
+                            {Array.from({ length: 8 }, (_, j) => (
+                                <div key={j} className="absolute bottom-0" style={{ left: `${10 + j * 11}%`, width: '3px', height: `${50 + Math.random() * 40}%`, background: `linear-gradient(180deg, transparent 0%, ${curtain.colors[j % curtain.colors.length]}50 30%, ${curtain.colors[j % curtain.colors.length]}80 60%, transparent 100%)`, filter: 'blur(2px)', animation: `aurora-ray-shimmer ${8 + j * 0.5}s var(--ease-in-out-sine) infinite`, animationDelay: `${j * -1}s` }} />
+                            ))}
+                        </div>
+                    ))}
+
+                    <div className="absolute bottom-0 left-0 right-0 h-[20%]" style={{ background: `linear-gradient(180deg, transparent 0%, rgba(15,23,42,0.3) 30%, rgba(15,23,42,0.8) 70%, rgba(15,23,42,1) 100%)` }} />
+                    <div className="absolute bottom-0 left-0 right-0 h-[12%]" style={{ background: `linear-gradient(180deg, transparent 0%, ${variant.glowColor}0.08) 50%, ${variant.glowColor}0.15) 100%)`, filter: 'blur(20px)', animation: 'aurora-fog-drift 61.8s var(--ease-in-out-sine) infinite alternate' }} />
+
+                    {motes.map(mote => (<div key={mote.id} className="absolute rounded-full" style={{ left: `${mote.x}%`, top: '85%', width: mote.size, height: mote.size, background: 'white', boxShadow: `0 0 ${mote.size}px white, 0 0 ${mote.size * 3}px ${variant.glowColor}0.5)`, filter: 'blur(1px)', '--mote-op': mote.opacity, '--mote-drift': mote.drift, animation: `aurora-mote-fall ${mote.duration}s var(--ease-organic) infinite`, animationDelay: `${mote.delay}s` }} />))}
+                </div>
+            );
+        }
+
+        // --------------------------------------------------------------------------
+        // [SHARED] CENTER TEXT COMPONENT
+        // --------------------------------------------------------------------------
+        function CenterText({ config, font, mounted, letterSpacing }) {
+            return (
+                <div className="relative z-10 text-center px-4">
+                    <h1 className="mb-6 text-white font-extralight" style={{ fontFamily: font, fontSize: 'clamp(2.5rem, 10vw, 7rem)', letterSpacing: letterSpacing || '0.3em' }}>
+                        {config.title.split("").map((char, i) => (
+                            <span key={i} className={`title-char transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0 blur-0' : 'opacity-0 translate-y-10 blur-sm'}`} style={{ transitionDelay: `${600 + i * 70}ms`, transitionTimingFunction: 'var(--ease-out-expo)', textShadow: `0 0 50px rgba(${config.accentRGB},0.5), 0 0 100px rgba(${config.accentRGB},0.3)` }}>
+                                {char === " " ? "\u00A0" : char}
+                            </span>
+                        ))}
+                    </h1>
+                    <p className={`text-sm md:text-base font-light tracking-[0.35em] md:tracking-[0.5em] transition-all duration-1000 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`} style={{ transitionDelay: '1600ms', fontFamily: font, color: config.accent, textShadow: `0 0 30px rgba(${config.accentRGB},0.4)` }}>
+                        {config.subtitle}
+                    </p>
+                    <div className={`mt-10 flex items-center justify-center gap-4 transition-all duration-1000 ${mounted ? 'opacity-100' : 'opacity-0'}`} style={{ transitionDelay: '2000ms' }}>
+                        <div className="h-px w-16 md:w-28" style={{ background: `linear-gradient(90deg, transparent, ${config.accent}50)` }} />
+                        <div className="w-2 h-2 rotate-45" style={{ background: config.accent, boxShadow: `0 0 15px ${config.accent}` }} />
+                        <div className="h-px w-16 md:w-28" style={{ background: `linear-gradient(90deg, ${config.accent}50, transparent)` }} />
+                    </div>
+                </div>
+            );
+        }
+
+        // --------------------------------------------------------------------------
+        // [CORE] MAIN APP ORCHESTRA
+        // --------------------------------------------------------------------------
+        function App() {
+            const [mounted, setMounted] = useState(false);
+            const [variantKey, setVariantKey] = useState(Object.keys(themeConfig.variants)[0]);
+            const [dropdownOpen, setDropdownOpen] = useState(false);
+
+            useEffect(() => { const timer = setTimeout(() => setMounted(true), 150); return () => clearTimeout(timer); }, []);
+
+            const variantConfig = themeConfig.variants[variantKey];
+
+            const handleVariantChange = (key) => {
+                setMounted(false);
+                setTimeout(() => { setVariantKey(key); setDropdownOpen(false); setTimeout(() => setMounted(true), 100); }, 400);
+            };
+
+            return (
+                <div className="relative w-full h-full transition-all duration-1000" style={{ background: variantConfig.bg, transitionTimingFunction: 'var(--ease-out-expo)' }}>
+                    <AuroraTheme mounted={mounted} variant={variantConfig} />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <CenterText config={variantConfig} font={themeConfig.font} letterSpacing={themeConfig.letterSpacing} mounted={mounted} />
+                    </div>
+                    <div className="noise" />
+                    <div className="vignette" />
+                    <div className="absolute top-6 left-6 z-20">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `linear-gradient(135deg, ${variantConfig.accent}20, ${variantConfig.accent}08)`, border: `1px solid ${variantConfig.accent}18` }}>
+                                <div className="w-2.5 h-2.5 rounded-full" style={{ background: variantConfig.accent, boxShadow: `0 0 12px ${variantConfig.accent}` }} />
+                            </div>
+                            <span className="hidden sm:block text-white/25 text-[9px] tracking-[0.2em] font-light uppercase" style={{ fontFamily: "'Inter', sans-serif" }}>Aurora Infinita</span>
+                        </div>
+                    </div>
+                    <div className="absolute top-6 right-6 z-30">
+                        <div className="relative">
+                            <button onClick={() => setDropdownOpen(!dropdownOpen)} className="px-5 py-2.5 rounded-xl backdrop-blur-xl border border-white/[0.06] text-white/60 hover:text-white transition-all duration-400 flex items-center gap-2" style={{ background: 'rgba(0,0,0,0.4)', fontFamily: "'Inter', sans-serif", fontSize: '10px', letterSpacing: '0.12em' }}>
+                                <span>PALETTE: {variantConfig.name.toUpperCase()}</span>
+                                <svg className={`w-2.5 h-2.5 transition-transform duration-400 ${dropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                            </button>
+                            {dropdownOpen && (
+                                <div className="absolute top-full right-0 mt-2 w-48 py-1.5 rounded-xl backdrop-blur-2xl border border-white/[0.06] shadow-xl z-40" style={{ background: 'rgba(8,8,8,0.85)' }}>
+                                    {Object.entries(themeConfig.variants).map(([key, v]) => (
+                                        <button key={key} onClick={() => handleVariantChange(key)} className={`w-full text-left px-4 py-2.5 text-[9px] tracking-[0.1em] transition-all duration-300 ${variantKey === key ? 'text-white' : 'text-white/35 hover:text-white/60'}`} style={{ fontFamily: "'Inter', sans-serif" }}>
+                                            {v.name.toUpperCase()}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="absolute top-0 left-0 w-32 h-32 pointer-events-none opacity-30" style={{ borderRight: `1px solid ${variantConfig.accent}06`, borderBottom: `1px solid ${variantConfig.accent}06` }} />
+                    <div className="absolute bottom-0 right-0 w-32 h-32 pointer-events-none opacity-30" style={{ borderLeft: `1px solid ${variantConfig.accent}06`, borderTop: `1px solid ${variantConfig.accent}06` }} />
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
