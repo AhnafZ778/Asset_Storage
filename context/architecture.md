@@ -74,3 +74,18 @@ Modern browsers block `fetch()` requests to `file://` URLs.
 **Requirement**: The user _must_ run a local server (e.g., `python3 -m http.server`, `npx http-server`, or the Live Server extension) to view the gallery properly.
 
 **Note**: Run the server from the project root, not `/viewer/`, if you want to preview assets that reference `../storage/` paths.
+
+## ☁️ Deployment Architecture
+
+To support the split structure (`viewer/` app + `storage/` assets) on Vercel:
+
+1.  **`vercel.json` Rewrites**:
+    - Requests to `/` and other paths are rewritten to `/viewer/$1`.
+    - This makes the `viewer` directory act as the public root.
+2.  **CORS Headers**:
+    - Added explicitly to allow `viewer` (served from root) to fetch JSON and HTML from `storage/` if needed, though they are on the same domain in this setup.
+
+### Live URLs
+
+- **Preview**: Run `vercel`
+- **Production**: Run `vercel --prod`
