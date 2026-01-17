@@ -553,5 +553,39 @@
       { "name": "Cosmic", "class": "theme-cosmic", "promptPath": "../storage/nebula-genesis/prompt_cosmic.md" },
       { "name": "Ember", "class": "theme-ember", "promptPath": "../storage/nebula-genesis/prompt_ember.md" }
     ]
+  },
+  {
+    "id": "nav-zen-garden",
+    "name": "Zen Garden Navbar",
+    "category": "Navigation",
+    "description": "Procedural nature navigation with wind physics, swaying procedural bushes, and interactive Soot Sprites.",
+    "path": "../storage/nav-zen-garden/code.html",
+    "preview": "thumbnails/real_nav_zen.png",
+    "tags": ["navigation", "nature", "physics", "ghibli", "soot-sprite"],
+    "dateCreated": "2026-01-17",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/nav-zen-garden/prompt.md"
+      }
+    ]
+  },
+  {
+    "id": "nav-abyssal-trench",
+    "name": "Abyssal Trench Navbar",
+    "category": "Navigation",
+    "description": "Deep-sea bioluminescent navigation with bubble particle simulation and sonar interaction effects.",
+    "path": "../storage/nav-abyssal-trench/code.html",
+    "preview": "thumbnails/real_nav_abyssal.png",
+    "tags": ["navigation", "underwater", "bioluminescence", "dark", "particles"],
+    "dateCreated": "2026-01-17",
+    "variants": [
+      {
+        "name": "Default",
+        "class": "",
+        "promptPath": "../storage/nav-abyssal-trench/prompt.md"
+      }
+    ]
   }
 ]
