@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zen Theme - Manga Garden</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              rounded: ["Nunito", "sans-serif"],
+              hand: ["Caveat", "cursive"],
+            },
+            animation: {
+              'drift-slow': 'drift 90s linear infinite',
+              'drift-medium': 'drift 60s linear infinite',
+              'sway': 'sway 5s ease-in-out infinite',
+              'sway-gentle': 'swayGentle 4s ease-in-out infinite',
+              'blink': 'blink 3s ease-in-out infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'leaf-fall': 'leafFall 8s ease-in-out infinite',
+            },
+            keyframes: {
+              drift: {
+                '0%': { transform: 'translateX(-120%)' },
+                '100%': { transform: 'translateX(120vw)' },
+              },
+              sway: {
+                '0%, 100%': { transform: 'rotate(-1.5deg)' },
+                '50%': { transform: 'rotate(1.5deg)' },
+              },
+              swayGentle: {
+                '0%, 100%': { transform: 'rotate(-3deg) translateX(0)' },
+                '50%': { transform: 'rotate(3deg) translateX(2px)' },
+              },
+              blink: {
+                '0%, 42%, 58%, 100%': { transform: 'scaleY(1)' },
+                '50%': { transform: 'scaleY(0.1)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-6px)' },
+              },
+              leafFall: {
+                '0%': { transform: 'translateY(-20px) rotate(0deg)', opacity: '0' },
+                '10%': { opacity: '0.8' },
+                '100%': { transform: 'translateY(100vh) rotate(360deg)', opacity: '0' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Nunito', sans-serif;
+      }
+      
+      /* Canvas/Paper Grain Texture */
+      .canvas-grain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.04;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        z-index: 1000;
+      }
+      
+      /* Page transitions */
+      .page {
+        display: none;
+        animation: fadeIn 0.35s ease-out;
+      }
+      .page.active {
+        display: block;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      /* Manga-style Fluffy Clouds */
+      .cloud {
+        position: absolute;
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+      }
+      .cloud-puff {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 50%;
+        border: 2px solid rgba(20, 83, 45, 0.15);
+        box-shadow: inset -6px -6px 15px rgba(200, 220, 240, 0.4),
+                    inset 4px 4px 10px rgba(255, 255, 255, 0.9);
+      }
+      
+      /* Cel-Shaded Bamboo */
+      .bamboo-stalk {
+        position: absolute;
+        bottom: 0;
+        background: #86efac;
+        border: 3px solid #14532d;
+        border-radius: 6px;
+        box-shadow: inset 8px 0 0 rgba(187, 247, 208, 0.7),
+                    inset -4px 0 0 rgba(20, 83, 45, 0.15);
+      }
+      .bamboo-node {
+        position: absolute;
+        left: -3px;
+        right: -3px;
+        height: 8px;
+        background: #86efac;
+        border: 3px solid #14532d;
+        border-radius: 4px;
+        box-shadow: inset 0 2px 0 rgba(187, 247, 208, 0.6);
+      }
+      .bamboo-leaf-cel {
+        position: absolute;
+        width: 45px;
+        height: 14px;
+        background: #86efac;
+        border: 2px solid #14532d;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        transform-origin: left center;
+        box-shadow: inset 3px 2px 0 rgba(187, 247, 208, 0.6);
+      }
+      
+      /* --- NAV BUSH & SOOT SPRITE --- */
+      
+      .nav-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 32px; /* Increased gap for bushes */
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      /* The Bush Container */
+      .nav-bush-wrapper {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      
+      /* The Cel-Shaded Bush Graphic */
+      .nav-bush {
+        position: absolute;
+        width: 64px;
+        height: 50px;
+        background: #4ade80; /* Base Green */
+        border-radius: 30px;
+        border: 2px solid #15803d; /* Dark Outline */
+        z-index: 1;
+        box-shadow: inset 4px 4px 0px rgba(255, 255, 255, 0.3),
+                    inset -4px -4px 0px rgba(0, 0, 0, 0.1),
+                    0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        animation: bushIdle 6s ease-in-out infinite; /* Default subtle breathing */
+      }
+      
+      /* Fluffy bits on the bush */
+      .nav-bush::before, .nav-bush::after {
+        content: '';
+        position: absolute;
+        background: #4ade80;
+        border-radius: 50%;
+        border: 2px solid #15803d;
+        z-index: -1; /* Behind the main body */
+      }
+      .nav-bush::before {
+        width: 30px;
+        height: 30px;
+        top: -10px;
+        left: 5px;
+        box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3);
+      }
+      .nav-bush::after {
+        width: 25px;
+        height: 25px;
+        top: -8px;
+        right: 8px;
+        background: #22c55e; /* Slightly darker puff */
+        border: 2px solid #15803d;
+      }
+
+      /* Soot Sprite */
+      .soot-sprite {
+        position: absolute;
+        pointer-events: none;
+        width: 34px;
+        height: 34px;
+        background: #1c1917;
+        border-radius: 50%;
+        border: 2px solid #0c0a09;
+        z-index: 2; /* Inside/Behind Bush Logic */
+        transition: scale 0.8s translateX(0);
+        transform-origin: center bottom;
+      }
+      
+      /* Eyes */
+      .soot-sprite::before,
+      .soot-sprite::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 7px;
+        background: white;
+        border-radius: 50%;
+        top: 10px;
+        animation: blink 3s ease-in-out infinite;
+      }
+      .soot-sprite::before { left: 8px; }
+      .soot-sprite::after { right: 8px; animation-delay: 0.15s; }
+
+      /* --- SEQUENCED ANIMATIONS --- */
+      
+      /* Explicit Keyframes for JS/CSS Animations */
+      @keyframes rustle {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.05) rotate(2deg); }
+        50% { transform: scale(0.95) rotate(-2deg); }
+        75% { transform: scale(1.02) rotate(1deg); }
+      }
+      
+      @keyframes bushSway {
+         0%, 100% { transform: rotate(-2deg); }
+         50% { transform: rotate(2deg); }
+      }
+      
+      @keyframes bushPop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.3, 0.7) translateY(5px); } /* Squash */
+        60% { transform: scale(0.9, 1.2) translateY(-5px); } /* Stretch */
+        100% { transform: scale(1); }
+      }
+      
+      @keyframes bushSquish {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.25, 0.75) translateY(5px); } /* Impact squish */
+        60% { transform: scale(0.9, 1.1) translateY(-2px); } /* Rebound */
+        100% { transform: scale(1); }
+      }
+
+      /* Random Shake Animation */
+      @keyframes bushShake {
+        0% { transform: translateX(0) rotate(0deg); }
+        25% { transform: translateX(-2px) rotate(-4deg); }
+        50% { transform: translateX(2px) rotate(4deg); }
+        75% { transform: translateX(-1px) rotate(-2deg); }
+        100% { transform: translateX(0) rotate(0deg); }
+      }
+
+      /* Soot Peep Animation */
+      @keyframes sootPeepAnim {
+        0% { transform: translate(0, 0) scale(0.8); }
+        20% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1); } /* Pop out fast */
+        40% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr1, -10deg)); } /* Look 1 */
+        70% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr2, 10deg)); } /* Look 2 */
+        100% { transform: translate(0, 0) scale(0.8); } /* Return */
+      }
+      .soot-sprite.peeping {
+        animation: sootPeepAnim 2s ease-in-out forwards;
+        z-index: 2; /* Behind bush wrapper (z-10) but peeping out from behind */
+      }
+
+      /* 1. Pop Out (Side) */
+      @keyframes popOutSide {
+        0% { transform: translateX(0) scale(0.8); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(1.2, 0.8) translateY(5px); } /* Anticipate */
+        60% { transform: translateX(calc(var(--side-offset) * 0.8)) scale(0.9, 1.1) translateY(-15px); } /* Jump */
+        100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); } /* Land */
+      }
+      .anim-pop-out {
+        animation: popOutSide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        z-index: 50;
+      }
+
+      /* 2. Look Around */
+      @keyframes lookAround {
+        0% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+        20% { transform: translateX(var(--side-offset)) scale(1.05) rotate(-10deg); }
+        50% { transform: translateX(var(--side-offset)) scale(0.95) rotate(10deg); }
+        80% { transform: translateX(var(--side-offset)) scale(1.02) rotate(-5deg); }
+        100% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+      }
+      .anim-look {
+        animation: lookAround 0.8s ease-in-out forwards;
+        z-index: 50;
+      }
+
+      /* 3. Travel (Vertical Bobbing) */
+      @keyframes travelBob {
+        0%, 100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); }
+        50% { transform: translateX(var(--side-offset)) scale(0.9, 1.1) translateY(-8px); }
+      }
+      .anim-travel {
+        animation: travelBob 0.3s ease-in-out infinite;
+        z-index: 50;
+      }
+
+      /* 4. Dive In */
+      @keyframes diveIn {
+        0% { transform: translateX(var(--side-offset)) scale(1); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(0.8, 1.2) translateY(-15px); } /* Jump up */
+        100% { transform: translateX(0) scale(0.8); } /* Dive in */
+      }
+      .anim-dive {
+        animation: diveIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        z-index: 50;
+      }
+
+      /* ACTIVE vs INACTIVE BUSHES */
+      .nav-bush-wrapper.active .nav-bush {
+        background: #22c55e; /* Darker green when active */
+        animation: bushIdle 4s ease-in-out infinite; /* Calm idle */
+      }
+      
+      /* Explicity Shake Class */
+      .nav-bush-wrapper.active .nav-bush.shaking {
+        animation: bushShake 0.5s ease-in-out;
+      }
+      
+      .nav-bush-wrapper:not(.active) .nav-bush {
+        animation: bushSway 5s ease-in-out infinite; /* Gentle wind sway */
+      }
+      
+      .nav-btn {
+        position: relative;
+        z-index: 20; /* Above bush */
+        text-shadow: 0 2px 0 rgba(255,255,255,0.5);
+      }
+
+      /* Falling Leaf from Active Bush */
+      .active-bush-leaf {
+        position: absolute;
+        background: #4ade80;
+        border: 1px solid #14532d;
+        width: 14px;
+        height: 8px;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        pointer-events: none;
+        z-index: 40;
+        opacity: 0;
+      }
+      
+      @keyframes leafDropAnim {
+        0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+        25% { transform: translate(15px, 40px) rotate(45deg); opacity: 1; }
+        50% { transform: translate(-10px, 90px) rotate(90deg); opacity: 0.9; }
+        75% { transform: translate(10px, 150px) rotate(180deg); opacity: 0.8; }
+        100% { transform: translate(20px, 200px) rotate(360deg); opacity: 0; }
+      }
+
+      /* Stone Texture for Sidebar */
+      .stone-texture {
+        background-color: #d6d3d1; /* Stone 300 */
+        background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23a8a29e' fill-opacity='0.2' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E");
+        border-right: 3px solid #78716c;
+        box-shadow: 4px 4px 0 rgba(87, 83, 78, 0.2);
+      }
+      
+      /* Manga panel card styling */
+      .manga-panel {
+        background: #fffbeb;
+        border: 2px solid #e7e5e4;
+        border-radius: 16px;
+        transition: all 0.2s ease;
+        position: relative;
+      }
+      .manga-panel:hover {
+        border-color: #86efac;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      }
+      
+      /* Leaf watermark */
+      .leaf-watermark {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        opacity: 0.15;
+      }
+      .leaf-watermark svg { width: 32px; height: 32px; }
+      
+      /* Wax seal */
+      .wax-seal {
+        width: 24px;
+        height: 24px;
+        background: radial-gradient(circle at 35% 35%, #dc2626, #991b1b);
+        border-radius: 50%;
+        border: 2px solid #7f1d1d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 10px;
+        color: white;
+        font-weight: bold;
+      }
+      
+      /* Marshmallow buttons */
+      .marshmallow-btn {
+        background: #86efac;
+        color: #14532d;
+        border: 2px solid #22c55e;
+        border-radius: 9999px;
+        font-weight: 600;
+        transition: all 0.15s ease;
+        box-shadow: 0 3px 0 #22c55e;
+      }
+      .marshmallow-btn:hover {
+        transform: scale(1.05) rotate(1deg);
+        box-shadow: 0 4px 0 #22c55e;
+      }
+      .marshmallow-btn:active {
+        transform: scale(0.98);
+        box-shadow: 0 1px 0 #22c55e;
+      }
+      
+      /* Scrollbar */
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: rgba(254, 252, 232, 0.5); border-radius: 10px; }
+      ::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, #86efac, #4ade80); border-radius: 10px; border: 1px solid #22c55e; }
+    </style>
+  </head>
+  <body class="bg-sky-200">
+    
+    <!-- Canvas Grain Overlay -->
+    <div class="canvas-grain"></div>
+    
+    <!-- Manga Panel Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <!-- Ghibli Sky Gradient -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe]"></div>
+      <!-- Subtle Warm Wash -->
+      <div class="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-amber-100/20"></div>
+      
+      <!-- Clouds -->
+      <div class="cloud animate-drift-slow" style="top: 8%; left: -180px; animation-delay: -15s;">
+        <div class="cloud-puff" style="width: 90px; height: 45px; top: 12px; left: 0;"></div>
+        <div class="cloud-puff" style="width: 70px; height: 55px; top: 0; left: 40px;"></div>
+        <div class="cloud-puff" style="width: 80px; height: 40px; top: 15px; left: 85px;"></div>
+        <div class="cloud-puff" style="width: 50px; height: 35px; top: 8px; left: 140px;"></div>
+      </div>
+      
+      <div class="cloud animate-drift-medium" style="top: 15%; left: -220px; animation-delay: -35s;">
+        <div class="cloud-puff" style="width: 100px; height: 50px; top: 18px; left: 0;"></div>
+        <div class="cloud-puff" style="width: 85px; height: 65px; top: 0; left: 55px;"></div>
+        <div class="cloud-puff" style="width: 95px; height: 48px; top: 12px; left: 115px;"></div>
+        <div class="cloud-puff" style="width: 60px; height: 40px; top: 20px; left: 185px;"></div>
+      </div>
+      
+      <!-- Vignette -->
+      <div id="bamboo-vignette" class="absolute inset-0"></div>
+      <div id="falling-leaves" class="absolute inset-0"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-green-100/40 to-transparent"></div>
+    </div>
+
+    <div class="h-screen w-screen flex overflow-hidden font-rounded text-stone-800 relative z-10">
+      
+      <!-- Garden Post Sidebar (Updated to Stone/Bush theme) -->
+      <aside class="fixed left-6 top-1/2 -translate-y-1/2 z-50">
+        <div class="stone-texture flex flex-col items-center py-6 px-4 rounded-2xl shadow-xl relative">
+          
+          <!-- Logo -->
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-stone-100 to-stone-300 border-2 border-stone-500 text-green-600 flex items-center justify-center text-xl mb-2 shadow-md z-20 relative">
+            ⛩️
+          </div>
+          
+          <!-- Navigation -->
+          <nav class="nav-container relative">
+            <!-- Soot Sprite (Moves absolute within nav-container) -->
+            <div id="soot-sprite" class="soot-sprite" style="top: 38px; left: 20px;"></div>
+            
+            <!-- Calendar -->
+            <div class="nav-bush-wrapper active" id="bush-0" onclick="window.showPage('calendar')">
+              <div class="nav-bush"></div>
+              <button class="nav-btn transition-transform duration-200 text-white hover:scale-110" data-page="calendar">
+                📅
+              </button>
+            </div>
+            
+            <!-- Tasks -->
+            <div class="nav-bush-wrapper" id="bush-1" onclick="window.showPage('tasks')">
+              <div class="nav-bush"></div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="tasks">
+                ⚡
+              </button>
+            </div>
+            
+            <!-- Archives -->
+            <div class="nav-bush-wrapper" id="bush-2" onclick="window.showPage('archives')">
+              <div class="nav-bush"></div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="archives">
+                📜
+              </button>
+            </div>
+            
+            <!-- Mind Palace -->
+            <div class="nav-bush-wrapper" id="bush-3" onclick="window.showPage('mind-palace')">
+              <div class="nav-bush"></div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="mind-palace">
+                🧠
+              </button>
+            </div>
+            
+            <!-- Settings -->
+            <div class="nav-bush-wrapper" id="bush-4" onclick="window.showPage('settings')">
+              <div class="nav-bush"></div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="settings">
+                ⚙️
+              </button>
+            </div>
+          </nav>
+          
+          <!-- Divider -->
+          <div class="w-8 h-0.5 bg-stone-400/50 my-2"></div>
+          
+          <!-- Stone Lantern Base Decoration -->
+          <div class="potted-bamboo">
+             <!-- Mossy stone base -->
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-6 bg-stone-500 rounded-md border-2 border-stone-600"></div>
+            <!-- Tiny moss -->
+            <div class="absolute bottom-4 left-1 w-3 h-3 bg-green-500 rounded-full opacity-80"></div>
+            <!-- Stalk -->
+            <div class="mini-stalk" style="left: 18px; height: 30px;">
+              <div class="mini-leaf animate-sway-gentle" style="top: 2px; left: 4px; transform: rotate(-45deg);"></div>
+            </div>
+          </div>
+          
+        </div>
+      </aside>
+      
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col h-full overflow-hidden relative ml-36">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-6 px-8 pt-6">
+          <div class="flex flex-col">
+            <span class="text-green-600 text-xs font-bold uppercase tracking-widest mb-1 flex items-center gap-1">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2C8 6 4 10 4 14c0 4 3 6 8 6s8-2 8-6c0-4-4-8-8-12z"/>
+              </svg>
+              Current State
+            </span>
+            <h2 id="page-title" class="text-4xl text-stone-800 font-hand font-bold">Your Flow</h2>
+          </div>
+          <div class="flex items-center gap-3 bg-[#fffbeb] px-5 py-2.5 rounded-full border-2 border-green-300 shadow-sm">
+            <div class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
+            <span class="text-xs text-stone-600 uppercase tracking-widest font-semibold">Harmony</span>
+            <span class="text-lg">🍃</span>
+          </div>
+        </div>
+        
+        <!-- Pages Container -->
+        <div class="flex-1 overflow-y-auto px-8 pb-8">
+          
+          <!-- Calendar Page -->
+          <div id="page-calendar" class="page active">
+            <div class="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
+              
+              <!-- Main Calendar Card -->
+              <div class="manga-panel p-6 relative">
+                <!-- Leaf Watermark -->
+                <div class="leaf-watermark">
+                  <svg viewBox="0 0 40 40" fill="#86efac">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                    <path d="M20 12v18" stroke="#14532d" stroke-width="1.5" fill="none"/>
+                  </svg>
+                </div>
+                
+                <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-stone-200">
+                  <div>
+                    <div class="text-[10px] font-bold text-green-600 uppercase mb-1 tracking-wider flex items-center gap-1">
+                      🌱 Rhythm
+                    </div>
+                    <h3 class="text-2xl font-hand font-bold text-stone-800">December 2024</h3>
+                  </div>
+                  <div class="flex gap-2">
+                    <button class="px-4 py-2 text-[10px] uppercase border-2 border-stone-300 text-stone-600 rounded-full hover:border-green-400 hover:bg-green-50 transition-all font-semibold">
+                      Today
+                    </button>
+                    <button class="marshmallow-btn px-4 py-2 text-[10px] uppercase">
+                      Month 🌿
+                    </button>
+                  </div>
+                </div>
+                
+                <!-- Days Header -->
+                <div class="grid grid-cols-7 gap-2 mb-4 text-center text-[10px] font-bold text-green-500 uppercase">
+                  <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+                
+                <!-- Calendar Grid -->
+                <div class="grid grid-cols-7 gap-2">
+                  <div class="min-h-[60px]"></div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">1</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">2</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">3</span>
+                    <div class="mt-1 text-[8px] text-green-800 bg-green-100 px-1.5 py-0.5 rounded-full truncate font-semibold border border-green-200">📝 Essay</div>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">4</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">5</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">6</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">7</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">8</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">9</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">10</span>
+                    <div class="mt-1 text-[8px] text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded-full truncate font-semibold border border-amber-200">📚 Exam</div>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">11</span>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">12</span>
+                  </div>
+                  <!-- Today -->
+                  <div class="min-h-[60px] p-2 bg-green-50 rounded-xl border-2 border-green-400 shadow-md relative">
+                    <span class="text-xs text-green-700 font-bold">13</span>
+                    <div class="absolute -top-1.5 -right-1.5 w-5 h-5 bg-green-400 rounded-full border-2 border-green-600 flex items-center justify-center text-[8px]">🌿</div>
+                  </div>
+                  <div class="min-h-[60px] p-2 bg-white rounded-xl border-2 border-transparent hover:border-green-300 transition-all">
+                    <span class="text-xs text-stone-400 font-semibold">14</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Intentions Sidebar -->
+              <div class="manga-panel p-6 flex flex-col relative">
+                <div class="leaf-watermark" style="opacity: 0.1;">
+                  <svg viewBox="0 0 40 40" fill="#86efac">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                
+                <div class="flex justify-between items-center mb-6 pb-4 border-b-2 border-dashed border-stone-200">
+                  <div class="text-xs font-bold text-green-600 uppercase tracking-wider flex items-center gap-1">
+                    🌱 Intentions
+                  </div>
+                  <button class="marshmallow-btn text-[10px] px-3 py-1.5">
+                    + Add
+                  </button>
+                </div>
+                
+                <div class="flex-1 space-y-3">
+                  <div class="p-4 bg-white rounded-xl border-2 border-stone-100 hover:border-green-300 transition-all cursor-pointer group">
+                    <div class="font-semibold text-sm text-stone-800 mb-2 group-hover:text-green-700 transition-colors">📐 Calculus Final</div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-[9px] text-green-700 bg-green-100 px-2 py-0.5 rounded-full font-semibold border border-green-200">Exam</span>
+                      <span class="font-bold text-green-500 text-sm">2d 🍃</span>
+                    </div>
+                  </div>
+                  <div class="p-4 bg-white rounded-xl border-2 border-stone-100 hover:border-green-300 transition-all cursor-pointer group">
+                    <div class="font-semibold text-sm text-stone-800 mb-2 group-hover:text-green-700 transition-colors">📜 History Essay</div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-[9px] text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full font-semibold border border-amber-200">Assignment</span>
+                      <span class="font-bold text-amber-500 text-sm">5d 🌿</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <button class="marshmallow-btn mt-6 w-full py-3 text-xs uppercase">
+                  🌱 Auto-Schedule
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Tasks Page -->
+          <div id="page-tasks" class="page">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+              
+              <!-- Pending Column -->
+              <div class="manga-panel p-6 relative" style="border-color: #fcd34d;">
+                <div class="leaf-watermark" style="opacity: 0.08;">
+                  <svg viewBox="0 0 40 40" fill="#fbbf24">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-xs font-bold text-amber-600 uppercase mb-4 flex items-center gap-2 pb-4 border-b-2 border-dashed border-amber-200 tracking-wider">
+                  <span class="w-3 h-3 rounded-full bg-amber-400 border border-amber-500"></span>
+                  🌻 Pending
+                </div>
+                <div class="space-y-3">
+                  <div class="p-4 bg-white rounded-xl border-2 border-amber-100 hover:border-amber-300 cursor-pointer transition-all hover:-translate-y-1">
+                    <div class="font-semibold text-sm text-stone-800 mb-2">📄 Research Paper</div>
+                    <div class="text-[9px] text-stone-500 bg-stone-50 px-2 py-1 rounded-full inline-block border border-stone-200">Due: Dec 18</div>
+                  </div>
+                  <div class="p-4 bg-white rounded-xl border-2 border-amber-100 hover:border-amber-300 cursor-pointer transition-all hover:-translate-y-1">
+                    <div class="font-semibold text-sm text-stone-800 mb-2">🧪 Lab Report</div>
+                    <div class="text-[9px] text-stone-500 bg-stone-50 px-2 py-1 rounded-full inline-block border border-stone-200">Due: Dec 20</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- In Flow Column -->
+              <div class="manga-panel p-6 relative" style="border-color: #86efac;">
+                <div class="leaf-watermark">
+                  <svg viewBox="0 0 40 40" fill="#86efac">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-xs font-bold text-green-600 uppercase mb-4 flex items-center gap-2 pb-4 border-b-2 border-dashed border-green-200 tracking-wider">
+                  <span class="w-3 h-3 rounded-full bg-green-400 animate-pulse border border-green-500"></span>
+                  🍃 In Flow
+                </div>
+                <div class="space-y-3">
+                  <div class="p-4 bg-green-50 rounded-xl border-2 border-green-300 shadow-sm">
+                    <div class="font-semibold text-sm text-stone-800 mb-3">📊 Calculus Set</div>
+                    <div class="h-2 bg-stone-100 rounded-full overflow-hidden border border-stone-200">
+                      <div class="h-full w-3/5 bg-gradient-to-r from-green-300 to-green-400 rounded-full"></div>
+                    </div>
+                    <div class="text-[9px] text-green-700 mt-2 font-semibold">60% complete 🌿</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Complete Column -->
+              <div class="manga-panel p-6 relative" style="border-color: #22c55e;">
+                <div class="leaf-watermark" style="opacity: 0.08;">
+                  <svg viewBox="0 0 40 40" fill="#22c55e">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-xs font-bold text-green-700 uppercase mb-4 flex items-center gap-2 pb-4 border-b-2 border-dashed border-green-300 tracking-wider">
+                  <span class="w-3 h-3 rounded-full bg-green-500 border border-green-600"></span>
+                  ✨ Complete
+                </div>
+                <div class="space-y-3">
+                  <div class="p-4 bg-green-50/60 rounded-xl border-2 border-green-200 opacity-85 relative">
+                    <!-- Wax Seal -->
+                    <div class="wax-seal absolute -top-2 -right-2">✓</div>
+                    <div class="font-semibold text-sm text-stone-500 line-through mb-2">📚 Literature Essay</div>
+                    <div class="text-[9px] text-green-600 font-semibold">Completed with grace 🌸</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Archives Page -->
+          <div id="page-archives" class="page">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              
+              <div class="manga-panel p-6 cursor-pointer group relative">
+                <div class="leaf-watermark">
+                  <svg viewBox="0 0 40 40" fill="#86efac">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-[9px] font-bold text-green-600 uppercase mb-2 tracking-wider flex items-center gap-1">
+                  🌱 Mathematics
+                </div>
+                <h3 class="text-lg text-stone-800 mb-3 font-hand font-bold group-hover:text-green-700 transition-colors">Calculus Notes</h3>
+                <p class="text-sm text-stone-500 mb-4 leading-relaxed">Limits, derivatives, and integrals explored.</p>
+                <div class="flex justify-between text-xs text-stone-400">
+                  <span>Nov 28</span>
+                  <span class="bg-green-100 px-2 py-0.5 rounded-full text-green-700 font-semibold border border-green-200">12 pages</span>
+                </div>
+              </div>
+              
+              <div class="manga-panel p-6 cursor-pointer group relative">
+                <div class="leaf-watermark" style="opacity: 0.1;">
+                  <svg viewBox="0 0 40 40" fill="#fbbf24">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-[9px] font-bold text-amber-600 uppercase mb-2 tracking-wider flex items-center gap-1">
+                  📖 History
+                </div>
+                <h3 class="text-lg text-stone-800 mb-3 font-hand font-bold group-hover:text-amber-700 transition-colors">Great War Analysis</h3>
+                <p class="text-sm text-stone-500 mb-4 leading-relaxed">Events leading to the conflict.</p>
+                <div class="flex justify-between text-xs text-stone-400">
+                  <span>Nov 25</span>
+                  <span class="bg-amber-100 px-2 py-0.5 rounded-full text-amber-700 font-semibold border border-amber-200">8 pages</span>
+                </div>
+              </div>
+              
+              <div class="manga-panel p-6 cursor-pointer group relative">
+                <div class="leaf-watermark" style="opacity: 0.1;">
+                  <svg viewBox="0 0 40 40" fill="#a78bfa">
+                    <path d="M20 2C14 8 8 14 8 22c0 6 5 10 12 10s12-4 12-10c0-8-6-14-12-20z"/>
+                  </svg>
+                </div>
+                <div class="text-[9px] font-bold text-purple-600 uppercase mb-2 tracking-wider flex items-center gap-1">
+                  ⚛️ Physics
+                </div>
+                <h3 class="text-lg text-stone-800 mb-3 font-hand font-bold group-hover:text-purple-700 transition-colors">Quantum Mechanics</h3>
+                <p class="text-sm text-stone-500 mb-4 leading-relaxed">Wave-particle duality mysteries.</p>
+                <div class="flex justify-between text-xs text-stone-400">
+                  <span>Nov 22</span>
+                  <span class="bg-purple-100 px-2 py-0.5 rounded-full text-purple-700 font-semibold border border-purple-200">15 pages</span>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+          
+        </div>
+      </main>
+    </div>
+
+    <script>
+      // Initialize with defaults
+      const config = {
+        theme: 'zen',
+        activePage: 'calendar',
+        pageIndex: 0
+      };
+      
+      const pageTitles = {
+        'calendar': '🍃 Your Flow',
+        'tasks': '⚡ Your Focus',
+        'archives': '📜 Your Journal',
+        'mind-palace': '🧘 Your Clarity',
+        'settings': '⚙️ Your Balance',
+      };
+      
+      const pageOrder = ['calendar', 'tasks', 'archives', 'mind-palace', 'settings'];
+
+      // Helper function to wait for animations
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      window.showPage = function(pageId) {
+        const oldIndex = pageOrder.indexOf(config.activePage);
+        const newIndex = pageOrder.indexOf(pageId);
+        
+        // Update Config & UI Immediately for responsiveness, animation catches up
+        config.activePage = pageId || 'calendar';
+        
+        // Trigger Animation Sequence
+        animateNavigation(oldIndex, newIndex);
+
+        // Update Page Content
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById('page-' + config.activePage);
+        if (targetPage) targetPage.classList.add('active');
+        
+        // Update Header Title
+        const titleEl = document.getElementById('page-title');
+        if (titleEl) titleEl.textContent = pageTitles[config.activePage] || 'Your Flow';
+        
+        // Update Nav Button Styles
+        updateNavStyles(pageId);
+      }
+      
+      async function animateNavigation(oldIndex, newIndex) {
+        const soot = document.getElementById('soot-sprite');
+        const oldBush = document.getElementById(`bush-${oldIndex}`);
+        const newBush = document.getElementById(`bush-${newIndex}`);
+        
+        if (oldIndex === newIndex) return; // Same page, do nothing
+
+        // 0. RESET & PREPARE
+        // Remove previous active state to stop rustling
+        if (oldBush) oldBush.classList.remove('active');
+        
+        // Determine Random Side (-1 for left, 1 for right)
+        // Offset is ~45px to clear the bush
+        const sideDir = Math.random() > 0.5 ? 1 : -1;
+        const sideOffset = 45 * sideDir;
+        soot.style.setProperty('--side-offset', sideOffset + 'px');
+        
+        // Calculate destination Y
+        // Nav bushes are spaced ~92px apart (60px height + 32px gap)
+        // padding-top: 20px, +13px for center offset (adjusted for larger sprite)
+        const endY = 20 + (newIndex * 92) + 13;
+
+        // --- SEQUENCE START ---
+
+        // 1. POP OUT (Side)
+        // Reset any existing classes
+        soot.className = 'soot-sprite'; 
+        void soot.offsetWidth; // Force reflow
+        soot.classList.add('anim-pop-out');
+        
+        // Pop reaction from old bush
+        if (oldBush) {
+            const oldBushGraphic = oldBush.querySelector('.nav-bush');
+            if (oldBushGraphic) {
+                oldBushGraphic.style.animation = 'bush-pop 0.3s ease';
+                setTimeout(() => { oldBushGraphic.style.animation = ''; }, 300);
+            }
+        }
+        
+        await wait(400); // Wait for pop out
+
+        // 2. LOOK AROUND (Idle)
+        soot.className = 'soot-sprite anim-look';
+        await wait(600); // Little shimmy/wiggle
+
+        // 3. TRAVEL (Vertical Jump)
+        soot.className = 'soot-sprite anim-travel';
+        
+        // Determine duration based on distance (min 0.4s, max 1.0s)
+        const dist = Math.abs(newIndex - oldIndex);
+        const duration = Math.min(Math.max(0.4, dist * 0.2), 1.0);
+        
+        // Apply vertical transition
+        soot.style.transition = `top ${duration}s ease-in-out`;
+        soot.style.top = endY + 'px';
+        
+        await wait(duration * 1000); // Wait for travel
+
+        // 4. DIVE IN
+        soot.style.transition = ''; // Remove transition for instant class swap if needed
+        soot.className = 'soot-sprite anim-dive';
+        
+        await wait(400); // Wait for dive
+
+        // 5. FINISH & CLEANUP
+        soot.className = 'soot-sprite'; // Reset to base state (hidden/nested)
+        
+        // React new bush
+        if (newBush) {
+            const newBushGraphic = newBush.querySelector('.nav-bush');
+            if (newBushGraphic) {
+                newBushGraphic.style.animation = 'bush-squish 0.3s ease';
+                setTimeout(() => { 
+                    newBushGraphic.style.animation = ''; 
+                    newBush.classList.add('active'); // Start rustling
+                }, 300);
+            }
+        }
+      }
+
+      function updateNavStyles(activePageId) {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          if (btn.dataset.page === activePageId) {
+            btn.classList.remove('text-stone-200');
+            btn.classList.add('text-white');
+          } else {
+            btn.classList.add('text-stone-200');
+            btn.classList.remove('text-white');
+          }
+        });
+      }
+      
+      // Soot Peeping Logic
+      function startSootPeeper() {
+        setInterval(() => {
+          const soot = document.getElementById('soot-sprite');
+          // Don't peep if traveling or popped out or already peeping
+          if (soot.classList.contains('anim-pop-out') || 
+              soot.classList.contains('anim-travel') || 
+              soot.classList.contains('anim-dive') || 
+              soot.classList.contains('anim-look') ||
+              soot.classList.contains('peeping')) return;
+              
+          // Reduced frequency: 50% chance every 6 seconds
+          if (Math.random() > 0.5) {
+            
+            // Randomize Direction: Top, Left, Right (No Bottom)
+            const directions = ['top', 'left', 'right'];
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            
+            // Increased translation values to ensure eyes are visible
+            let tx = '0px', ty = '0px', r1 = '-10deg', r2 = '10deg';
+            
+            if (dir === 'top') {
+                ty = '-38px'; // Pop up significantly to show eyes over bush top
+                r1 = '-15deg'; r2 = '15deg';
+            } else if (dir === 'left') {
+                tx = '-35px'; // Pop left significantly to clear bush side
+                ty = '-10px'; // Slight lift to not look grounded
+                r1 = '-25deg'; r2 = '-15deg'; // Lean left
+            } else if (dir === 'right') {
+                tx = '35px'; // Pop right significantly
+                ty = '-10px'; // Slight lift
+                r1 = '25deg'; r2 = '15deg'; // Lean right
+            }
+            
+            // Apply dynamic vars
+            soot.style.setProperty('--ptx', tx);
+            soot.style.setProperty('--pty', ty);
+            soot.style.setProperty('--pr1', r1);
+            soot.style.setProperty('--pr2', r2);
+            
+            soot.classList.add('peeping');
+            
+            // Cleanup matches animation duration
+            setTimeout(() => {
+              soot.classList.remove('peeping');
+            }, 2000);
+          }
+        }, 6000); // Check every 6 seconds
+      }
+
+      // Active Bush Leaf Dropper Logic
+      function startActiveBushLeafDropper() {
+        const navContainer = document.querySelector('.nav-container');
+        
+        setInterval(() => {
+          const activeBush = document.querySelector('.nav-bush-wrapper.active');
+          if (!activeBush) return;
+          
+          // 60% chance to drop a leaf
+          if (Math.random() > 0.4) {
+            const leaf = document.createElement('div');
+            leaf.className = 'active-bush-leaf';
+            leaf.style.animation = 'leafDropAnim 4s linear forwards';
+            
+            // Position relative to the bush
+            // The nav container is relative, so we append leaf to it or calculate offset
+            // Appending to activeBush might clip it if overflow is hidden (it's not, but z-index might vary)
+            // Let's append to body but position it absolutely based on rect
+            const rect = activeBush.getBoundingClientRect();
+            leaf.style.top = (rect.top + 20) + 'px';
+            leaf.style.left = (rect.left + 30 + (Math.random() * 20 - 10)) + 'px'; // Centerish
+            
+            document.body.appendChild(leaf);
+            
+            // Clean up
+            setTimeout(() => {
+              if (leaf.parentNode) leaf.parentNode.removeChild(leaf);
+            }, 4000);
+          }
+        }, 2000);
+      }
+
+      // Active Bush Shaker Logic
+      function startActiveBushShaker() {
+        // Run a loop with random timeout
+        const scheduleShake = () => {
+            const delay = 3000 + Math.random() * 5000; // 3 to 8 seconds
+            setTimeout(() => {
+                const soot = document.getElementById('soot-sprite');
+                const activeBushWrapper = document.querySelector('.nav-bush-wrapper.active');
+                
+                // Conditions to Shake:
+                // 1. Soot is not peeping/moving
+                // 2. Active bush exists
+                const isBusy = soot.classList.contains('anim-pop-out') || 
+                               soot.classList.contains('anim-travel') || 
+                               soot.classList.contains('anim-dive') || 
+                               soot.classList.contains('anim-look') ||
+                               soot.classList.contains('peeping');
+                
+                if (activeBushWrapper && !isBusy) {
+                    const bush = activeBushWrapper.querySelector('.nav-bush');
+                    bush.classList.add('shaking');
+                    setTimeout(() => {
+                        bush.classList.remove('shaking');
+                    }, 500); // Shake duration
+                }
+                
+                scheduleShake(); // Schedule next
+            }, delay);
+        };
+        scheduleShake();
+      }
+      
+      // Create cel-shaded bamboo stalks
+      function createCelBamboo() {
+        const container = document.getElementById('bamboo-vignette');
+        if (!container) return;
+        
+        const rightStalks = [
+          { left: 'calc(100% - 60px)', height: '55%', width: 22, delay: 0 },
+          { left: 'calc(100% - 95px)', height: '70%', width: 28, delay: -1.5 },
+          { left: 'calc(100% - 140px)', height: '45%', width: 18, delay: -3 },
+        ];
+        
+        rightStalks.forEach((config, idx) => {
+          const stalk = createStalk(config);
+          container.appendChild(stalk);
+        });
+        
+        const leftStalks = [
+          { left: '25px', height: '60%', width: 24, delay: -2 },
+          { left: '60px', height: '40%', width: 16, delay: -4 },
+        ];
+        
+        leftStalks.forEach((config, idx) => {
+          const stalk = createStalk(config);
+          container.appendChild(stalk);
+        });
+      }
+      
+      function createStalk(config) {
+        const stalk = document.createElement('div');
+        stalk.className = 'bamboo-stalk animate-sway';
+        stalk.style.cssText = `
+          left: ${config.left};
+          height: ${config.height};
+          width: ${config.width}px;
+          animation-delay: ${config.delay}s;
+          animation-duration: 5s;
+          transform-origin: bottom center;
+        `;
+        
+        const nodeCount = 3 + Math.floor(Math.random() * 2);
+        for (let i = 1; i <= nodeCount; i++) {
+          const node = document.createElement('div');
+          node.className = 'bamboo-node';
+          node.style.bottom = `${(i / (nodeCount + 1)) * 100}%`;
+          stalk.appendChild(node);
+          
+          if (Math.random() > 0.4) {
+            const leaf = document.createElement('div');
+            leaf.className = 'bamboo-leaf-cel animate-sway-gentle';
+            const side = i % 2 === 0 ? 'left' : 'right';
+            const rotation = side === 'left' ? -45 : 45;
+            leaf.style.cssText = `
+              ${side}: ${config.width - 2}px;
+              bottom: ${((i / (nodeCount + 1)) * 100) + 2}%;
+              transform: rotate(${rotation}deg);
+              transform-origin: ${side === 'left' ? 'right' : 'left'} center;
+              animation-delay: ${Math.random() * -4}s;
+            `;
+            stalk.appendChild(leaf);
+          }
+        }
+        return stalk;
+      }
+      
+      function createFallingLeaves() {
+        const container = document.getElementById('falling-leaves');
+        if (!container) return;
+        
+        for (let i = 0; i < 5; i++) {
+          const leaf = document.createElement('div');
+          leaf.className = 'bamboo-leaf-cel animate-leaf-fall';
+          leaf.style.cssText = `
+            left: ${20 + Math.random() * 60}%;
+            top: -20px;
+            width: ${25 + Math.random() * 15}px;
+            height: ${8 + Math.random() * 5}px;
+            opacity: 0;
+            animation-delay: ${i * 2 + Math.random() * 3}s;
+            animation-duration: ${7 + Math.random() * 4}s;
+          `;
+          container.appendChild(leaf);
+        }
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        createCelBamboo();
+        createFallingLeaves();
+        startSootPeeper();
+        startActiveBushLeafDropper();
+        startActiveBushShaker();
+        window.showPage('calendar');
+      });
+    </script>
+  </body>
+</html>

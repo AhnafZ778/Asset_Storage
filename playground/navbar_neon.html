@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Navbar Neon - Digital Brutalism</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Orbitron for Titles, Share Tech Mono for Code -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  
+  <style>
+    /* --- CSS RESET & VARS --- */
+    :root {
+      --neon-green: #3ba000;
+      --neon-pink: #130000;
+      --neon-blue: #00ffff;
+      --neon-bg: #0a0a0a;
+      --grid-size: 20px;
+    }
+
+    body {
+      background-color: var(--neon-bg);
+      color: #e5e5e5;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden; /* No scroll, fixed viewport */
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* --- ATMOSPHERE --- */
+    #scanlines {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.5) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.6;
+    }
+
+    #matrix-canvas {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 0;
+      opacity: 0.2;
+    }
+
+    /* --- HAZARD STRIPES (Sidebar) --- */
+    .hazard-stripes {
+      background: repeating-linear-gradient(
+        45deg,
+        #1a1a1a,
+        #1a1a1a 10px,
+        #262626 10px,
+        #262626 20px
+      );
+      border-right: 2px solid #333;
+    }
+
+    /* --- NAVIGATION CONTAINER (ASYMMETRICAL GRID) --- */
+    .nav-container {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: min-content;
+      gap: 1rem;
+      padding: 0 4rem;
+      align-content: center;
+      height: 100vh;
+      z-index: 10;
+      perspective: 1000px;
+    }
+
+    /* --- HOLO TABS (Massive & Kinetic) --- */
+    .holo-tab-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+      /* No border initially */
+    }
+
+    /* ASYMMETRICAL LAYOUT */
+    .holo-tab-wrapper:nth-of-type(2) { grid-column: 2 / 6; justify-self: start; } /* Calendar - offset from Pilot wrapper which is likely child 1 */
+    .holo-tab-wrapper:nth-of-type(3) { grid-column: 7 / 12; justify-self: end; }   /* Tasks */
+    .holo-tab-wrapper:nth-of-type(4) { grid-column: 3 / 9; justify-self: center; } /* Conquest */
+    .holo-tab-wrapper:nth-of-type(5) { grid-column: 8 / 12; justify-self: start; } /* Lexicon */
+    .holo-tab-wrapper:nth-of-type(6) { grid-column: 4 / 10; justify-self: center; } /* Profile */
+    
+    /* Decoration: Brackets appear on hover */
+    .holo-tab-wrapper::before,
+    .holo-tab-wrapper::after {
+        content: '';
+        position: absolute;
+        width: 20px; height: 40px;
+        border: 4px solid transparent;
+        transition: all 0.2s steps(2);
+        opacity: 0;
+    }
+    .holo-tab-wrapper::before { top: 50%; left: -20px; transform: translateY(-50%); border-left-color: var(--neon-green); }
+    .holo-tab-wrapper::after { top: 50%; right: -20px; transform: translateY(-50%); border-right-color: var(--neon-green); }
+
+    .holo-tab-wrapper:hover::before,
+    .holo-tab-wrapper:hover::after {
+        opacity: 1;
+        height: 100%;
+    }
+
+    .holo-tab-wrapper:hover .holo-text {
+      color: #fff;
+      text-shadow: 0 0 20px var(--neon-green);
+      /* NO TRANSFORM - Clean Hover */
+    }
+    
+    .holo-tab-wrapper.active {
+      z-index: 20; /* Pop above */
+    }
+    
+    .holo-tab-wrapper.active .holo-text {
+      font-size: 6rem; /* EXPLOSIVE SIZE */
+      color: var(--neon-green);
+      text-shadow: 0 0 30px var(--neon-green), 0 0 100px var(--neon-green);
+      background: none;
+    }
+    
+    .holo-tab-wrapper.active::before,
+    .holo-tab-wrapper.active::after {
+        opacity: 1;
+        height: 80%;
+        border-width: 6px;
+    }
+
+    .holo-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 3rem; /* LARGE DEFAULT */
+      font-weight: 800;
+      letter-spacing: -2px;
+      color: rgba(255, 255, 255, 0.3);
+      transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+      text-transform: uppercase;
+      mix-blend-mode: screen;
+    }
+
+    /* --- PILOT: 3D GLITCH CUBE (SMOOTH PHYSICS) --- */
+    #neon-pilot-wrapper {
+        position: absolute;
+        top: 0; left: -30px;
+        width: 30px; height: 30px;
+        z-index: 50;
+        opacity: 0;
+        perspective: 600px;
+        /* PREMIUM SMOOTH TRANSITION */
+        transition: 
+            top 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), 
+            left 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        will-change: top, left;
+    }
+
+    #neon-pilot-sprite {
+        width: 100%; height: 100%;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate-idle 4s linear infinite;
+    }
+    
+    /* Cube Faces */
+    .cube-face {
+        position: absolute;
+        width: 30px; height: 30px;
+        background: rgba(0, 20, 0, 0.9);
+        border: 1px solid var(--neon-green);
+        box-shadow: 0 0 5px var(--neon-green);
+    }
+    .face-front  { transform: rotateY(0deg) translateZ(15px); }
+    .face-back   { transform: rotateY(180deg) translateZ(15px); }
+    .face-right  { transform: rotateY(90deg) translateZ(15px); }
+    .face-left   { transform: rotateY(-90deg) translateZ(15px); }
+    .face-top    { transform: rotateX(90deg) translateZ(15px); }
+    .face-bottom { transform: rotateX(-90deg) translateZ(15px); }
+
+    @keyframes rotate-idle {
+        0% { transform: rotateY(0deg) rotateX(10deg); }
+        100% { transform: rotateY(360deg) rotateX(10deg); }
+    }
+
+    /* Tearing FX (Applied via JS classes) */
+    .tearing .cube-face {
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+        transform: translate(-3px, 0); /* Shift Top */
+    }
+    .tearing #neon-pilot-sprite::after {
+        /* Ghost Clone for Bottom */
+        content: '';
+        position: absolute;
+        top: 0; left: 3px;
+        width: 100%; height: 100%;
+        background: var(--neon-pink);
+        clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0 100%);
+        opacity: 0.8;
+    }
+
+    /* --- ATMOSPHERE FX --- */
+    #vignette {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 9001;
+        pointer-events: none;
+        background: radial-gradient(circle, transparent 50%, black 150%);
+    }
+
+    /* --- DEBUG PANEL (Liquid Gold Requirement) --- */
+    #debug-panel {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0,0,0,0.8);
+        border: 1px solid var(--neon-pink);
+        color: var(--neon-pink);
+        font-family: monospace;
+        padding: 5px;
+        font-size: 10px;
+        z-index: 9999;
+        pointer-events: none;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- DEBUG PANEL -->
+  <div id="debug-panel">
+    STATUS: SYSTEM INIT<br>
+    COORDS: 0,0<br>
+    STATE: IDLE
+  </div>
+
+  <!-- ATMOSPHERE -->
+  <div id="vignette"></div>
+  <div id="scanlines"></div>
+  <canvas id="matrix-canvas"></canvas>
+
+  <!-- SIDEBAR (Visual Anchor) -->
+  <aside class="fixed left-0 top-0 h-full w-16 hazard-stripes z-20"></aside>
+
+  <!-- NAVIGATION -->
+  <nav class="nav-container" id="nav-container">
+    
+    <!-- PILOT (The Glitch-Bot) -->
+    <div id="neon-pilot-wrapper">
+        <div id="neon-pilot-sprite">
+            <div class="cube-face face-front"></div>
+            <div class="cube-face face-back"></div>
+            <div class="cube-face face-right"></div>
+            <div class="cube-face face-left"></div>
+            <div class="cube-face face-top"></div>
+            <div class="cube-face face-bottom"></div>
+        </div>
+    </div>
+
+    <!-- TABS -->
+    <!-- Index 0 -->
+    <div class="holo-tab-wrapper active" data-index="0" data-page="calendar">
+        <span class="holo-text">CALENDAR</span>
+    </div>
+    
+    <!-- Index 1 -->
+    <div class="holo-tab-wrapper" data-index="1" data-page="tasks">
+        <span class="holo-text">TASKS</span>
+    </div>
+
+    <!-- Index 2 -->
+    <div class="holo-tab-wrapper" data-index="2" data-page="conquest">
+        <span class="holo-text">CONQUEST</span>
+    </div>
+
+    <!-- Index 3 -->
+    <div class="holo-tab-wrapper" data-index="3" data-page="lexicon">
+        <span class="holo-text">LEXICON</span>
+    </div>
+
+    <!-- Index 4 -->
+    <div class="holo-tab-wrapper" data-index="4" data-page="profile">
+        <span class="holo-text">PROFILE</span>
+    </div>
+
+  </nav>
+
+  <script>
+    // --- GLOBAL STATE ---
+    let activeIndex = 0;
+    let isBusy = false;
+    
+    // Config for Design
+    const GRID_SIZE = 4; // 4px micro-steps for jitter
+    const FRAME_SKIP = 1; // Update every frame (Faster)
+    const MOVE_SPEED = 30; // Much Faster (was 12)
+    
+    // Debug Logic
+    const debugPanel = document.getElementById('debug-panel');
+    function updateDebug(msg) {
+        debugPanel.innerHTML = msg;
+    }
+
+    // --- KINETIC TEXT SCRAMBLER ---
+    const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&';
+    function scrambleText(element, finalText) {
+        let iterations = 0;
+        const interval = setInterval(() => {
+            element.innerText = finalText
+                .split('')
+                .map((letter, index) => {
+                    if(index < iterations) return finalText[index];
+                    return CHARS[Math.floor(Math.random() * CHARS.length)];
+                })
+                .join('');
+            
+            if(iterations >= finalText.length) clearInterval(interval);
+            iterations += 1/3;
+        }, 30);
+    }
+
+    // --- QUANTIZED NAVIGATION LOGIC (2D) ---
+    // --- QUANTIZED NAVIGATION LOGIC (2D) -> NOW SMOOTH COMPLIANT ---
+    function animateNavigation(index) {
+        if (isBusy || index === activeIndex) return;
+        
+        isBusy = true;
+        
+        const navItems = document.querySelectorAll('.holo-tab-wrapper');
+        const currentItem = navItems[activeIndex];
+        const nextItem = navItems[index];
+        const pilotWrapper = document.getElementById('neon-pilot-wrapper');
+        const pilotSprite = document.getElementById('neon-pilot-sprite'); 
+        
+        // Kinetic Text Effect (Only on Activation, not Hover)
+        const textSpan = nextItem.querySelector('.holo-text');
+        scrambleText(textSpan, textSpan.innerText);
+
+        // CALCULATE TARGET (2D)
+        const endX = nextItem.offsetLeft - 40;
+        const endY = nextItem.offsetTop; 
+        
+        // DIRECT ASSIGNMENT (CSS Handles Transition)
+        pilotWrapper.style.top = endY + 'px';
+        pilotWrapper.style.left = endX + 'px';
+        
+        // TEARING FX (During Transition)
+        // We flicker the tearing class for 600ms (duration of transition)
+        pilotWrapper.classList.add('tearing');
+        const flickerInterval = setInterval(() => {
+             if(Math.random() > 0.5) pilotWrapper.classList.add('tearing');
+             else pilotWrapper.classList.remove('tearing');
+        }, 50);
+        
+        // FINISH (After 600ms)
+        setTimeout(() => {
+            clearInterval(flickerInterval);
+            pilotWrapper.classList.remove('tearing');
+            
+            activeIndex = index;
+            navItems.forEach(el => el.classList.remove('active'));
+            nextItem.classList.add('active');
+            
+            isBusy = false;
+        }, 600); // Matches CSS transition duration
+    }
+    
+    // --- PARALLAX INPUT ---
+    document.addEventListener('mousemove', (e) => {
+        const x = (e.clientX / window.innerWidth - 0.5) * 2; // -1 to 1
+        const y = (e.clientY / window.innerHeight - 0.5) * 2;
+        
+        const container = document.getElementById('nav-container');
+        // Tilt the container
+        container.style.transform = `rotateY(${x * 5}deg) rotateX(${y * -5}deg)`;
+        
+        // Shift Matrix Rain (Opposite direction for depth)
+        const canvas = document.getElementById('matrix-canvas');
+        canvas.style.transform = `translate(${x * -20}px, ${y * -20}px)`;
+    });
+    
+    // Bind Clicks
+    document.addEventListener('DOMContentLoaded', () => {
+        const navItems = document.querySelectorAll('.holo-tab-wrapper');
+        
+        // Initial Placement
+        const firstItem = navItems[0];
+        const pilotWrapper = document.getElementById('neon-pilot-wrapper');
+        if(firstItem) {
+             pilotWrapper.style.opacity = '1';
+             pilotWrapper.style.top = firstItem.offsetTop + 'px';
+             pilotWrapper.style.left = (firstItem.offsetLeft - 40) + 'px';
+             firstItem.classList.add('active'); // Set initial big size
+        }
+
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                const idx = parseInt(item.getAttribute('data-index'));
+                animateNavigation(idx);
+            });
+            // Removed MouseEnter Scramble as per user request
+        });
+    });
+
+    // --- MATRIX RAIN LOGIC (LAYERED) ---
+    function initMatrixRain() {
+        const canvas = document.getElementById('matrix-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$#@%&';
+        const fontSize = 14;
+        const colCount = Math.floor(canvas.width / fontSize);
+        
+        // Create 3 Layers
+        const layers = [
+            { speed: 0.5, color: 'rgba(0, 50, 0, 0.5)', drops: new Array(colCount).fill(0).map(()=>Math.random()*canvas.height) },
+            { speed: 1.0, color: 'rgba(0, 150, 0, 0.8)', drops: new Array(colCount).fill(0).map(()=>Math.random()*canvas.height) },
+            { speed: 1.5, color: '#39ff14', drops: new Array(colCount).fill(0).map(()=>Math.random()*canvas.height) }
+        ];
+
+        const draw = () => {
+            // Fade Trail
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.font = fontSize + 'px monospace';
+            
+            layers.forEach((layer, layerIdx) => {
+                ctx.fillStyle = layer.color;
+                
+                for(let i = 0; i < layer.drops.length; i++) {
+                    // Update Drop Position based on speed
+                    layer.drops[i] += layer.speed;
+                    
+                    // Reset if off bottom
+                    if(layer.drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+                        layer.drops[i] = 0;
+                    }
+                    
+                    // Render (Quantized Y position to font grid)
+                    const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                    const yPos = Math.floor(layer.drops[i]) * fontSize; // Snap to grid
+                    
+                    // Feature: White Glitch Head
+                    if (layerIdx === 2 && Math.random() > 0.95) ctx.fillStyle = '#FFF';
+                    else ctx.fillStyle = layer.color;
+
+                    ctx.fillText(text, i * fontSize, yPos);
+                }
+            });
+            
+            requestAnimationFrame(draw);
+        };
+        
+        draw();
+    }
+    
+    initMatrixRain();
+
+  </script>
+</body>
+</html>

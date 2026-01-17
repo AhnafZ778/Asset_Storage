@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Storage: Navigation Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background: #0f172a; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0;
+            overflow: hidden; /* Viewport app */
+        }
+        
+        .showcase-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        .viewport {
+            position: relative;
+            border-right: 1px solid #334155;
+            background: #000;
+        }
+        
+        .viewport iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .label {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(15, 23, 42, 0.9);
+            color: #94a3b8;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: 1px solid #334155;
+            z-index: 50;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* Mobile handling: Stack on small screens */
+        @media (max-width: 1024px) {
+            .showcase-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            .viewport {
+                border-right: none;
+                border-bottom: 1px solid #334155;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="showcase-grid">
+        <!-- SLOT 1: ZEN GARDEN -->
+        <div class="viewport">
+            <div class="label">COMPONENT: ZEN / GARDEN</div>
+            <iframe src="navbar.html" title="Zen Navbar"></iframe>
+        </div>
+
+        <!-- SLOT 2: ABYSSAL TRENCH -->
+        <div class="viewport">
+            <div class="label">COMPONENT: ABYSSAL / TRENCH</div>
+            <iframe src="navbar_abyssal.html" title="Abyssal Navbar"></iframe>
+        </div>
+    </div>
+
+</body>
+</html>

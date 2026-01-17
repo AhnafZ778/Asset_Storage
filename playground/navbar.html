@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Garden Post Navbar - Isolated</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              rounded: ["Nunito", "sans-serif"],
+              hand: ["Caveat", "cursive"],
+            },
+            animation: {
+              'drift-slow': 'drift 90s linear infinite',
+              'drift-medium': 'drift 60s linear infinite',
+              'sway': 'sway 5s ease-in-out infinite',
+              'sway-gentle': 'swayGentle 4s ease-in-out infinite',
+              'blink': 'blink 3s ease-in-out infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'leaf-fall': 'leafFall 8s ease-in-out infinite',
+            },
+            animation: {
+              'drift-slow': 'drift 90s linear infinite',
+              'drift-medium': 'drift 60s linear infinite',
+              'rotate-slow': 'spin 60s linear infinite',
+              'rotate-medium': 'spin 40s linear infinite reverse',
+              'sway': 'sway 5s ease-in-out infinite',
+              'sway-gentle': 'swayGentle 4s ease-in-out infinite',
+              'blink': 'blink 3s ease-in-out infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'leaf-fall': 'leafFall 8s ease-in-out infinite',
+            },
+            keyframes: {
+              spin: {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+              drift: {
+                '0%': { transform: 'translateX(-120%)' },
+                '100%': { transform: 'translateX(120vw)' },
+              },
+              sway: {
+                '0%, 100%': { transform: 'rotate(-1.5deg)' },
+                '50%': { transform: 'rotate(1.5deg)' },
+              },
+              swayGentle: {
+                '0%, 100%': { transform: 'rotate(-3deg) translateX(0)' },
+                '50%': { transform: 'rotate(3deg) translateX(2px)' },
+              },
+              blink: {
+                '0%, 42%, 58%, 100%': { transform: 'scaleY(1)' },
+                '50%': { transform: 'scaleY(0.1)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-6px)' },
+              },
+              leafFall: {
+                '0%': { transform: 'translateY(-20px) rotate(0deg)', opacity: '0' },
+                '10%': { opacity: '0.8' },
+                '100%': { transform: 'translateY(100vh) rotate(360deg)', opacity: '0' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Nunito', sans-serif;
+      }
+      
+      /* Canvas/Paper Grain Texture */
+      .canvas-grain {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        opacity: 0.04;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+        z-index: 1000;
+      }
+      
+      /* Manga-style Fluffy Clouds */
+      .cloud {
+        position: absolute;
+        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+      }
+      .cloud-puff {
+        position: absolute;
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 50%;
+        border: 2px solid rgba(20, 83, 45, 0.15);
+        box-shadow: inset -6px -6px 15px rgba(200, 220, 240, 0.4),
+                    inset 4px 4px 10px rgba(255, 255, 255, 0.9);
+      }
+      
+      /* Cel-Shaded Bamboo */
+      .bamboo-stalk {
+        position: absolute;
+        bottom: 0;
+        background: #86efac;
+        border: 3px solid #14532d;
+        border-radius: 6px;
+        box-shadow: inset 8px 0 0 rgba(187, 247, 208, 0.7),
+                    inset -4px 0 0 rgba(20, 83, 45, 0.15);
+      }
+      .bamboo-node {
+        position: absolute;
+        left: -3px;
+        right: -3px;
+        height: 8px;
+        background: #86efac;
+        border: 3px solid #14532d;
+        border-radius: 4px;
+        box-shadow: inset 0 2px 0 rgba(187, 247, 208, 0.6);
+      }
+      .bamboo-leaf-cel {
+        position: absolute;
+        width: 45px;
+        height: 14px;
+        background: #86efac;
+        border: 2px solid #14532d;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        transform-origin: left center;
+        box-shadow: inset 3px 2px 0 rgba(187, 247, 208, 0.6);
+      }
+      
+      /* --- NAV BUSH & SOOT SPRITE --- */
+      
+      .nav-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 32px; /* Increased gap for bushes */
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+
+      /* The Bush Container */
+      .nav-bush-wrapper {
+        position: relative;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+      }
+      
+      /* The Cel-Shaded Bush Graphic */
+      .nav-bush {
+        position: absolute;
+        width: 64px;
+        height: 50px;
+        background: #4ade80; /* Base Green */
+        border-radius: 30px;
+        border: 2px solid #15803d; /* Dark Outline */
+        z-index: 1;
+        box-shadow: inset 4px 4px 0px rgba(255, 255, 255, 0.3),
+                    inset -4px -4px 0px rgba(0, 0, 0, 0.1),
+                    0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        /* Combine Physics (skew) with Animation (sway/idle) */
+        /* Note: We apply wind-skew via a wrapper or by combining transforms here */
+        transform: skewX(var(--wind-skew, 0deg)); 
+        animation: bushIdle 6s ease-in-out infinite; 
+      }
+      
+      /* Fluffy bits on the bush */
+      .nav-bush::before, .nav-bush::after {
+        content: '';
+        position: absolute;
+        background: #4ade80;
+        border-radius: 50%;
+        border: 2px solid #15803d;
+        z-index: -1; /* Behind the main body */
+      }
+      .nav-bush::before {
+        width: 30px;
+        height: 30px;
+        top: -10px;
+        left: 5px;
+        box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3);
+      }
+      .nav-bush::after {
+        width: 25px;
+        height: 25px;
+        top: -8px;
+        right: 8px;
+        background: #22c55e; /* Slightly darker puff */
+        border: 2px solid #15803d;
+      }
+      
+      /* --- ITERATION 2: SSS (Luminance Layering) --- */
+      .bush-inner-light {
+        position: absolute;
+        inset: 4px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #ecfccb 0%, #84cc16 40%, transparent 80%);
+        mix-blend-mode: screen;
+        opacity: 0.6;
+        filter: blur(4px);
+        animation: sunGlow 8s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 2;
+      }
+      
+      @keyframes sunGlow {
+        0%, 100% { opacity: 0.3; transform: scale(0.95); }
+        50% { opacity: 0.7; transform: scale(1.05); }
+      }
+
+      /* Soot Sprite */
+      .soot-sprite {
+        position: absolute;
+        pointer-events: none;
+        width: 34px;
+        height: 34px;
+        background: #1c1917;
+        border-radius: 50%;
+        border: 2px solid #0c0a09;
+        z-index: 2; /* Inside/Behind Bush Logic */
+        transition: scale 0.8s translateX(0);
+        transform-origin: center bottom;
+      }
+      
+      /* Eyes */
+      .soot-sprite::before,
+      .soot-sprite::after {
+        content: '';
+        position: absolute;
+        width: 6px;
+        height: 7px;
+        background: white;
+        border-radius: 50%;
+        top: 10px;
+        animation: blink 3s ease-in-out infinite;
+      }
+      .soot-sprite::before { left: 8px; }
+      .soot-sprite::after { right: 8px; animation-delay: 0.15s; }
+
+      /* --- SEQUENCED ANIMATIONS --- */
+      
+      /* Explicit Keyframes for JS/CSS Animations */
+      @keyframes rustle {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.05) rotate(2deg); }
+        50% { transform: scale(0.95) rotate(-2deg); }
+        75% { transform: scale(1.02) rotate(1deg); }
+      }
+      
+      @keyframes bushSway {
+         0%, 100% { transform: rotate(-2deg); }
+         50% { transform: rotate(2deg); }
+      }
+      
+      @keyframes bushPop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.3, 0.7) translateY(5px); } /* Squash */
+        60% { transform: scale(0.9, 1.2) translateY(-5px); } /* Stretch */
+        100% { transform: scale(1); }
+      }
+      
+      @keyframes bushSquish {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.25, 0.75) translateY(5px); } /* Impact squish */
+        60% { transform: scale(0.9, 1.1) translateY(-2px); } /* Rebound */
+        100% { transform: scale(1); }
+      }
+
+      /* Random Shake Animation */
+      @keyframes bushShake {
+        0% { transform: translateX(0) rotate(0deg); }
+        25% { transform: translateX(-2px) rotate(-4deg); }
+        50% { transform: translateX(2px) rotate(4deg); }
+        75% { transform: translateX(-1px) rotate(-2deg); }
+        100% { transform: translateX(0) rotate(0deg); }
+      }
+
+      /* Soot Peep Animation */
+      @keyframes sootPeepAnim {
+        0% { transform: translate(0, 0) scale(0.8); }
+        20% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1); } /* Pop out fast */
+        40% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr1, -10deg)); } /* Look 1 */
+        70% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr2, 10deg)); } /* Look 2 */
+        100% { transform: translate(0, 0) scale(0.8); } /* Return */
+      }
+      .soot-sprite.peeping {
+        animation: sootPeepAnim 2s ease-in-out forwards;
+        z-index: 2; /* Behind bush wrapper (z-10) but peeping out from behind */
+      }
+
+      /* 1. Pop Out (Side) */
+      @keyframes popOutSide {
+        0% { transform: translateX(0) scale(0.8); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(1.2, 0.8) translateY(5px); } /* Anticipate */
+        60% { transform: translateX(calc(var(--side-offset) * 0.8)) scale(0.9, 1.1) translateY(-15px); } /* Jump */
+        100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); } /* Land */
+      }
+      .anim-pop-out {
+        animation: popOutSide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        z-index: 50;
+      }
+
+      /* 2. Look Around */
+      @keyframes lookAround {
+        0% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+        20% { transform: translateX(var(--side-offset)) scale(1.05) rotate(-10deg); }
+        50% { transform: translateX(var(--side-offset)) scale(0.95) rotate(10deg); }
+        80% { transform: translateX(var(--side-offset)) scale(1.02) rotate(-5deg); }
+        100% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+      }
+      .anim-look {
+        animation: lookAround 0.8s ease-in-out forwards;
+        z-index: 50;
+      }
+
+      /* 3. Travel (Vertical Bobbing) */
+      @keyframes travelBob {
+        0%, 100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); }
+        50% { transform: translateX(var(--side-offset)) scale(0.9, 1.1) translateY(-8px); }
+      }
+      .anim-travel {
+        animation: travelBob 0.3s ease-in-out infinite;
+        z-index: 50;
+      }
+
+      /* 5. DIVE IN */
+      @keyframes diveIn {
+        0% { transform: translateX(var(--side-offset)) scale(1); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(0.8, 1.2) translateY(-15px); } /* Jump up */
+        100% { transform: translateX(0) scale(0.8); } /* Dive in */
+      }
+      .anim-dive {
+        animation: diveIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        z-index: 50;
+      }
+
+      /* 0. ANTICIPATION (Squash) */
+      @keyframes anticipateSquash {
+        0% { transform: scale(0.8); }
+        100% { transform: scale(1.2, 0.6) translateY(10px); }
+      }
+      .anim-anticipate {
+        animation: anticipateSquash 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        z-index: 15; /* Behind bush slightly */
+      }
+
+      /* 6. LANDING (Jelly) */
+      @keyframes jellyLand {
+        0% { transform: scale(0.8); } /* From dive */
+        30% { transform: scale(1.3, 0.7); } /* Splat */
+        50% { transform: scale(0.9, 1.1); } /* Rebound */
+        70% { transform: scale(1.1, 0.9); } /* Wiggle */
+        100% { transform: scale(1); } /* Rest */
+      }
+      .anim-land {
+        animation: jellyLand 0.4s ease-out forwards;
+        z-index: 2;
+      }
+
+      /* ACTIVE vs INACTIVE BUSHES */
+      .nav-bush-wrapper.active .nav-bush {
+        background: #22c55e; /* Darker green when active */
+        animation: bushIdle 4s ease-in-out infinite; /* Calm idle */
+      }
+      
+      /* Explicity Shake Class */
+      .nav-bush-wrapper.active .nav-bush.shaking {
+        animation: bushShake 0.5s ease-in-out;
+      }
+      
+      .nav-bush-wrapper:not(.active) .nav-bush {
+        animation: bushSway 5s ease-in-out infinite; /* Gentle wind sway */
+      }
+      
+      .nav-btn {
+        position: relative;
+        z-index: 20; /* Above bush */
+        text-shadow: 0 2px 0 rgba(255,255,255,0.5);
+      }
+
+      /* Falling Leaf from Active Bush */
+      .active-bush-leaf {
+        position: absolute;
+        background: #4ade80;
+        border: 1px solid #14532d;
+        width: 14px;
+        height: 8px;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        pointer-events: none;
+        z-index: 40;
+        opacity: 0;
+      }
+      
+      @keyframes leafDropAnim {
+        0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+        25% { transform: translate(15px, 40px) rotate(45deg); opacity: 1; }
+        50% { transform: translate(-10px, 90px) rotate(90deg); opacity: 0.9; }
+        75% { transform: translate(10px, 150px) rotate(180deg); opacity: 0.8; }
+        100% { transform: translate(20px, 200px) rotate(360deg); opacity: 0; }
+      }
+
+      /* Stone Texture for Sidebar */
+      .stone-texture {
+        background-color: #d6d3d1; /* Stone 300 base */
+        /* Use the SVG filter for texture */
+        filter: url(#stoneFilter);
+        /* Subtle gradient to give it form */
+        background-image: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+        border-right: 3px solid #78716c;
+        box-shadow: 10px 10px 20px rgba(0,0,0,0.2),
+                    inset 2px 2px 0 rgba(255,255,255,0.2);
+        position: relative; /* Context for Moss */
+        overflow: visible; /* Let moss hang off */
+      }
+      
+      /* Moss Clumps */
+      .moss-clump {
+        position: absolute;
+        background: #65a30d; /* Lime 600 */
+        border-radius: 50% 40% 60% 50% / 60% 50% 40% 50%;
+        box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3),
+                    1px 2px 3px rgba(0,0,0,0.2);
+        z-index: 5;
+        pointer-events: none;
+      }
+      .moss-clump::after {
+        content: '';
+        position: absolute;
+        inset: 20%;
+        background: #4d7c0f; /* Darker center */
+        border-radius: inherit;
+        filter: blur(2px);
+        opacity: 0.5;
+      }
+      
+      /* --- ITERATION 2: GOD RAYS --- */
+      .ray {
+        background: conic-gradient(from 0deg, 
+            transparent 0deg, 
+            rgba(255, 255, 255, 0.05) 20deg, 
+            transparent 40deg, 
+            rgba(255, 255, 255, 0.08) 60deg, 
+            transparent 90deg);
+        will-change: transform;
+      }
+      /* Soot Sprite 2.1: Clean Body, Cute Eyes (Restoring Animation) */
+      .soot-sprite {
+        /* Base - Restored to clean shape for better physics */
+        @apply absolute -top-7 -right-3 w-10 h-10 z-20 flex items-center justify-center cursor-pointer;
+        background: #1a1a1a; 
+        border-radius: 50%;
+        /* Subtle shadow instead of heavy fuzz */
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+        /* REMOVED: soot-wobble animation to fix conflict with physics */
+      }
+      
+      /* New Eyes retained (they were an improvement) */
+      .soot-eye {
+         @apply absolute top-2 bg-white rounded-full overflow-hidden;
+         width: 13px; /* Slightly larger */
+         height: 13px;
+         box-shadow: 0 0 2px rgba(0,0,0,0.3);
+      }
+      
+      .soot-pupil {
+         width: 4px; 
+         height: 4px;
+         background: #000;
+         border-radius: 50%;
+         position: absolute;
+         top: 3px; 
+         left: 3px;
+         /* Shine for life */
+         box-shadow: 1px 1px 0 rgba(255,255,255,0.8); 
+      }
+      
+      /* --- ITERATION 5: POLISH --- */
+      .color-grade-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 100;
+        /* Warm sunlight top-left, Cool shadow bottom-right */
+        background: linear-gradient(135deg, rgba(254, 243, 199, 0.1) 0%, rgba(30, 58, 138, 0.1) 100%);
+        mix-blend-mode: overlay;
+      }
+
+      .vignette-layer {
+         position: absolute;
+         inset: 0;
+         pointer-events: none;
+         z-index: 101;
+         /* Cinematic vignette */
+         background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4) 120%);
+      }
+    </style>
+  </head>
+  <body class="bg-sky-200">
+    
+    <!-- Procedural Stone Filter (Hidden SVG) -->
+    <svg width="0" height="0" class="absolute">
+    <!-- Procedural Stone Filter (Hidden SVG) -->
+    <svg width="0" height="0" class="absolute">
+      <filter id="stoneFilter">
+        <!-- Reduced baseFrequency for larger, softer grain. Reduced numOctaves for less "static" noise. -->
+        <feTurbulence type="fractalNoise" baseFrequency="0.4" numOctaves="2" stitchTiles="stitch" result="noise" />
+        <!-- Reduced light intensity to make it subtle -->
+        <feDiffuseLighting in="noise" lighting-color="#fff" surfaceScale="1">
+          <feDistantLight azimuth="45" elevation="60" />
+        </feDiffuseLighting>
+        <feComposite operator="in" in2="SourceGraphic" result="lighting" />
+        <!-- Using 'soft-light' or low opacity blend to avoid harsh contrast -->
+        <feBlend in="SourceGraphic" in2="lighting" mode="multiply" />
+      </filter>
+    </svg>
+    </svg>
+
+    <div class="color-grade-overlay"></div>
+    <div class="vignette-layer"></div>
+
+    <!-- Canvas Grain Overlay -->
+    <div class="canvas-grain"></div>
+
+    <!-- Volumetric God Rays (Overlay) -->
+    <div class="god-rays-container fixed inset-0 pointer-events-none z-[60] mix-blend-overlay opacity-60">
+      <div class="ray ray-1 absolute inset-[-50%] animate-rotate-slow"></div>
+      <div class="ray ray-2 absolute inset-[-50%] animate-rotate-medium"></div>
+      <!-- Floating Dust Motes -->
+      <div id="dust-particles" class="absolute inset-0"></div>
+    </div>
+    
+    <!-- Manga Panel Background -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <!-- Ghibli Sky Gradient -->
+      <div class="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe]"></div>
+      <!-- Subtle Warm Wash -->
+      <div class="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-amber-100/20"></div>
+      
+      <!-- Clouds -->
+      <div class="cloud animate-drift-slow" style="top: 8%; left: -180px; animation-delay: -15s;">
+        <div class="cloud-puff" style="width: 90px; height: 45px; top: 12px; left: 0;"></div>
+        <div class="cloud-puff" style="width: 70px; height: 55px; top: 0; left: 40px;"></div>
+        <div class="cloud-puff" style="width: 80px; height: 40px; top: 15px; left: 85px;"></div>
+        <div class="cloud-puff" style="width: 50px; height: 35px; top: 8px; left: 140px;"></div>
+      </div>
+      
+      <div class="cloud animate-drift-medium" style="top: 15%; left: -220px; animation-delay: -35s;">
+        <div class="cloud-puff" style="width: 100px; height: 50px; top: 18px; left: 0;"></div>
+        <div class="cloud-puff" style="width: 85px; height: 65px; top: 0; left: 55px;"></div>
+        <div class="cloud-puff" style="width: 95px; height: 48px; top: 12px; left: 115px;"></div>
+        <div class="cloud-puff" style="width: 60px; height: 40px; top: 20px; left: 185px;"></div>
+      </div>
+      
+      <!-- Vignette -->
+      <div id="bamboo-vignette" class="absolute inset-0"></div>
+      <div id="falling-leaves" class="absolute inset-0"></div>
+      <div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-green-100/40 to-transparent"></div>
+    </div>
+
+    <div class="h-screen w-screen flex overflow-hidden font-rounded text-stone-800 relative z-10">
+      
+      <!-- Garden Post Sidebar (Updated to Stone/Bush theme) -->
+      <!-- CENTERED POSITIONING APPLIED HERE -->
+      <aside class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+        <div class="stone-texture flex flex-col items-center py-6 px-4 rounded-2xl shadow-xl relative">
+          
+          <!-- Logo -->
+          <div class="w-12 h-12 rounded-full bg-gradient-to-br from-stone-100 to-stone-300 border-2 border-stone-500 text-green-600 flex items-center justify-center text-xl mb-2 shadow-md z-20 relative">
+            ⛩️
+          </div>
+          
+          <!-- Navigation -->
+          <nav class="nav-container relative" id="nav-container">
+            <!-- Dynamic AO Shadow for Soot Sprite -->
+            <div id="soot-shadow" class="absolute bg-black/40 blur-sm rounded-full transition-all duration-300" 
+                 style="width: 24px; height: 6px; top: 68px; left: 25px; opacity: 0.6; z-index: 1;"></div>
+            <!-- Soot Sprite (Moves absolute within nav-container) -->
+            <div id="soot-sprite" class="soot-sprite" style="top: 38px; left: 20px;">
+               <!-- Eyes -->
+               <div class="relative w-full h-full"> 
+                 <div class="soot-eye left-1.5">
+                    <div class="soot-pupil"></div>
+                 </div>
+                 <div class="soot-eye right-1.5">
+                    <div class="soot-pupil"></div>
+                 </div>
+               </div>
+            </div>
+            
+            <!-- Calendar -->
+            <div class="nav-bush-wrapper active" id="bush-0" onclick="window.showPage('calendar')">
+              <div class="nav-bush">
+                <!-- SSS Layer -->
+                <div class="bush-inner-light"></div>
+              </div>
+              <button class="nav-btn transition-transform duration-200 text-white hover:scale-110" data-page="calendar">
+                📅
+              </button>
+            </div>
+            
+            <!-- Tasks -->
+            <div class="nav-bush-wrapper" id="bush-1" onclick="window.showPage('tasks')">
+              <div class="nav-bush">
+                <!-- SSS Layer -->
+                <div class="bush-inner-light"></div>
+              </div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="tasks">
+                ⚡
+              </button>
+            </div>
+            
+            <!-- Archives -->
+            <div class="nav-bush-wrapper" id="bush-2" onclick="window.showPage('archives')">
+              <div class="nav-bush">
+                <!-- SSS Layer -->
+                <div class="bush-inner-light"></div>
+              </div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="archives">
+                📜
+              </button>
+            </div>
+            
+            <!-- Mind Palace -->
+            <div class="nav-bush-wrapper" id="bush-3" onclick="window.showPage('mind-palace')">
+              <div class="nav-bush">
+                <!-- SSS Layer -->
+                <div class="bush-inner-light"></div>
+              </div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="mind-palace">
+                🧠
+              </button>
+            </div>
+            
+            <!-- Settings -->
+            <div class="nav-bush-wrapper" id="bush-4" onclick="window.showPage('settings')">
+              <div class="nav-bush">
+                <!-- SSS Layer -->
+                <div class="bush-inner-light"></div>
+              </div>
+              <button class="nav-btn transition-transform duration-200 text-stone-200 hover:scale-110" data-page="settings">
+                ⚙️
+              </button>
+            </div>
+          </nav>
+          
+          <!-- Divider -->
+          <div class="w-8 h-0.5 bg-stone-400/50 my-2"></div>
+          
+          <!-- Stone Lantern Base Decoration -->
+          <div class="potted-bamboo">
+             <!-- Mossy stone base -->
+            <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-6 bg-stone-500 rounded-md border-2 border-stone-600"></div>
+            <!-- Soot Sprite -->
+
+            <!-- Tiny moss -->
+            <div class="absolute bottom-4 left-1 w-3 h-3 bg-green-500 rounded-full opacity-80"></div>
+            <!-- Stalk -->
+            <div class="mini-stalk" style="left: 18px; height: 30px;">
+              <div class="mini-leaf animate-sway-gentle" style="top: 2px; left: 4px; transform: rotate(-45deg);"></div>
+            </div>
+          </div>
+          
+        </div>
+      </aside>
+      
+    </div>
+
+    <script>
+      // --- VISUAL PERFECTION: GLOBAL CONFIG ---
+      const THEME_CONFIG = {
+        bushHeight: 60,
+        bushGap: 32,
+        navPaddingTop: 20 + 13, // 20 pad + 13 offset
+        windSensitivity: 0.15,  // How much mouse speed affects bush sway
+        windDecay: 0.92,        // Inertia decay (lower = faster stop)
+      };
+
+      // Initialize with defaults
+      const config = {
+        activePage: 'calendar'
+      };
+      
+      const pageOrder = ['calendar', 'tasks', 'archives', 'mind-palace', 'settings'];
+
+      // --- PHYSICS: INTERACTIVE WIND SYSTEM ---
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+      let mouseVelocityX = 0;
+      
+      const bushes = []; // Will hold { element, currentSkew, targetSkew }
+
+      function initPhysics() {
+        // Collect all bush elements
+        document.querySelectorAll('.nav-bush').forEach(el => {
+            bushes.push({
+                element: el,
+                currentSkew: 0,
+                velocity: 0
+            });
+        });
+
+        // Mouse Velocity Tracker
+        document.addEventListener('mousemove', (e) => {
+            mouseVelocityX = e.clientX - lastMouseX;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+
+            // Apply wind force to bushes near the mouse
+            bushes.forEach(bushData => {
+                const rect = bushData.element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                // Distance check
+                const dx = e.clientX - centerX;
+                const dy = e.clientY - centerY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // If close enough (< 100px), impart force
+                if (dist < 100) {
+                    // Force decays with distance
+                    const force = Math.max(0, (100 - dist) / 100) * mouseVelocityX * THEME_CONFIG.windSensitivity;
+                    bushData.velocity += force;
+                }
+            });
+        });
+
+        // Start Physics Loop
+        requestAnimationFrame(physicsLoop);
+      }
+
+      function physicsLoop() {
+        bushes.forEach(bush => {
+            // Apply simple spring physics for sway
+            // Force towards 0 (rest position)
+            const springForce = -bush.currentSkew * 0.1;
+            
+            // Apply spring force + dampening
+            bush.velocity += springForce;
+            bush.velocity *= THEME_CONFIG.windDecay;
+            
+            // Update position
+            bush.currentSkew += bush.velocity;
+            
+            // Apply transform (Combines with CSS hover/idle animations safely?)
+            // Note: CSS animations use 'transform', setting it JS might override.
+            // Better to use a CSS variable for the wind offset.
+            bush.element.style.setProperty('--wind-skew', `${bush.currentSkew}deg`);
+        });
+        
+        requestAnimationFrame(physicsLoop);
+      }
+
+      // Helper function to wait for animations
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      window.showPage = function(pageId) {
+        const oldIndex = pageOrder.indexOf(config.activePage);
+        const newIndex = pageOrder.indexOf(pageId);
+        
+        // Update Config
+        config.activePage = pageId || 'calendar';
+        
+        // Trigger Animation Sequence
+        animateNavigation(oldIndex, newIndex);
+        
+        // Update Nav Button Styles
+        updateNavStyles(pageId);
+      }
+      
+      async function animateNavigation(oldIndex, newIndex) {
+        const soot = document.getElementById('soot-sprite');
+        const shadow = document.getElementById('soot-shadow');
+        const oldBush = document.getElementById(`bush-${oldIndex}`);
+        const newBush = document.getElementById(`bush-${newIndex}`);
+        
+        if (oldIndex === newIndex) return; // Same page, do nothing
+
+        // 0. RESET & PREPARE
+        // Remove previous active state to stop rustling
+        if (oldBush) oldBush.classList.remove('active');
+        
+        // Determine Random Side (-1 for left, 1 for right)
+        const sideDir = Math.random() > 0.5 ? 1 : -1;
+        const sideOffset = 45 * sideDir;
+        soot.style.setProperty('--side-offset', sideOffset + 'px');
+        
+        // Calculate destination Y using Config
+        const endY = THEME_CONFIG.navPaddingTop + (newIndex * (THEME_CONFIG.bushHeight + THEME_CONFIG.bushGap));
+        const shadowEndY = endY + 30; // Shadow offset target
+
+        // --- SEQUENCE START (SOFT BODY UPGRADE) ---
+
+        // 1. ANTICIPATION (Squash Down)
+        soot.className = 'soot-sprite anim-anticipate'; 
+        // Shadow widens slightly (squash)
+        if(shadow) shadow.style.transform = 'scale(1.2, 1)';
+        await wait(200);
+
+        // 2. POP OUT (Stretch Up + Jump)
+        soot.className = 'soot-sprite anim-pop-out';
+        // Shadow shrinks and fades (jump)
+        if(shadow) {
+            shadow.style.transform = 'scale(0.5)';
+            shadow.style.opacity = '0.2';
+        }
+        
+        // React old bush
+        if (oldBush) {
+            const oldBushGraphic = oldBush.querySelector('.nav-bush');
+            if (oldBushGraphic) {
+                // Add recoil velocity to wind physics
+                const bushObj = bushes.find(b => b.element === oldBushGraphic);
+                if (bushObj) bushObj.velocity += 15 * sideDir; // Push away
+            }
+        }
+        
+        await wait(400); // Wait for pop out
+
+        // 3. LOOK AROUND (Idle)
+        soot.className = 'soot-sprite anim-look';
+        if(shadow) {
+            shadow.style.transform = `translateX(${sideOffset}px) scale(0.8)`; // Follow side
+            shadow.style.opacity = '0.3';
+            // Move shadow visually to side
+            shadow.style.transition = 'top 0.8s ease-in-out, transform 0.8s ease-in-out, opacity 0.3s';
+        }
+
+        await wait(500); // Little shimmy/wiggle
+
+        // 4. TRAVEL (Vertical Jump)
+        soot.className = 'soot-sprite anim-travel';
+        
+        // Determine duration based on distance (min 0.4s, max 1.0s)
+        const dist = Math.abs(newIndex - oldIndex);
+        const duration = Math.min(Math.max(0.4, dist * 0.2), 1.0);
+        
+        // Apply vertical transition
+        soot.style.transition = `top ${duration}s cubic-bezier(0.45, 0, 0.55, 1)`; // S-curve for more weight
+        soot.style.top = endY + 'px';
+        
+        // Shadow follows logic
+        if(shadow) {
+            shadow.style.transition = `top ${duration}s cubic-bezier(0.45, 0, 0.55, 1), transform 0.3s`;
+            shadow.style.top = shadowEndY + 'px';
+        }
+
+        await wait(duration * 1000); // Wait for travel
+
+        // 5. DIVE IN (Stretch Down)
+        soot.style.transition = ''; // Remove transition for instant class swap if needed
+        soot.className = 'soot-sprite anim-dive';
+        
+        if(shadow) {
+            // Shadow grows back
+            shadow.style.transition = 'transform 0.4s, opacity 0.4s';
+            shadow.style.transform = 'translateX(0) scale(0.5)';
+            shadow.style.opacity = '0.4';
+        }
+
+        await wait(400); // Wait for dive
+
+        // 6. LANDING (Jelly Wobble)
+        soot.className = 'soot-sprite anim-land'; // New class
+        
+        if(shadow) {
+           shadow.style.transform = 'scale(1)';
+           shadow.style.opacity = '0.6';
+        }
+
+        // React new bush
+        if (newBush) {
+            const newBushGraphic = newBush.querySelector('.nav-bush');
+            if (newBushGraphic) {
+                // Impact velocity for wind physics
+                const bushObj = bushes.find(b => b.element === newBushGraphic);
+                if (bushObj) bushObj.velocity += 10 * sideDir; // Shake on impact
+                
+                setTimeout(() => { 
+                    newBush.classList.add('active'); // Start rustling
+                }, 200);
+            }
+        }
+        
+        await wait(400);
+
+        // 7. FINISH & CLEANUP
+        soot.className = 'soot-sprite'; // Reset to base state (hidden/nested)
+      }
+
+      function updateNavStyles(activePageId) {
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          if (btn.dataset.page === activePageId) {
+            btn.classList.remove('text-stone-200');
+            btn.classList.add('text-white');
+          } else {
+            btn.classList.add('text-stone-200');
+            btn.classList.remove('text-white');
+          }
+        });
+      }
+      
+      // Soot Peeping Logic
+      function startSootPeeper() {
+        setInterval(() => {
+          const soot = document.getElementById('soot-sprite');
+          // Don't peep if traveling or popped out or already peeping
+          if (soot.classList.contains('anim-pop-out') || 
+              soot.classList.contains('anim-travel') || 
+              soot.classList.contains('anim-dive') || 
+              soot.classList.contains('anim-look') ||
+              soot.classList.contains('peeping') ||
+              soot.classList.contains('anim-anticipate') ||
+              soot.classList.contains('anim-land')) return;
+              
+          // Reduced frequency: 50% chance every 6 seconds
+          if (Math.random() > 0.5) {
+            
+            // Randomize Direction: Top, Left, Right (No Bottom)
+            const directions = ['top', 'left', 'right'];
+            const dir = directions[Math.floor(Math.random() * directions.length)];
+            
+            // Increased translation values to ensure eyes are visible
+            let tx = '0px', ty = '0px', r1 = '-10deg', r2 = '10deg';
+            
+            if (dir === 'top') {
+                ty = '-38px'; // Pop up significantly to show eyes over bush top
+                r1 = '-15deg'; r2 = '15deg';
+            } else if (dir === 'left') {
+                tx = '-35px'; // Pop left significantly to clear bush side
+                ty = '-10px'; // Slight lift to not look grounded
+                r1 = '-25deg'; r2 = '-15deg'; // Lean left
+            } else if (dir === 'right') {
+                tx = '35px'; // Pop right significantly
+                ty = '-10px'; // Slight lift
+                r1 = '25deg'; r2 = '15deg'; // Lean right
+            }
+            
+            // Apply dynamic vars
+            soot.style.setProperty('--ptx', tx);
+            soot.style.setProperty('--pty', ty);
+            soot.style.setProperty('--pr1', r1);
+            soot.style.setProperty('--pr2', r2);
+            
+            soot.classList.add('peeping');
+            
+            // Cleanup matches animation duration
+            setTimeout(() => {
+              soot.classList.remove('peeping');
+            }, 2000);
+          }
+        }, 6000); // Check every 6 seconds for peeping opportunity
+
+         // Existing blink logic
+         const eyes = document.querySelectorAll('.soot-eye');
+         const pupils = document.querySelectorAll('.soot-pupil');
+         
+         // Blinking
+         setInterval(() => {
+             if(Math.random() > 0.3) { // 70% chance not to blink, making it more random
+                 eyes.forEach(eye => {
+                     eye.style.transform = 'scaleY(0.1)';
+                     setTimeout(() => eye.style.transform = 'scaleY(1)', 150);
+                 });
+             }
+         }, 3500); // Changed from 3000 to 3500
+
+         // Eye Tracking
+         document.addEventListener('mousemove', (e) => {
+            const mx = e.clientX;
+            const my = e.clientY;
+            
+            pupils.forEach(pupil => {
+               // Get center of the eye (parent of pupil)
+               const eye = pupil.parentElement;
+               const rect = eye.getBoundingClientRect();
+               const eyeX = rect.left + rect.width/2;
+               const eyeY = rect.top + rect.height/2;
+               
+               const angle = Math.atan2(my - eyeY, mx - eyeX);
+               // Max radius within the 8px eye - 4px pupil = ~2px room
+               const maxDist = 1.5; 
+               const dist = Math.min(maxDist, Math.hypot(mx - eyeX, my - eyeY) / 10); 
+               
+               const pupilX = Math.cos(angle) * dist;
+               const pupilY = Math.sin(angle) * dist;
+               
+               pupil.style.transform = `translate(${pupilX}px, ${pupilY}px)`;
+            });
+         });
+      }
+      
+      // Active Bush Leaf Dropper Logic
+      function startActiveBushLeafDropper() {
+        const navContainer = document.querySelector('.nav-container');
+        
+        setInterval(() => {
+          const activeBush = document.querySelector('.nav-bush-wrapper.active');
+          if (!activeBush) return;
+          
+          // 60% chance to drop a leaf
+          if (Math.random() > 0.4) {
+            const leaf = document.createElement('div');
+            leaf.className = 'active-bush-leaf';
+            leaf.style.animation = 'leafDropAnim 4s linear forwards';
+            
+            // Position relative to the bush
+            const rect = activeBush.getBoundingClientRect();
+            leaf.style.top = (rect.top + 20) + 'px';
+            leaf.style.left = (rect.left + 30 + (Math.random() * 20 - 10)) + 'px'; // Centerish
+            
+            // leaf.style.zIndex needs to be high but perhaps below header? 
+            leaf.style.zIndex = "55"; // Higher than aside z-50 to float over
+
+            document.body.appendChild(leaf);
+            
+            // Clean up
+            setTimeout(() => {
+              if (leaf.parentNode) leaf.parentNode.removeChild(leaf);
+            }, 4000);
+          }
+        }, 2000);
+      }
+
+      // Active Bush Shaker Logic
+      function startActiveBushShaker() {
+        // Run a loop with random timeout
+        const scheduleShake = () => {
+            const delay = 3000 + Math.random() * 5000; // 3 to 8 seconds
+            setTimeout(() => {
+                const soot = document.getElementById('soot-sprite');
+                const activeBushWrapper = document.querySelector('.nav-bush-wrapper.active');
+                
+                // Conditions to Shake:
+                // 1. Soot is not peeping/moving
+                // 2. Active bush exists
+                const isBusy = soot.classList.contains('anim-pop-out') || 
+                               soot.classList.contains('anim-travel') || 
+                               soot.classList.contains('anim-dive') || 
+                               soot.classList.contains('anim-look') ||
+                               soot.classList.contains('peeping');
+                
+                if (activeBushWrapper && !isBusy) {
+                    const bush = activeBushWrapper.querySelector('.nav-bush');
+                    bush.classList.add('shaking');
+                    setTimeout(() => {
+                        bush.classList.remove('shaking');
+                    }, 500); // Shake duration
+                }
+                
+                scheduleShake(); // Schedule next
+            }, delay);
+        };
+        scheduleShake();
+      }
+      
+      // Create cel-shaded bamboo stalks
+      function createCelBamboo() {
+        const container = document.getElementById('bamboo-vignette');
+        if (!container) return;
+        
+        const rightStalks = [
+          { left: 'calc(100% - 60px)', height: '55%', width: 22, delay: 0 },
+          { left: 'calc(100% - 95px)', height: '70%', width: 28, delay: -1.5 },
+          { left: 'calc(100% - 140px)', height: '45%', width: 18, delay: -3 },
+        ];
+        
+        rightStalks.forEach((config, idx) => {
+          const stalk = createStalk(config);
+          container.appendChild(stalk);
+        });
+        
+        const leftStalks = [
+          { left: '25px', height: '60%', width: 24, delay: -2 },
+          { left: '60px', height: '40%', width: 16, delay: -4 },
+        ];
+        
+        leftStalks.forEach((config, idx) => {
+          const stalk = createStalk(config);
+          container.appendChild(stalk);
+        });
+      }
+      
+      function createStalk(config) {
+        const stalk = document.createElement('div');
+        stalk.className = 'bamboo-stalk animate-sway';
+        stalk.style.cssText = `
+          left: ${config.left};
+          height: ${config.height};
+          width: ${config.width}px;
+          animation-delay: ${config.delay}s;
+          animation-duration: 5s;
+          transform-origin: bottom center;
+        `;
+        
+        const nodeCount = 3 + Math.floor(Math.random() * 2);
+        for (let i = 1; i <= nodeCount; i++) {
+          const node = document.createElement('div');
+          node.className = 'bamboo-node';
+          node.style.bottom = `${(i / (nodeCount + 1)) * 100}%`;
+          stalk.appendChild(node);
+          
+          if (Math.random() > 0.4) {
+            const leaf = document.createElement('div');
+            leaf.className = 'bamboo-leaf-cel animate-sway-gentle';
+            const side = i % 2 === 0 ? 'left' : 'right';
+            const rotation = side === 'left' ? -45 : 45;
+            leaf.style.cssText = `
+              ${side}: ${config.width - 2}px;
+              bottom: ${((i / (nodeCount + 1)) * 100) + 2}%;
+              transform: rotate(${rotation}deg);
+              transform-origin: ${side === 'left' ? 'right' : 'left'} center;
+              animation-delay: ${Math.random() * -4}s;
+            `;
+            stalk.appendChild(leaf);
+          }
+        }
+        return stalk;
+      }
+      
+      function createFallingLeaves() {
+        const container = document.getElementById('falling-leaves');
+        if (!container) return;
+        
+        for (let i = 0; i < 5; i++) {
+          const leaf = document.createElement('div');
+          leaf.className = 'bamboo-leaf-cel animate-leaf-fall';
+          leaf.style.cssText = `
+            left: ${20 + Math.random() * 60}%;
+            top: -20px;
+            width: ${25 + Math.random() * 15}px;
+            height: ${8 + Math.random() * 5}px;
+            opacity: 0;
+            animation-delay: ${i * 2 + Math.random() * 3}s;
+            animation-duration: ${7 + Math.random() * 4}s;
+          `;
+          container.appendChild(leaf);
+        }
+      }
+      
+      function createDustMotes() {
+        const container = document.getElementById('dust-particles');
+        if(!container) return;
+        for(let i=0; i<30; i++) {
+           const mute = document.createElement('div');
+           mute.className = 'absolute bg-white rounded-full opacity-20 animate-float';
+           mute.style.width = Math.random() * 3 + 'px';
+           mute.style.height = mute.style.width;
+           mute.style.left = Math.random() * 100 + '%';
+           mute.style.top = Math.random() * 100 + '%';
+           mute.style.animationDelay = Math.random() * 5 + 's';
+           mute.style.animationDuration = 5 + Math.random() * 10 + 's';
+           container.appendChild(mute);
+        }
+      }
+      
+      function generateMoss() {
+        const stoneBar = document.querySelector('.stone-texture');
+        if(!stoneBar) return;
+        
+        // 1. Top Edge Moss (Hanging)
+        for(let i=0; i<5; i++) {
+            const moss = document.createElement('div');
+            moss.className = 'moss-clump';
+            const size = 15 + Math.random() * 20;
+            moss.style.width = size + 'px';
+            moss.style.height = size * 0.8 + 'px';
+            moss.style.top = -size/2 + 'px';
+            moss.style.left = (Math.random() * 80 + 10) + '%';
+            stoneBar.appendChild(moss);
+        }
+
+        // 2. Random Patches on Surface
+        for(let i=0; i<4; i++) {
+            const moss = document.createElement('div');
+            moss.className = 'moss-clump';
+            const size = 10 + Math.random() * 10;
+            moss.style.width = size + 'px';
+            moss.style.height = size + 'px';
+            moss.style.top = (Math.random() * 90) + '%';
+            moss.style.left = (Math.random() > 0.5 ? -5 : 95) + '%'; // Cling to sides
+            moss.style.opacity = 0.8;
+            stoneBar.appendChild(moss);
+        }
+      }
+
+      // --- PARTICLE SYSTEM (DUST, LEAVES, FIREFLIES) ---
+      const particles = []; // { el, x, y, vx, vy, baseSpeed, type: 'dust'|'leaf'|'firefly' }
+
+      function initParticleSystem() {
+        createDustMotes();
+        createFallingLeaves();
+        createFireflies();
+        // Start the master physics loop for particles
+        requestAnimationFrame(particleLoop);
+      }
+
+      function createDustMotes() {
+        const container = document.getElementById('dust-particles');
+        if(!container) return;
+        
+        for(let i=0; i<40; i++) {
+           const dot = document.createElement('div');
+           dot.className = 'absolute bg-white/80 rounded-full';
+           // Random sizes for depth
+           const size = Math.random() * 2 + 1;
+           dot.style.width = size + 'px';
+           dot.style.height = size + 'px';
+           
+           // Initial Position
+           const x = Math.random() * window.innerWidth;
+           const y = Math.random() * window.innerHeight;
+           
+           container.appendChild(dot);
+           
+           particles.push({
+             el: dot,
+             x: x,
+             y: y,
+             vx: (Math.random() - 0.5) * 0.5, // Slow drift
+             vy: (Math.random() - 0.5) * 0.5,
+             baseSpeed: 0.5,
+             friction: 0.98,
+             type: 'dust'
+           });
+        }
+      }
+
+      function createFallingLeaves() {
+         const container = document.getElementById('falling-leaves');
+         if(!container) return;
+         
+         const leafCount = 12;
+         for(let i=0; i<leafCount; i++) {
+            const leaf = document.createElement('div');
+            leaf.className = 'bamboo-leaf-cel';
+            leaf.style.width = (30 + Math.random()*20) + 'px';
+            leaf.style.height = (10 + Math.random()*5) + 'px';
+            leaf.style.opacity = 0.8;
+            leaf.style.backgroundColor = '#86efac';
+            
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            container.appendChild(leaf);
+            
+            particles.push({
+              el: leaf,
+              x: x,
+              y: y,
+              vx: (Math.random() - 0.5) * 2,
+              vy: 1 + Math.random() * 2, // Falling down
+              rotation: Math.random() * 360,
+              rotSpeed: (Math.random() - 0.5) * 4,
+              baseSpeed: 1,
+              friction: 0.95,
+              type: 'leaf'
+            });
+         }
+      }
+
+      function createFireflies() {
+        // Container same as dust? Or body?
+        const container = document.body;
+        
+        for(let i=0; i<8; i++) {
+          const fly = document.createElement('div');
+          fly.className = 'firefly';
+          fly.style.animation = `fireflyBlink ${2 + Math.random()*3}s ease-in-out infinite ${Math.random()*2}s`;
+          
+          const x = Math.random() * window.innerWidth;
+          const y = Math.random() * window.innerHeight;
+          
+          container.appendChild(fly);
+          
+          particles.push({
+             el: fly,
+             x: x,
+             y: y,
+             vx: (Math.random() - 0.5) * 1.5,
+             vy: (Math.random() - 0.5) * 1.5,
+             baseSpeed: 1.5,
+             friction: 1, // No friction, perpetual motion
+             type: 'firefly',
+             timer: Math.random() * 100
+          });
+        }
+      }
+
+      function particleLoop() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        particles.forEach(p => {
+            // Apply Forces
+            
+            // 1. Mouse Repulsion (Magnetic Field)
+            // Use lastMouseX/Y from existing global
+            const dx = p.x - lastMouseX;
+            const dy = p.y - lastMouseY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const repelRange = 250;
+            
+            if (dist < repelRange) {
+                const force = (repelRange - dist) / repelRange;
+                const angle = Math.atan2(dy, dx);
+                // Stronger force for dust (lighter), weaker for leaves
+                const multiplier = p.type === 'dust' ? 8 : (p.type === 'leaf' ? 3 : 1); 
+                
+                p.vx += Math.cos(angle) * force * multiplier * 0.5;
+                p.vy += Math.sin(angle) * force * multiplier * 0.5;
+            }
+            
+            // 2. Natural Movement
+            if (p.type === 'leaf') {
+                // Gravity
+                p.vy += 0.05;
+                // Wind (global mouse velocity effect, simpler here)
+                p.vx += Math.sin(Date.now() * 0.001) * 0.1; // Gentle sway
+                p.rotation += p.rotSpeed;
+            } else if (p.type === 'firefly') {
+                // Wander
+                p.timer += 0.1;
+                p.vx += Math.sin(p.timer) * 0.05;
+                p.vy += Math.cos(p.timer * 0.7) * 0.05;
+                // Clamp speed
+                const speed = Math.sqrt(p.vx*p.vx + p.vy*p.vy);
+                if(speed > 2) { p.vx *= 0.9; p.vy *= 0.9; }
+            }
+
+            // Apply Velocity
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            // Apply Friction (Air Resistance)
+            p.vx *= p.friction;
+            p.vy *= p.friction;
+            
+            // Wrap Around Logic
+            if (p.x < -50) p.x = width + 50;
+            if (p.x > width + 50) p.x = -50;
+            if (p.y < -50) p.y = height + 50;
+            if (p.y > height + 50) p.y = -50;
+            
+            // Reset leaf to top if fell off bottom
+            if (p.type === 'leaf' && p.y > height + 50) {
+               p.y = -50;
+               p.x = Math.random() * width;
+               p.vy = 1; 
+            }
+            
+            // Update Visuals
+            if (p.type === 'leaf') {
+                p.el.style.transform = `translate(${p.x}px, ${p.y}px) rotate(${p.rotation}deg)`;
+            } else {
+                p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+            }
+        });
+        
+        requestAnimationFrame(particleLoop);
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        createCelBamboo();
+        generateMoss(); // NEW
+        startSootPeeper();
+        startActiveBushLeafDropper();
+        startActiveBushShaker();
+        initParticleSystem(); // NEW: Start physics engine
+      });
+    </script>
+  </body>
+</html>
