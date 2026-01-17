@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- DEBUG MODE ACTIVE -->
+<div id="debug-panel" class="fixed top-0 right-0 max-w-sm bg-black/90 text-green-400 font-mono text-xs z-[9999] p-4 m-4 rounded border border-green-500 pointer-events-none">
+  <div class="font-bold border-b border-green-700 mb-2">ABYSSAL PILOT DIAGNOSTICS</div>
+  <div id="dbg-wrapper">Wrapper: Checking...</div>
+  <div id="dbg-sprite">Sprite: Checking...</div>
+  <div id="dbg-pos">Position: ?</div>
+  <div id="dbg-z">Z-Index: ?</div>
+  <div id="dbg-state">State: Idle</div>
+  <div id="dbg-click">Last Click: None</div>
+</div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Garden Post Navbar - Isolated</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              serif: ["Cinzel Decorative", "serif"],
+              mono: ["Rajdhani", "monospace"],
+            },
+            animation: {
+              'drift-slow': 'drift 90s linear infinite',
+              'drift-medium': 'drift 60s linear infinite',
+              'sway': 'sway 5s ease-in-out infinite',
+              'sway-gentle': 'swayGentle 4s ease-in-out infinite',
+              'blink': 'blink 3s ease-in-out infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'leaf-fall': 'leafFall 8s ease-in-out infinite',
+            },
+            animation: {
+              'drift-slow': 'drift 90s linear infinite',
+              'drift-medium': 'drift 60s linear infinite',
+              'rotate-slow': 'spin 60s linear infinite',
+              'rotate-medium': 'spin 40s linear infinite reverse',
+              'sway': 'sway 5s ease-in-out infinite',
+              'sway-gentle': 'swayGentle 4s ease-in-out infinite',
+              'blink': 'blink 3s ease-in-out infinite',
+              'float': 'float 3s ease-in-out infinite',
+              'leaf-fall': 'leafFall 8s ease-in-out infinite',
+            },
+            keyframes: {
+              spin: {
+                '0%': { transform: 'rotate(0deg)' },
+                '100%': { transform: 'rotate(360deg)' },
+              },
+              drift: {
+                '0%': { transform: 'translateX(-120%)' },
+                '100%': { transform: 'translateX(120vw)' },
+              },
+              sway: {
+                '0%, 100%': { transform: 'rotate(-1.5deg)' },
+                '50%': { transform: 'rotate(1.5deg)' },
+              },
+              swayGentle: {
+                '0%, 100%': { transform: 'rotate(-3deg) translateX(0)' },
+                '50%': { transform: 'rotate(3deg) translateX(2px)' },
+              },
+              blink: {
+                '0%, 42%, 58%, 100%': { transform: 'scaleY(1)' },
+                '50%': { transform: 'scaleY(0.1)' },
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-6px)' },
+              },
+              leafFall: {
+                '0%': { transform: 'translateY(-20px) rotate(0deg)', opacity: '0' },
+                '10%': { opacity: '0.8' },
+                '100%': { transform: 'translateY(100vh) rotate(360deg)', opacity: '0' },
+              },
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Rajdhani', sans-serif; /* Tech/Submersible Font */
+      }
+      
+      /* --- ABYSSAL HIGH-FIDELITY ASSETS --- */
+      
+      /* POINTER EVENTS OVERRIDE (Critical Fix) */
+      .nav-caustics, 
+      #marine-snow-front, 
+      #marine-snow-back,
+      .canvas-grain {
+          pointer-events: none !important;
+      }
+      
+      .nav-btn, .nav-bush-wrapper {
+          pointer-events: auto !important;
+          cursor: pointer;
+      }
+      
+      /* 1. The "Wet Chitin" Shader (Sidebar) */
+      .abyssal-spire {
+        position: relative;
+        background: linear-gradient(180deg, #0f172a 0%, #020617 100%); /* Deep base */
+        border-right: 1px solid rgba(148, 163, 184, 0.1);
+        box-shadow: 10px 0 30px rgba(0,0,0,0.5),
+                    inset 1px 0 0 rgba(255,255,255,0.05); /* Specular edge */
+        overflow: visible;
+        backdrop-filter: blur(10px);
+      }
+      
+      /* Iridescent Scale Overlay */
+      .abyssal-spire::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        opacity: 0.15;
+        background-image: radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.2) 0%, transparent 50%);
+        background-size: 40px 40px;
+        mask-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 40C9 40 0 31 0 20S9 0 20 0s20 9 20 20-9 20-20 20zm0-38C10.1 2 2 10.1 2 20s8.1 18 18 18 18-8.1 18-18S29.9 2 20 2z' fill='%23000' fill-opacity='1'/%3E%3C/svg%3E");
+        pointer-events: none;
+      }
+
+      /* 2. The "Bio-Membrane" Button (Replaces Pills) */
+      .bio-membrane {
+        position: absolute;
+        width: 60px;
+        height: 50px;
+        background: rgba(15, 23, 42, 0.4); /* Semi-transparent body */
+        border: 1px solid rgba(56, 189, 248, 0.2); /* Faint cyan rim */
+        
+        /* Organic Shape (Blob) */
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        
+        /* Bioluminescent Bloom (Inner Glow) */
+        box-shadow: inset 0 0 15px rgba(6, 182, 212, 0.1),
+                    0 0 5px rgba(6, 182, 212, 0.05);
+        
+        transform-origin: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        
+        /* Breathing Animation */
+        animation: membranePulse 6s ease-in-out infinite;
+      }
+      
+      @keyframes membranePulse {
+        0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+        50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+      }
+
+      /* Active/Hover State: "Predator Strike" */
+      /* Active/Hover State: "Soul Presence" */
+      .nav-bush-wrapper:hover .bio-membrane {
+        /* Hover stays Cyan (Scanning) */
+        background: rgba(6, 182, 212, 0.2); 
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.4);
+      }
+      
+      .nav-bush-wrapper.active .bio-membrane {
+        /* Active becomes Pink/Fuchsia (Sprite/Soul Inside) */
+        background: rgba(217, 70, 239, 0.25); /* Fuchsia 500 tint */
+        border-color: rgba(217, 70, 239, 0.8);
+        box-shadow: 0 0 25px rgba(217, 70, 239, 0.6),
+                    inset 0 0 15px rgba(217, 70, 239, 0.3);
+        animation: membranePulseFast 2s ease-in-out infinite; 
+      }
+      
+      @keyframes membranePulseFast {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 25px rgba(217, 70, 239, 0.6); }
+        50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(217, 70, 239, 0.8); }
+      }
+      /* ABYSSAL PILOT ANIMATIONS */
+      
+      /* Base Propel Keyframes (UP) */
+      @keyframes jellyPropel {
+          0% { transform: translateY(0) scale(1, 1); } 
+          20% { transform: translateY(5px) scale(1.1, 0.9); } 
+          35% { transform: translateY(-10px) scale(0.9, 1.2); } 
+          60% { transform: translateY(-15px) scale(1, 1); } 
+          100% { transform: translateY(0) scale(1, 1); } 
+      }
+
+      /* Base Propel Keyframes (DOWN - HEAD FIRST) */
+      @keyframes jellyPropelDown {
+          0% { transform: translateY(0) scale(1, 1) rotate(180deg); } 
+          20% { transform: translateY(5px) scale(1.1, 0.9) rotate(180deg); } /* Move Down, Squish */
+          35% { transform: translateY(10px) scale(0.9, 1.2) rotate(180deg); } /* Stretch */
+          60% { transform: translateY(15px) scale(1, 1) rotate(180deg); } 
+          100% { transform: translateY(0) scale(1, 1) rotate(180deg); } 
+      }
+
+      .pilot-swim-up {
+          animation: jellyPropel 2.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* Slowed */
+          filter: drop-shadow(0 0 15px #22d3ee);
+      }
+      
+      .pilot-swim-down {
+          animation: jellyPropelDown 2.0s cubic-bezier(0.4, 0, 0.2, 1) forwards; /* Slowed */
+          filter: drop-shadow(0 0 15px #d946ef);
+      }
+      
+      .pilot-idle {
+        animation: jellyPulse 4s ease-in-out infinite;
+        filter: drop-shadow(0 0 5px #22d3ee);
+      }
+      
+      @keyframes jellyPulse {
+          0%, 100% { transform: scale(1); opacity: 0.8; }
+          50% { transform: scale(1.05); opacity: 1; }
+      }.nav-bush-wrapper:not(.active):hover .bio-membrane {
+         animation: membraneJitter 0.5s linear infinite;
+      }
+      
+      @keyframes membraneJitter {
+        0% { transform: scale(1.05) translate(0,0); }
+        25% { transform: scale(1.05) translate(1px, 1px); }
+        50% { transform: scale(1.05) translate(-1px, -1px); }
+        75% { transform: scale(1.05) translate(-1px, 1px); }
+        100% { transform: scale(1.05) translate(0,0); }
+      }
+      
+      /* 3. The "Rune" Icons (SVG Container) */
+      .rune-icon {
+        width: 24px;
+        height: 24px;
+        color: #94a3b8; /* Slate 400 */
+        filter: drop-shadow(0 0 2px rgba(148, 163, 184, 0.5));
+        transition: all 0.3s ease;
+      }
+      
+      .nav-bush-wrapper:hover .rune-icon {
+        color: #22d3ee; /* Cyan 400 */
+        filter: drop-shadow(0 0 8px #22d3ee);
+        transform: scale(1.1);
+      }
+      
+      .nav-bush-wrapper.active .rune-icon {
+        color: #f0abfc; /* Fuchsia 300 */
+        filter: drop-shadow(0 0 10px #d946ef);
+        transform: scale(1.2);
+      }
+      
+      /* --- NAV BUSH & SOOT SPRITE --- */
+      
+      .nav-container {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 32px; /* Increased gap for bushes */
+        padding-top: 20px;
+        padding-bottom: 20px;
+      }
+      
+      /* --- ABYSSAL FLORA: ANEMONES --- */
+      .nav-bush-wrapper {
+        position: relative;
+        width: 80px; 
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        pointer-events: auto; /* Allow JS to toggle */
+        cursor: pointer;
+      }
+      
+      /* The Base (Invisible Anchor) */
+      .anemone-base {
+        position: absolute;
+        bottom: 0px; 
+        width: 10px; height: 10px;
+        background: transparent;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+      }
+      
+      /* The Tentacles */
+      .tentacle {
+        position: absolute;
+        bottom: 0;
+        width: 6px;
+        background: linear-gradient(to top, #d946ef, #8b5cf6); /* Pink to Purple */
+        border-radius: 20px;
+        transform-origin: bottom center;
+        box-shadow: 0 0 5px rgba(217, 70, 239, 0.5);
+        opacity: 0.9;
+      }
+      
+      /* Individual Tentacle Variations */
+      .t1 { height: 45px; left: -10px; animation: swayTentacle 3s ease-in-out infinite; animation-delay: 0s; }
+      .t2 { height: 55px; left: -5px;  animation: swayTentacle 3.5s ease-in-out infinite; animation-delay: -1s; }
+      .t3 { height: 60px; left: 0px;   animation: swayTentacle 4s ease-in-out infinite; animation-delay: -2s; }
+      .t4 { height: 50px; left: 5px;   animation: swayTentacle 3.2s ease-in-out infinite; animation-delay: -0.5s; }
+      .t5 { height: 40px; left: 10px;  animation: swayTentacle 2.8s ease-in-out infinite; animation-delay: -1.5s; }
+      
+      /* The Core Glow */
+      .anemone-core {
+        position: absolute;
+        bottom: 5px;
+        width: 20px; height: 15px;
+        background: #f0abfc;
+        border-radius: 50%;
+        filter: blur(5px);
+        opacity: 0.6;
+        animation: pulseCore 2s ease-in-out infinite;
+      }
+
+      @keyframes swayTentacle {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+      }
+      @keyframes pulseCore {
+        0%, 100% { opacity: 0.4; scale: 0.9; }
+        50% { opacity: 0.8; scale: 1.1; }
+      }
+
+      /* --- PREMIUM CSS JELLYFISH (VOLUMETRIC) --- */
+      
+      .jellyfish-sprite {
+        position: absolute;
+        width: 100%; height: 100%;
+        transform-origin: center center;
+        pointer-events: none;
+        z-index: 50; /* Above everything locally */
+      }
+      
+      /* 1. THE HOOD (Outer Bell) */
+      .jelly-hood {
+          position: absolute;
+          top: 0; left: 10%; width: 80%; height: 60%;
+          background: radial-gradient(circle at 50% 30%, rgba(34, 211, 238, 0) 0%, rgba(34, 211, 238, 0.1) 40%, rgba(6, 182, 212, 0.3) 100%);
+          border-radius: 50% 50% 40% 40%;
+          border-top: 1px solid rgba(165, 243, 252, 0.5); /* Crisp Highlight */
+          box-shadow: 
+            inset 0 0 15px rgba(34, 211, 238, 0.2),
+            0 0 20px rgba(34, 211, 238, 0.1); 
+          backdrop-filter: blur(3px);
+          overflow: hidden;
+          transform-origin: center bottom;
+          animation: hoodPulse 4s ease-in-out infinite;
+      }
+      
+      /* VEINS TEXTURE via Pseudo */
+      .jelly-hood::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          opacity: 0.3;
+          background: repeating-radial-gradient(
+            circle at 50% -20%, 
+            transparent 0, 
+            transparent 4px, 
+            rgba(34, 211, 238, 0.2) 5px, 
+            transparent 6px
+          );
+          mix-blend-mode: overlay;
+      }
+      
+      /* SPOTS TEXTURE via Pseudo */
+      .jelly-hood::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          opacity: 0.4;
+          background-image: radial-gradient(circle, rgba(255,255,255,0.4) 1px, transparent 1px);
+          background-size: 8px 8px; /* Dotted Pattern */
+          mask-image: linear-gradient(to bottom, black, transparent 80%);
+      }
+      
+      /* 2. INTERNAL ORGANS (The "Brain/Stomach") */
+      .jelly-organs {
+          position: absolute;
+          top: 30%; left: 35%; width: 30%; height: 30%;
+          background: radial-gradient(circle, #f0abfc 0%, #d946ef 60%, transparent 100%);
+          border-radius: 50%;
+          filter: blur(4px);
+          opacity: 0.8;
+          mix-blend-mode: screen;
+          animation: organPulse 2s ease-in-out infinite alternate;
+      }
+      
+      /* 3. ORAL ARMS (Frilly center bits) */
+      .jelly-oral-arms {
+          position: absolute;
+          top: 50%; left: 50%; transform: translateX(-50%);
+          width: 20px; height: 30px;
+          display: flex; justify-content: center;
+      }
+      .oral-arm {
+          width: 4px; height: 100%;
+          background: linear-gradient(to bottom, rgba(217, 70, 239, 0.6), transparent);
+          border-radius: 4px;
+          margin: 0 1px;
+          filter: blur(1px);
+          animation: swayOral 3s ease-in-out infinite;
+      }
+      
+      /* 4. TENTACLES (Long stinging threads) */
+      .jelly-tentacles {
+          position: absolute;
+          top: 55%; left: 0; width: 100%; height: 100%;
+          perspective: 100px;
+      }
+      
+      .tentacle {
+          position: absolute;
+          top: 0;
+          width: 1px;
+          background: linear-gradient(to bottom, rgba(103, 232, 249, 0.8), rgba(34, 211, 238, 0) 90%);
+          transform-origin: top center;
+          opacity: 0.6;
+      }
+      
+      /* High-Repetition Tentacles for Density */
+      .t1 { left: 20%; height: 60px; animation: lash 3.1s ease-in-out infinite; }
+      .t2 { left: 35%; height: 80px; animation: lash 2.5s ease-in-out infinite; }
+      .t3 { left: 50%; height: 70px; animation: lash 3.7s ease-in-out infinite; }
+      .t4 { left: 65%; height: 85px; animation: lash 2.9s ease-in-out infinite; }
+      .t5 { left: 80%; height: 55px; animation: lash 3.3s ease-in-out infinite; }
+
+      /* --- ANIMATIONS --- */
+      @keyframes hoodPulse {
+          0%, 100% { transform: scale(1, 1); border-radius: 50% 50% 40% 40%; }
+          50% { transform: scale(1.05, 0.95); border-radius: 55% 55% 35% 35%; }
+      }
+      @keyframes organPulse {
+          0% { opacity: 0.6; transform: scale(0.9); }
+          100% { opacity: 0.9; transform: scale(1.1); box-shadow: 0 0 15px #d946ef; }
+      }
+      @keyframes swayOral {
+          0%, 100% { transform: rotate(-5deg); }
+          50% { transform: rotate(5deg); }
+      }
+      @keyframes lash {
+          0%, 100% { transform: rotateX(0deg) rotateZ(-2deg) translateY(0); }
+          25% { transform: rotateX(10deg) rotateZ(5deg) translateY(-2px); }
+          50% { transform: rotateX(0deg) rotateZ(8deg) translateY(0); }
+          75% { transform: rotateX(-10deg) rotateZ(2deg) translateY(2px); }
+      }
+
+      /* --- SEQUENCED ANIMATIONS --- */
+      
+      /* Explicit Keyframes for JS/CSS Animations */
+      @keyframes rustle {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.05) rotate(2deg); }
+        50% { transform: scale(0.95) rotate(-2deg); }
+        75% { transform: scale(1.02) rotate(1deg); }
+      }
+      
+      @keyframes bushSway {
+         0%, 100% { transform: rotate(-2deg); }
+         50% { transform: rotate(2deg); }
+      }
+      
+      @keyframes bushPop {
+        0% { transform: scale(1); }
+        40% { transform: scale(1.3, 0.7) translateY(5px); } /* Squash */
+        60% { transform: scale(0.9, 1.2) translateY(-5px); } /* Stretch */
+        100% { transform: scale(1); }
+      }
+      
+      @keyframes bushSquish {
+        0% { transform: scale(1); }
+        30% { transform: scale(1.25, 0.75) translateY(5px); } /* Impact squish */
+        60% { transform: scale(0.9, 1.1) translateY(-2px); } /* Rebound */
+        100% { transform: scale(1); }
+      }
+
+      /* Random Shake Animation */
+      @keyframes bushShake {
+        0% { transform: translateX(0) rotate(0deg); }
+        25% { transform: translateX(-2px) rotate(-4deg); }
+        50% { transform: translateX(2px) rotate(4deg); }
+        75% { transform: translateX(-1px) rotate(-2deg); }
+        100% { transform: translateX(0) rotate(0deg); }
+      }
+
+      /* Soot Peep Animation */
+      @keyframes sootPeepAnim {
+        0% { transform: translate(0, 0) scale(0.8); }
+        20% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1); } /* Pop out fast */
+        40% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr1, -10deg)); } /* Look 1 */
+        70% { transform: translate(var(--ptx, 0), var(--pty, 0)) scale(1) rotate(var(--pr2, 10deg)); } /* Look 2 */
+        100% { transform: translate(0, 0) scale(0.8); } /* Return */
+      }
+      .soot-sprite.peeping {
+        animation: sootPeepAnim 2s ease-in-out forwards;
+        z-index: 2; /* Behind bush wrapper (z-10) but peeping out from behind */
+      }
+
+      /* 1. Pop Out (Side) */
+      @keyframes popOutSide {
+        0% { transform: translateX(0) scale(0.8); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(1.2, 0.8) translateY(5px); } /* Anticipate */
+        60% { transform: translateX(calc(var(--side-offset) * 0.8)) scale(0.9, 1.1) translateY(-15px); } /* Jump */
+        100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); } /* Land */
+      }
+      .anim-pop-out {
+        animation: popOutSide 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+      }
+
+      /* 2. Look Around */
+      @keyframes lookAround {
+        0% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+        20% { transform: translateX(var(--side-offset)) scale(1.05) rotate(-10deg); }
+        50% { transform: translateX(var(--side-offset)) scale(0.95) rotate(10deg); }
+        80% { transform: translateX(var(--side-offset)) scale(1.02) rotate(-5deg); }
+        100% { transform: translateX(var(--side-offset)) scale(1) rotate(0deg); }
+      }
+      .anim-look {
+        animation: lookAround 0.8s ease-in-out forwards;
+      }
+
+      /* 3. Travel (Vertical Bobbing) */
+      @keyframes travelBob {
+        0%, 100% { transform: translateX(var(--side-offset)) scale(1) translateY(0); }
+        50% { transform: translateX(var(--side-offset)) scale(0.9, 1.1) translateY(-8px); }
+      }
+      .anim-travel {
+        animation: travelBob 0.3s ease-in-out infinite;
+      }
+
+      /* 5. DIVE IN */
+      @keyframes diveIn {
+        0% { transform: translateX(var(--side-offset)) scale(1); }
+        40% { transform: translateX(calc(var(--side-offset) * 0.5)) scale(0.8, 1.2) translateY(-15px); } /* Jump up */
+        100% { transform: translateX(0) scale(0.8); } /* Dive in */
+      }
+      .anim-dive {
+        animation: diveIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+      }
+
+      /* 0. ANTICIPATION (Squash) */
+      @keyframes anticipateSquash {
+        0% { transform: scale(0.8); }
+        100% { transform: scale(1.2, 0.6) translateY(10px); }
+      }
+      .anim-anticipate {
+        animation: anticipateSquash 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        /* z-index removed to stay behind */
+      }
+
+      /* 6. LANDING (Jelly) */
+      @keyframes jellyLand {
+        0% { transform: scale(0.8); } /* From dive */
+        30% { transform: scale(1.3, 0.7); } /* Splat */
+        50% { transform: scale(0.9, 1.1); } /* Rebound */
+        70% { transform: scale(1.1, 0.9); } /* Wiggle */
+        100% { transform: scale(1); } /* Rest */
+      }
+      .anim-land {
+        animation: jellyLand 0.4s ease-out forwards;
+        z-index: 2;
+      }
+
+      /* ACTIVE vs INACTIVE BUSHES */
+      .nav-bush-wrapper.active .nav-bush {
+        background: #22c55e; /* Darker green when active */
+        animation: bushIdle 4s ease-in-out infinite; /* Calm idle */
+      }
+      
+      /* Explicity Shake Class */
+      .nav-bush-wrapper.active .nav-bush.shaking {
+        animation: bushShake 0.5s ease-in-out;
+      }
+      
+      .nav-bush-wrapper:not(.active) .nav-bush {
+        animation: bushSway 5s ease-in-out infinite; /* Gentle wind sway */
+      }
+      
+      .nav-btn {
+        position: relative;
+        z-index: 20; /* Above bush */
+        text-shadow: 0 2px 0 rgba(255,255,255,0.5);
+      }
+
+      /* Falling Leaf from Active Bush */
+      .active-bush-leaf {
+        position: absolute;
+        background: #4ade80;
+        border: 1px solid #14532d;
+        width: 14px;
+        height: 8px;
+        border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+        pointer-events: none;
+        z-index: 40;
+        opacity: 0;
+      }
+      
+      @keyframes leafDropAnim {
+        0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+        25% { transform: translate(15px, 40px) rotate(45deg); opacity: 1; }
+        50% { transform: translate(-10px, 90px) rotate(90deg); opacity: 0.9; }
+        75% { transform: translate(10px, 150px) rotate(180deg); opacity: 0.8; }
+        100% { transform: translate(20px, 200px) rotate(360deg); opacity: 0; }
+      }
+
+      /* Stone Texture -> Rusted Ship Metal */
+      .stone-texture {
+        background-color: #0f172a; /* Slate 900 */
+        /* Use the SVG filter for texture is removed for simpler metal look, or we use noise */
+        background-image: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%);
+        /* Subtle gradient to give it form */
+        background-image: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(0,0,0,0.1));
+        border-right: 3px solid #78716c;
+        box-shadow: 10px 10px 20px rgba(0,0,0,0.5),
+                    inset 2px 2px 0 rgba(255,255,255,0.05);
+        position: relative; /* Context for Moss */
+        overflow: visible; /* Let moss hang off */
+        border-right: 2px solid #334155;
+      }
+      
+      /* Moss Clumps -> Bioluminescent Polyps */
+      .moss-clump {
+        position: absolute;
+        background: #d946ef; /* Fuchsia */
+        border-radius: 50%;
+        box-shadow: 0 0 10px #d946ef, inset 2px 2px 5px rgba(255,255,255,0.4);
+        z-index: 5;
+        pointer-events: none;
+      }
+      .moss-clump::after {
+        content: '';
+        position: absolute;
+        inset: 20%;
+        background: #4d7c0f; /* Darker center */
+        border-radius: inherit;
+        filter: blur(2px);
+        opacity: 0.5;
+      }
+      
+      /* --- ITERATION 2: GOD RAYS --- */
+      .ray {
+        background: conic-gradient(from 0deg, 
+            transparent 0deg, 
+            rgba(255, 255, 255, 0.05) 20deg, 
+            transparent 40deg, 
+            rgba(255, 255, 255, 0.08) 60deg, 
+            transparent 90deg);
+        will-change: transform;
+      }
+      /* Abyssal Beacon (The Lure) */
+      /* Abyssal Beacon (Hidden Tracker Logic) */
+      .abyssal-beacon {
+        @apply absolute w-1 h-1 z-[-1] rounded-full pointer-events-none;
+        background: transparent;
+        opacity: 0; 
+        /* Kept for navigation logic to track "Y" position, but visually hidden */
+        transition: top 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
+      }
+      
+      /* Trail/Tether (Optional: Subtle particle trail logic handled by JS or simple pseudo) */
+      .abyssal-beacon::after {
+         content: '';
+         position: absolute;
+         top: 50%; left: 50%;
+         width: 200%; height: 200%;
+         transform: translate(-50%, -50%);
+         background: radial-gradient(circle, rgba(34,211,238,0.2) 0%, transparent 70%);
+         border-radius: 50%;
+         z-index: -1;
+         animation: beaconGlow 2s ease-in-out infinite alternate;
+      }
+
+      @keyframes beaconPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+      }
+      @keyframes beaconGlow {
+        0% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+        100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.5); }
+      }
+      
+      /* --- ITERATION 5: POLISH --- */
+      .color-grade-overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        z-index: 100;
+        /* Warm sunlight top-left, Cool shadow bottom-right */
+        background: linear-gradient(135deg, rgba(254, 243, 199, 0.1) 0%, rgba(30, 58, 138, 0.1) 100%);
+        mix-blend-mode: overlay;
+      }
+
+      .vignette-layer {
+         position: absolute;
+         inset: 0;
+         pointer-events: none;
+         z-index: 101;
+         /* Cinematic vignette */
+         background: radial-gradient(circle at center, transparent 40%, rgba(0,0,0,0.4) 120%);
+      }
+    </style>
+  </head>
+  <body class="bg-[#020617] text-white">
+    <!-- Abyssal Background Gradient -->
+    <div class="fixed inset-0 pointer-events-none" style="background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%); z-index: -1;"></div>
+    <!-- Caustic Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-20 mix-blend-screen" style="background: #22d3ee; filter: url(#abyssalCaustics); z-index: 0;"></div>
+    
+    <svg width="0" height="0" class="absolute">
+      <filter id="abyssalCaustics">
+        <!-- 1. Generate Fractal Noise (The Light Patterns) -->
+        <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="1" result="noise" />
+        <!-- 2. Displace the background using the noise -->
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" />
+        <!-- 3. Lighting (The Glow) -->
+        <feDiffuseLighting in="noise" lighting-color="#4fd1c5" surfaceScale="2">
+           <feDistantLight azimuth="45" elevation="60" />
+        </feDiffuseLighting>
+        <feComposite operator="in" in2="SourceGraphic" />
+      </filter>
+    </svg>
+
+    <div class="color-grade-overlay"></div>
+    <div class="vignette-layer"></div>
+
+    <!-- Canvas Grain Overlay -->
+    <div class="canvas-grain"></div>
+
+    <!-- Volumetric God Rays (Overlay) -->
+    <div class="god-rays-container fixed inset-0 pointer-events-none z-[60] mix-blend-overlay opacity-60">
+      <div class="ray ray-1 absolute inset-[-50%] animate-rotate-slow"></div>
+      <div class="ray ray-2 absolute inset-[-50%] animate-rotate-medium"></div>
+      <!-- Floating Dust Motes -->
+      <div id="dust-particles" class="absolute inset-0"></div>
+    </div>
+    
+    <!-- Abyssal Background Geometry -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+      <!-- 1. Deep Water Gradient -->
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,#1e1b4b_0%,#020617_50%,#000000_100%)]"></div>
+      
+      <!-- 2. Distant Light Shafts (Subtle Shear, No Rotation) -->
+      <div class="absolute inset-0 opacity-10 mix-blend-screen bg-[linear-gradient(45deg,transparent_40%,#0ea5e9_50%,transparent_60%)]" style="transform: skewX(-20deg);"></div>
+
+      <!-- 3. Caustic Overlay (The Wavy Light) -->
+      <div class="absolute inset-0 mix-blend-overlay opacity-40 nav-caustics" style="background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvc3ZnIiB3aWR0aD0iMjU2IiBoZWlnaHQ9IjI1NiI+PGZpbHRlciBpZD0iZnoiPjxmZVR1cmJ1bGVuY2UgdHlwZT0iZnJhY3RhbE5vaXNlIiBiYXNlRnJlcXVlbmN5PSIwLjAzIiBudW1PY3RhdmVzPSIxIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbHRlcj0idXJsKCNuKSIgb3BhY2l0eT0iMC41Ii8+PC9zdmc+'); filter: blur(20px) contrast(200%); animation: sway 15s ease-in-out infinite;"></div>
+      
+      <!-- 4. NEW: Ambient Marine Snow (Parallax Layers) -->
+      <div id="marine-snow-front" class="absolute inset-0 opacity-60"></div>
+      <div id="marine-snow-back" class="absolute inset-0 opacity-30 transform scale-150 blur-sm"></div>
+    </div>
+    
+    <!-- SHOWCASE REMOVED (Step 895) -->
+
+    <div class="h-screen w-screen flex overflow-hidden font-rounded text-stone-800 relative z-10">
+      
+      <!-- ABYSSAL SPIRE SIDEBAR -->
+      <aside class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-50">
+        <div class="abyssal-spire flex flex-col items-center py-8 px-4 rounded-full shadow-2xl relative">
+          
+          <!-- Bioluminescent Core (Logo) -->
+          <div class="w-14 h-14 rounded-full bg-[#0f172a] border border-[#38bdf8]/30 flex items-center justify-center text-[#38bdf8] text-2xl mb-6 shadow-[0_0_15px_rgba(56,189,248,0.3)] z-20 relative font-serif font-bold">
+            <span class="drop-shadow-[0_0_5px_rgba(56,189,248,0.8)]">Ω</span>
+          </div>
+      <!-- Navigation Items -->
+      <nav class="nav-container relative" id="nav-container" style="gap: 24px;">
+          <div id="abyssal-pilot-wrapper" class="absolute left-1/2 -translate-x-1/2 z-0 w-16 h-16 pointer-events-none transition-all duration-600 ease-in-out opacity-0" style="top: 0;">
+              <div id="abyssal-pilot-sprite" class="jellyfish-sprite">
+                  <!-- 1. The Volumetric Hood -->
+                  <div class="jelly-hood"></div>
+                  
+                  <!-- 2. The Internal Glowing Organs -->
+                  <div class="jelly-organs"></div>
+                  
+                  <!-- 3. Oral Arms (Center) -->
+                  <div class="jelly-oral-arms">
+                      <div class="oral-arm"></div>
+                      <div class="oral-arm"></div>
+                      <div class="oral-arm"></div>
+                  </div>
+                  
+                  <!-- 4. Trailing Tentacles -->
+                  <div class="jelly-tentacles">
+                      <div class="tentacle t1"></div>
+                      <div class="tentacle t2"></div>
+                      <div class="tentacle t3"></div>
+                      <div class="tentacle t4"></div>
+                      <div class="tentacle t5"></div>
+                  </div>
+              </div>
+          </div>
+            <!-- Abyssal Beacon (The Lure) -->
+            <div id="abyssal-beacon" class="abyssal-beacon" style="top: 36px; left: 16px;"></div>
+            
+            
+            <!-- 1. Star Chart (Calendar) -->
+            <div class="nav-bush-wrapper group active" data-index="0" data-page="calendar">
+              <div class="bio-membrane w-20 h-20 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center relative transition-all duration-300 group-hover:bg-cyan-900/40 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                 <div class="rune-icon text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2L15 8L21 9L17 14L18 20L12 17L6 20L7 14L3 9L9 8L12 2Z" />
+                      <circle cx="12" cy="12" r="3" opacity="0.5"/>
+                    </svg>
+                 </div>
+              </div>
+            </div>
+
+            <!-- 2. Current Flow (Tasks) -->
+            <div class="nav-bush-wrapper group" data-index="1" data-page="tasks">
+              <div class="bio-membrane w-20 h-20 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center relative transition-all duration-300 group-hover:bg-cyan-900/40 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                 <div class="rune-icon text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M22 17a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2 2 2 0 0 0-2-2 2 2 0 0 1-2-2 2 2 0 0 0-2-2 2 2 0 0 1-2-2 2 2 0 0 0-2-2h-2" />
+                      <path d="M2 17a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2 2 2 0 0 1 2-2 2 2 0 0 0 2-2 2 2 0 0 1 2-2h2" />
+                    </svg>
+                 </div>
+              </div>
+            </div>
+
+            <!-- 3. Ancient Scroll (Archives) -->
+            <div class="nav-bush-wrapper group" data-index="2" data-page="archives">
+              <div class="bio-membrane w-20 h-20 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center relative transition-all duration-300 group-hover:bg-cyan-900/40 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                 <div class="rune-icon text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M8 2H5l-2 2v16l2 2h14l2-2V4l-2-2H8z" />
+                      <path d="M10 2v4h4" />
+                    </svg>
+                 </div>
+              </div>
+            </div>
+
+            <!-- 4. Neural Net (Mind Palace) -->
+            <div class="nav-bush-wrapper group" data-index="3" data-page="mind-palace">
+              <div class="bio-membrane w-20 h-20 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center relative transition-all duration-300 group-hover:bg-cyan-900/40 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                 <div class="rune-icon text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M9.5 2C10.7 2 11.5 3 12 3.5C12.5 3 13.3 2 14.5 2C17.5 2 20 4.5 20 7.5C20 9.8 19 11.5 18 12.5" />
+                      <path d="M4 7.5C4 4.5 6.5 2 9.5 2" />
+                      <path d="M12 22C12 22 17 20 20 15" />
+                      <path d="M12 22C12 22 7 20 4 15" />
+                      <path d="M4 15C4 15 3 12 3 7.5" />
+                    </svg>
+                 </div>
+              </div>
+            </div>
+
+            <!-- 5. Mechanism (Settings) -->
+            <div class="nav-bush-wrapper group" data-index="4" data-page="settings">
+              <div class="bio-membrane w-20 h-20 rounded-2xl bg-slate-900/50 backdrop-blur-md border border-white/10 flex items-center justify-center relative transition-all duration-300 group-hover:bg-cyan-900/40 group-hover:border-cyan-400/50 group-hover:shadow-[0_0_20px_rgba(34,211,238,0.3)]">
+                 <div class="rune-icon text-cyan-400 text-2xl group-hover:scale-110 transition-transform">
+                    <svg viewBox="0 0 24 24" fill="none" class="w-8 h-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                    </svg>
+                 </div>
+              </div>
+            </div>
+          </nav>
+          
+          <!-- Divider -->
+          <div class="w-8 h-1 bg-slate-800/50 my-4 rounded-full"></div>
+          
+          <!-- Thermal Vent (Replaces Potted Bamboo) -->
+          <div class="thermal-vent relative">
+             <!-- Vent Chimney -->
+            <div class="w-12 h-16 bg-gradient-to-t from-slate-900 to-slate-800 rounded-lg relative overflow-hidden" 
+                 style="clip-path: polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%);">
+                 <!-- Cracks -->
+                 <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,...')] opacity-30 mix-blend-overlay"></div>
+            </div>
+            <!-- Bubbles Emitter (Handled by JS Particle System) -->
+            <div id="vent-emitter" class="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-4"></div>
+          </div>
+          
+        </div>
+      </aside>
+      
+    </div>
+
+    <script>
+      // --- VISUAL PERFECTION: GLOBAL CONFIG ---
+      const THEME_CONFIG = {
+        bushHeight: 60,
+        bushGap: 32,
+        navPaddingTop: 20 + 13, // 20 pad + 13 offset
+        windSensitivity: 0.15,  // How much mouse speed affects bush sway
+        windDecay: 0.92,        // Inertia decay (lower = faster stop)
+        // ABYSSAL PHYSICS CONSTANTS
+        gravity: 0.05,
+        buoyancy: 0.08, // Net positive lift
+        drag: 0.94,
+        currentForce: 0.05
+      };
+
+      // Initialize with defaults
+      const config = {
+        activePage: 'calendar'
+      };
+      
+      const pageOrder = ['calendar', 'tasks', 'archives', 'mind-palace', 'settings'];
+
+      // --- PHYSICS: INTERACTIVE WIND SYSTEM ---
+      let lastMouseX = 0;
+      let lastMouseY = 0;
+      let mouseVelocityX = 0;
+      
+      const bushes = []; // Will hold { element, currentSkew, targetSkew }
+
+      function initPhysics() {
+        // Collect all bush elements
+        document.querySelectorAll('.bio-membrane').forEach(el => {
+            bushes.push({
+                element: el,
+                currentSkew: 0,
+                velocity: 0
+            });
+        });
+
+        // Mouse Velocity Tracker
+        document.addEventListener('mousemove', (e) => {
+            mouseVelocityX = e.clientX - lastMouseX;
+            lastMouseX = e.clientX;
+            lastMouseY = e.clientY;
+
+            // Apply wind force to bushes near the mouse
+            bushes.forEach(bushData => {
+                const rect = bushData.element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                // Distance check
+                const dx = e.clientX - centerX;
+                const dy = e.clientY - centerY;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // If close enough (< 100px), impart force
+                if (dist < 100) {
+                    // Force decays with distance
+                    const force = Math.max(0, (100 - dist) / 100) * mouseVelocityX * THEME_CONFIG.windSensitivity;
+                    bushData.velocity += force;
+                }
+            });
+        });
+
+        // Start Physics Loop
+        requestAnimationFrame(physicsLoop);
+      }
+
+      function physicsLoop() {
+        // Global Abyssal Current (Time-based oscillation)
+        const time = Date.now() * 0.001;
+        const currentSway = Math.sin(time) * 0.15 + Math.cos(time * 0.7) * 0.05;
+
+        bushes.forEach(bush => {
+            // Apply Abyssal Forces
+            
+            // 1. Current Force (replaces Wind Decay/Spring for a constant motion)
+            // Push towards the sway direction
+            bush.velocity += (currentSway * 0.1);
+
+            // 2. Drag (Water Resistance) - Stronger damping
+            bush.velocity *= THEME_CONFIG.drag;
+            
+            // 3. Spring Force still needed to keep it anchored, but weaker
+            const springForce = -bush.currentSkew * 0.05;
+            bush.velocity += springForce;
+            
+            // Update position
+            bush.currentSkew += bush.velocity;
+            
+            // Apply transform
+            bush.element.style.setProperty('--wind-skew', `${bush.currentSkew}deg`);
+        });
+        
+        requestAnimationFrame(physicsLoop);
+      }
+
+      // Helper function to wait for animations
+      function wait(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+
+      window.showPage = function(pageId) {
+        // Just update internal state, do NOT trigger animation (Avoid Recursion)
+        config.activePage = pageId || 'calendar';
+        updateNavStyles(pageId);
+      }
+      
+      // [Deleted Old animateNavigation - replaced by Abyssal Pilot Logic below]
+
+      function updateNavStyles(activePageId) {
+        // Optional: Keep text color logic if needed, but wrapper handles active state
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+          // If using inner buttons (which we removed), this does nothing.
+          // Keeping for safety if layout reverts.
+        });
+      }
+      
+       
+       // Beacon Peep Logic
+       function startSootPeeper() {
+         setInterval(() => {
+           const sprite = document.getElementById('abyssal-beacon');
+           // Don't peep if busy (Simple check by Y offset or transition)
+           // Simplified: Just wander if opacity is 1 (visible)
+           // Actually, beacon is always visible behind. Let it drift.
+               
+           // 50% chance every 4s
+           if (Math.random() > 0.5) {
+             // For Vertical Layout, we peep Left or Right mostly
+             const directions = ['left', 'right'];
+             const dir = directions[Math.floor(Math.random() * directions.length)];
+             
+             let tx = '0px', ty = '0px', r1 = '-10deg', r2 = '10deg';
+             
+             if (dir === 'left') {
+                 tx = '-30px'; 
+                 ty = '5px';
+                 r1 = '-20deg'; r2 = '-10deg';
+             } else if (dir === 'right') {
+                 tx = '45px'; // Need to clear the wider menu
+                 ty = '5px'; 
+                 r1 = '20deg'; r2 = '10deg';
+             }
+             
+             // Apply vars
+             sprite.style.setProperty('--ptx', tx);
+             sprite.style.setProperty('--pty', ty);
+             sprite.style.setProperty('--pr1', r1);
+             sprite.style.setProperty('--pr2', r2);
+             
+             sprite.classList.add('peeping');
+             
+             setTimeout(() => {
+               sprite.classList.remove('peeping');
+             }, 2000);
+           }
+         }, 4000);
+       }
+
+       function startSootEyes() {
+         // Placeholder for future polyp logic if needed
+       }
+      
+      
+      // Active Bush Leaf Dropper Logic (Refactored for Bio-Membrane/Bubbles)
+      function startActiveBushLeafDropper() {
+        const navContainer = document.querySelector('.nav-container');
+        
+        setInterval(() => {
+          const activeBushWrapper = document.querySelector('.nav-bush-wrapper.active');
+          if (!activeBushWrapper) return;
+          
+          // 60% chance to drop a bubble
+          if (Math.random() > 0.4) {
+            const bubble = document.createElement('div');
+            bubble.className = 'active-bush-leaf'; // Keeping class name for compatibility with CSS, or update CSS to .active-bush-bubble
+            // But we need to update the CSS style for this class to look like a bubble if not done already
+            bubble.style.animation = 'leafDropAnim 4s linear forwards'; // Reuse anim or create bubbleRise
+            
+            // Override styles for bubble look
+            bubble.style.background = 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.8), rgba(6,182,212,0.4))';
+            bubble.style.border = '1px solid rgba(6,182,212,0.6)';
+            bubble.style.borderRadius = '50%';
+            bubble.style.width = (4 + Math.random() * 6) + 'px';
+            bubble.style.height = bubble.style.width;
+            
+            // Position relative to the membrane
+            const rect = activeBushWrapper.getBoundingClientRect();
+            bubble.style.top = (rect.top + 20) + 'px';
+            bubble.style.left = (rect.left + 30 + (Math.random() * 20 - 10)) + 'px'; 
+            
+            bubble.style.zIndex = "55";
+
+            document.body.appendChild(bubble);
+            
+            // Clean up
+            setTimeout(() => {
+              if (bubble.parentNode) bubble.parentNode.removeChild(bubble);
+            }, 4000);
+          }
+        }, 2000);
+      }
+
+    // Active Bush Shaker Logic (Placeholder for legacy calls)
+    function startActiveBushShaker() {
+        // No-op: Replaced by Pilot Mechanics
+    }
+
+    // State Variables
+    let activeIndex = 0;
+    let isBusy = false;
+    
+    // Bind Events on Load
+    document.addEventListener('DOMContentLoaded', () => {
+        const btns = document.querySelectorAll('.nav-bush-wrapper');
+        btns.forEach(btn => {
+           btn.addEventListener('click', (e) => {
+              // Get Index
+              const idx = parseInt(btn.getAttribute('data-index'));
+              animateNavigation(idx);
+           });
+        });
+    });
+
+    /* ABYSSAL PILOT NAVIGATION LOGIC */
+    function updateDebug(msg) {
+        const p = document.getElementById('debug-panel');
+        if(p) {
+            const wrap = document.getElementById('abyssal-pilot-wrapper');
+            const sprite = document.getElementById('abyssal-pilot-sprite');
+            document.getElementById('dbg-wrapper').innerText = wrap ? "Wrapper: OK" : "Wrapper: MISSING";
+            document.getElementById('dbg-sprite').innerText = sprite ? "Sprite: OK" : "Sprite: MISSING";
+            if(wrap) {
+                 const rect = wrap.getBoundingClientRect();
+                 document.getElementById('dbg-pos').innerText = `Pos: Top=${wrap.style.top}, RectY=${Math.round(rect.top)}`;
+                 document.getElementById('dbg-z').innerText = `Z-Index: ${wrap.style.zIndex}, Opacity: ${wrap.style.opacity}`;
+            }
+            if(msg) document.getElementById('dbg-state').innerText = "State: " + msg;
+        }
+    }
+    
+    // Init Debug
+    setInterval(() => updateDebug(), 500);
+
+    function animateNavigation(index) {
+      try {
+          document.getElementById('dbg-click').innerText = "Last Click: Index " + index;
+          updateDebug("Starting Anim...");
+
+          if (isBusy || index === activeIndex) {
+              updateDebug("Blocked (Busy/Same)");
+              return;
+          }
+          isBusy = true; // Briefly block
+
+          const navItems = document.querySelectorAll('.nav-bush-wrapper');
+          if(navItems.length === 0) throw new Error("No Nav Items Found");
+
+          // HARD LOCK: Disable Clicks on ALL Items (Prevent Looping)
+          navItems.forEach(btn => btn.style.pointerEvents = 'none');
+          
+          const currentItem = navItems[activeIndex];
+          const nextItem = navItems[index];
+          
+          if(!currentItem) throw new Error("Current Item Undefined (idx=" + activeIndex + ")");
+          if(!nextItem) throw new Error("Next Item Undefined (idx=" + index + ")");
+
+          // Wrapper handles Position (X/Y) + Opacity
+          const pilotWrapper = document.getElementById('abyssal-pilot-wrapper');
+          // Sprite handles Physics Animation (Swim/Pulse)
+          const pilotSprite = document.getElementById('abyssal-pilot-sprite');
+
+          if(!pilotWrapper || !pilotSprite) {
+              updateDebug("ERROR: MISSING ELEMENTS");
+              return;
+          }
+          
+          updateDebug(`Items OK. Cur=${activeIndex} Next=${index}`);
+
+          // Determine Direction
+          const direction = index - activeIndex; // > 0 = Down, < 0 = Up
+          
+          // Calculate Positions (Relative to Nav Container)
+          const startTop = currentItem.offsetTop; // Start at current button
+          const endTop = nextItem.offsetTop; // End at new button
+          updateDebug(`Travel: ${startTop} -> ${endTop}`);
+          
+          // 1. Reset Pilot to Current Button Position
+          // Button Height = 80px (w-20 h-20)
+          // Pilot Height = 64px (w-16 h-16)
+          // Center Offset = (80 - 64) / 2 = 8px
+          // Top position includes offsetTop.
+          const centerOffset = 8;
+          
+          pilotWrapper.style.transition = 'none';
+          pilotWrapper.style.top = (startTop + centerOffset) + 'px'; 
+          // FIX: Preserve Centering Transform!
+          pilotWrapper.style.transform = 'translateX(-50%) scale(1)'; 
+          pilotWrapper.style.opacity = '1';
+          pilotWrapper.style.zIndex = '50'; // POP OUT
+          
+          // Reset Animations on Sprite
+          pilotSprite.classList.remove('pilot-swim-up', 'pilot-swim-down', 'pilot-idle');
+          void pilotSprite.offsetWidth; // Force Reflow
+
+          // 2. Apply Directional Animation & Move
+          pilotWrapper.style.transition = 'top 2.0s ease-in-out'; // Slow Travel 2.0s
+          pilotWrapper.style.top = (endTop + centerOffset) + 'px'; // Move Wrapper
+
+          if (direction < 0) {
+              // GOING UP
+              pilotSprite.classList.add('pilot-swim-up');
+              updateDebug("Swimming UP");
+          } else {
+              // GOING DOWN
+              pilotSprite.classList.add('pilot-swim-down');
+              updateDebug("Swimming DOWN");
+          }
+
+          // 3. UI Updates after travel
+          setTimeout(() => {
+            try {
+                updateDebug("Arrived. Tucking Behind.");
+                // Update Buttons
+                navItems.forEach(item => item.classList.remove('active'));
+                nextItem.classList.add('active');
+                
+                // CRITICAL FIX: "Liquid Gold" Docking
+                // 1. Instantly snap behind button
+                pilotWrapper.style.transition = 'none';
+                pilotWrapper.style.zIndex = '-1'; 
+                pilotWrapper.style.opacity = '1'; 
+                
+                // Note: We DO NOT reset rotation classes here. 
+                // We let it dissolve in its current pose (Up/Down) to avoid the "Turn Up" glitch.
+
+                // 2. Shrink & Dissolve (Sucks tentacles in)
+                requestAnimationFrame(() => {
+                    // Enable transform transition for the shrink
+                    pilotWrapper.style.transition = 'opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                    pilotWrapper.style.opacity = '0';
+                    // FIX: Preserve Centering Transform!
+                    pilotWrapper.style.transform = 'translateX(-50%) scale(0.4)'; // Implode into button
+                });
+                
+                // 3. Final Cleanup
+                setTimeout(() => {
+                    activeIndex = index;
+                    isBusy = false;
+                    navItems.forEach(btn => btn.style.pointerEvents = 'auto');
+                    
+                    // Reset Scale for next time? 
+                    // No, next time "reset Position" block handles opacity/z-index, 
+                    // but we must also reset Transform there.
+                    
+                    const targetPage = nextItem.getAttribute('data-page');
+                    if(typeof showPage !== 'undefined') showPage(targetPage);
+                }, 600); 
+
+
+            } catch(e) {
+                updateDebug("Timeout Err: " + e.message);
+            }
+            
+          }, 2000); // 2000ms delay matches animation
+      } catch(err) {
+          console.error(err);
+          updateDebug("CRASH: " + err.message);
+          isBusy = false; // Reset lock
+          const navItems = document.querySelectorAll('.nav-bush-wrapper');
+          navItems.forEach(btn => btn.style.pointerEvents = 'auto'); // Emergency Unlock
+      }
+    }
+      
+      // Removed CelBamboo creation (Terrestrial)
+      
+      // Removed old createFallingLeaves (Terrestrial) -> Physics loop handles bubbles now
+      
+      // Removed old createDustMotes (Terrestrial) -> Physics loop handles plankton now
+      
+      function generateMoss() {
+         // Re-purpose as "Barnacles" or "Small Coral" on the Spire
+        const spire = document.querySelector('.abyssal-spire');
+        if(!spire) return;
+        
+        // Add some glowing barnacles
+        for(let i=0; i<8; i++) {
+            const barnacle = document.createElement('div');
+            barnacle.className = 'absolute rounded-full bg-cyan-900/80 border border-cyan-500/30';
+            const size = 4 + Math.random() * 6;
+            barnacle.style.width = size + 'px';
+            barnacle.style.height = size + 'px';
+            barnacle.style.top = (Math.random() * 90 + 5) + '%';
+            barnacle.style.left = (Math.random() > 0.5 ? -size/2 : 100 - size/2) + '%'; 
+            barnacle.style.boxShadow = '0 0 5px rgba(6,182,212,0.4)';
+            spire.appendChild(barnacle);
+        }
+      }
+
+      // --- PARTICLE SYSTEM (DUST, LEAVES, FIREFLIES) ---
+      const particles = []; 
+
+      function initParticleSystem() {
+        createDustMotes(); // Plankton
+        createFallingLeaves(); // Bubbles
+        
+        requestAnimationFrame(particleLoop);
+      }
+
+      /* PLANKTON SYSTEM */
+      function createDustMotes() {
+        const container = document.getElementById('marine-snow-back'); 
+        // Use the new container if possible, else body
+        const target = container || document.body;
+        
+        for(let i=0; i<60; i++) {
+           const dot = document.createElement('div');
+           dot.className = 'absolute bg-white/20 rounded-full blur-[1px]'; 
+           const size = Math.random() * 2 + 0.5;
+           dot.style.width = size + 'px';
+           dot.style.height = size + 'px';
+           
+           const x = Math.random() * window.innerWidth;
+           const y = Math.random() * window.innerHeight;
+           
+           target.appendChild(dot);
+           
+           particles.push({
+             el: dot,
+             x: x,
+             y: y,
+             vx: (Math.random() - 0.5) * 0.1, 
+             vy: 0.1 + Math.random() * 0.3, // Snow falls SLOWLY
+             baseSpeed: 0.2,
+             friction: 1,
+             type: 'dust' 
+           });
+        }
+      }
+
+      /* BUBBLE SYSTEM */
+      function createFallingLeaves() {
+         const container = document.getElementById('marine-snow-front');
+         const target = container || document.body;
+         
+         const count = 15;
+         for(let i=0; i<count; i++) {
+            const leaf = document.createElement('div');
+            leaf.className = 'absolute border border-cyan-400/20 rounded-full bg-cyan-200/5 backdrop-blur-sm';
+            const size = 8 + Math.random() * 16;
+            leaf.style.width = size + 'px';
+            leaf.style.height = size + 'px';
+            
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            
+            target.appendChild(leaf);
+            
+            particles.push({
+              el: leaf,
+              x: x,
+              y: y,
+              vx: (Math.random() - 0.5) * 0.2,
+              vy: -0.2 - Math.random() * 0.5, // Bubbles RISE
+              baseSpeed: 1,
+              friction: 1, 
+              type: 'leaf'
+            });
+         }
+      }
+
+      // Removed Fireflies
+      
+      function particleLoop() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        particles.forEach(p => {
+            // Apply Forces
+            const dx = p.x - lastMouseX;
+            const dy = p.y - lastMouseY;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            const repelRange = 250;
+            
+            if (dist < repelRange) {
+                const force = (repelRange - dist) / repelRange;
+                const angle = Math.atan2(dy, dx);
+                const multiplier = p.type === 'dust' ? 2 : 1; 
+                
+                p.vx += Math.cos(angle) * force * multiplier * 0.2;
+                p.vy += Math.sin(angle) * force * multiplier * 0.2;
+            }
+            
+            // Constant Motion
+            if (p.type === 'leaf') {
+                p.vy -= 0.005; // Buoyancy accel
+                if(p.vy < -2) p.vy = -2; // Cap speed
+                p.x += Math.sin(Date.now() * 0.002 + p.y * 0.05) * 0.1; // Wobble
+            }
+
+            p.x += p.vx;
+            p.y += p.vy;
+            
+            // X Wrap
+            if (p.x < -50) p.x = width + 50;
+            if (p.x > width + 50) p.x = -50;
+            
+            // Y Wrap
+            if (p.type === 'leaf') {
+                 if (p.y < -50) { // Off top
+                    p.y = height + 50;
+                    p.x = Math.random() * width;
+                    p.vy = -0.5 - Math.random(); 
+                 }
+            } else {
+                 if (p.y > height + 50) { // Off bottom (Snow)
+                    p.y = -50;
+                    p.x = Math.random() * width;
+                 }
+            }
+            
+            p.el.style.transform = `translate(${p.x}px, ${p.y}px)`;
+        });
+        
+        requestAnimationFrame(particleLoop);
+      }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- VISUAL SYSTEMS INIT ---
+        // (Navigation Logic is now handled by animateNavigation in the upper scope)
+
+        // --- VISUAL SYSTEMS INIT ---
+        try {
+            generateMoss(); 
+        } catch(e) { console.error("Moss Gen Failed", e); }
+        
+        try {
+            startSootPeeper();
+            startSootEyes(); // New encapsulated function
+            startActiveBushLeafDropper();
+            startActiveBushShaker();
+            initParticleSystem(); 
+            initPhysics(); 
+        } catch(e) { console.error("Physics Engine Failed", e); }
+      });
+    </script>
+  </body>
+</html>
